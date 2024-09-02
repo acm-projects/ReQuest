@@ -25,7 +25,7 @@ Our planet is slowly dying and is about to enter an irreversible stage. Take act
     <br> <br>
 
 ## Stretch Goals :rocket:
-
+- Crowdsourcing feature to add/verify location of recycling bins and other disposal locations 
 - Community post page to feature events to volunteer to pick up trash/clean environments
 - Social tab/ Leaderboard to compare points with friends and other users
 - Garbage & Recycling Schedules
@@ -260,9 +260,9 @@ Our planet is slowly dying and is about to enter an irreversible stage. Take act
 
 ## RecycleRoute TEAM!! :tada:
 
-- TBD
-- TBD
-- TBD
-- TBD
+- Hishita Shah
+- Arin Sood
+- Pranav Gehlot
+- Ayro Escobar
 - Jason Luu - Project Manager
 - Anjelica Avorque - Industry Mentor
