@@ -192,7 +192,7 @@ Our planet is slowly dying and is about to enter an irreversible stage. Take act
     - <a href="https://expressjs.com/">Express.js</a>
   - PostgreSQL:
     - <a href="https://www.youtube.com/watch?v=SpfIwlAYaKk/">PostgreSQL Tutorial for Beginners</a>
-    - <a href="https://www.youtube.com/watch?v=vxu1RrR0vbw">Implementing User AUthentication with Node JS and PostgreSQL</a>
+    - <a href="https://www.youtube.com/watch?v=vxu1RrR0vbw">Implementing User Authentication with Node JS and PostgreSQL</a>
   - APIs:
     - <a href="https://www.youtube.com/watch?v=KJhg761xb3c">Fetching Data from An API in React Native</a>
     - <a href="https://rapidapi.com/search/restaurants/">Searching for APIs</a>
@@ -202,7 +202,7 @@ Our planet is slowly dying and is about to enter an irreversible stage. Take act
         - <a href="https://cloud.google.com/vision">Google Vision API</a>
           - <a href="https://www.youtube.com/watch?v=iir0ezSvRLw&t=354s"> Integrating Google Cloud Vision API with React Natvie </a>
         - <a href="https://developers.google.com/maps/documentation/places/web-service/search-nearby">Google Places API</a>
-        - <a href="https://www.youtube.com/watch?v=iOif0eHQbHY"> avascript Google Places API to Display Nearby Places Info</a>
+        - <a href="https://www.youtube.com/watch?v=iOif0eHQbHY"> Javascript Google Places API to Display Nearby Places Info</a>
     - <a href="https://www.youtube.com/watch?v=DihOP19LQdg">Build A REST API With Node.js, Express, & PostgreSQL</a>
   - LLM
     - 5 min vid: <a href="https://www.youtube.com/watch?v=5sLYAQS9sWQ">How Large Language Models Work</a>
