@@ -64,7 +64,7 @@ Our planet is slowly dying and is about to enter an irreversible stage. Take act
 
 <details>
   
-**<summary>Week 2: 09/11 - 09/18 :shamrock: </summary>**
+**<summary>Week 2: Planning 09/11 - 09/18 :shamrock: </summary>**
 
 #### Frontend:
 
