@@ -43,7 +43,7 @@ Our planet is slowly dying and is about to enter an irreversible stage. Take act
 #### General:
 
 - Discuss who’s frontend/backend and the overall project/tech stack
-- Set up communication, environments, and WhenToMeet
+- Set up communication, environments, and <a href="https://www.when2meet.com/?26280852-TiZTA">WhenToMeet]</a>
 - Go over GitHub basics
 - Start working on UI designs with Figma
   - Low Fidelity to High Fidelity
