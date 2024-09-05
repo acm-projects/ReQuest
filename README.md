@@ -186,7 +186,7 @@ Our planet is slowly dying and is about to enter an irreversible stage. Take act
     - <a href="https://www.youtube.com/watch?v=mrjy92pW0kM">React Native #1: Setup Visual Studio Code</a>
     - <a href="https://reactnative.dev/docs/environment-setup">Setting up the Environment</a>
     - <a href="https://reactnative.dev/docs/tutorial?language=javascript">Learn the Basics</a>
-    - <a href="https://www.youtube.com/playlist?list=PLC3y8-rFHvwhiQJD1di4eRVN30WWCXkg1t">React Native Tutorial for Beginners</a>
+    - <a href="https://www.youtube.com/playlist?list=PLC3y8-rFHvwhiQJD1di4eRVN30WWCXkg1">React Native Tutorial for Beginners</a>
     - <a href="https://www.youtube.com/watch?v=6ZnfsJ6mM5c">React Native Tutorial for Beginners - Getting Started</a>
 - Backend:
   - Frameworks:
