@@ -25,9 +25,11 @@ Our planet is slowly dying and is about to enter an irreversible stage. Take act
     <br> <br>
 
 ## Stretch Goals :rocket:
-- Crowdsourcing feature to add/verify location of recycling bins and other disposal locations 
+
+- Crowdsourcing feature to add/verify location of recycling bins and other disposal locations
 - Community post page to feature events to volunteer to pick up trash/clean environments
 - Social tab/ Leaderboard to compare points with friends and other users
+  - Also implement feature to associate with university, organization, or etc to compete against others
 - Garbage & Recycling Schedules
 - DIY Recycling Projects (crafts, gardening, etc)
 - Gamification with points, levels, streaks, goals, quests, and rewards
@@ -54,7 +56,7 @@ Our planet is slowly dying and is about to enter an irreversible stage. Take act
 
 #### Backend
 
-- Start looking into Tech Stack (PostgreSQL, Express, Node.js)
+- Start looking into Tech Stack (MongoDB, Express, Node.js)
 - Play around with the APIs (use Postman)
 - Look into LLM for chatbot and start playing around with it
 <br>
@@ -181,18 +183,18 @@ Our planet is slowly dying and is about to enter an irreversible stage. Take act
 - Frontend: React Native with Expo
   - Resources:
     - <a href="https://www.youtube.com/watch?v=Tn6-PIqc4UM">What is React?</a>
-    - <a href="https://www.youtube.com/watch?v=w7ejDZ8SWv8">React JS Crash Course - Youtube</a>
-    - <a href="https://reactnative.dev/docs/tutorial?language=javascript">Learn the Basics</a>
-    - <a href="https://reactnative.dev/docs/environment-setup">Setting up the Environment</a>
     - <a href="https://www.youtube.com/watch?v=mrjy92pW0kM">React Native #1: Setup Visual Studio Code</a>
+    - <a href="https://reactnative.dev/docs/environment-setup">Setting up the Environment</a>
+    - <a href="https://reactnative.dev/docs/tutorial?language=javascript">Learn the Basics</a>
+    - <a href="https://www.youtube.com/playlist?list=PLC3y8-rFHvwhiQJD1di4eRVN30WWCXkg1t">React Native Tutorial for Beginners</a>
     - <a href="https://www.youtube.com/watch?v=6ZnfsJ6mM5c">React Native Tutorial for Beginners - Getting Started</a>
 - Backend:
   - Frameworks:
     - <a href="https://nodejs.org/en/">Node.js</a>
     - <a href="https://expressjs.com/">Express.js</a>
-  - PostgreSQL:
-    - <a href="https://www.youtube.com/watch?v=SpfIwlAYaKk/">PostgreSQL Tutorial for Beginners</a>
-    - <a href="https://www.youtube.com/watch?v=vxu1RrR0vbw">Implementing User Authentication with Node JS and PostgreSQL</a>
+  - MongdoDB:
+    - <a href="https://www.youtube.com/watch?v=ExcRbA7fy_A&list=PL4cUxeGkcC9h77dJ-QJlwGlZlTd4ecZOA">Complete MongoDB Tutorial #1 - What is MongoDB?</a>
+    - <a href="https://www.youtube.com/watch?v=P5QbE9aRCLQ&list=PLaAoUJDWH9WrPXMOkqHHsPHxbhvRDqryM">How to Start WIth Node & Express From Zero - Node Authentication API Part-1</a>
   - APIs:
     - <a href="https://www.youtube.com/watch?v=KJhg761xb3c">Fetching Data from An API in React Native</a>
     - <a href="https://rapidapi.com/search/restaurants/">Searching for APIs</a>
@@ -203,7 +205,7 @@ Our planet is slowly dying and is about to enter an irreversible stage. Take act
           - <a href="https://www.youtube.com/watch?v=iir0ezSvRLw&t=354s"> Integrating Google Cloud Vision API with React Natvie </a>
         - <a href="https://developers.google.com/maps/documentation/places/web-service/search-nearby">Google Places API</a>
         - <a href="https://www.youtube.com/watch?v=iOif0eHQbHY"> Javascript Google Places API to Display Nearby Places Info</a>
-    - <a href="https://www.youtube.com/watch?v=DihOP19LQdg">Build A REST API With Node.js, Express, & PostgreSQL</a>
+    - <a href="https://www.youtube.com/watch?v=fgTGADljAeg">Build A REST API With Node.js, Express, & MongoDB - Quick</a>
   - LLM
     - 5 min vid: <a href="https://www.youtube.com/watch?v=5sLYAQS9sWQ">How Large Language Models Work</a>
     - Chatbot Fine Tuning
@@ -222,7 +224,7 @@ Our planet is slowly dying and is about to enter an irreversible stage. Take act
 - <a href="https://nodejs.org/en/"> Node.Js </a>
 - <a href="https://git-scm.com/downloads"> Git </a>
 - <a href="https://git-scm.com/downloads"> GitHub </a> - <a href="https://docs.github.com/en/get-started/quickstart/hello-world"> Docs </a> - <a href="https://product.hubspot.com/blog/git-and-github-tutorial-for-beginners">Tutorial </a>
-- <a href="https://www.postgresql.org/docs/17/index.html"> PostgreSQL </a>
+- <a href="https://www.mongodb.com/docs/manual/core/document/"> MongoDB </a>
 
 ## Roadblocks and Possible Solutions :construction: :bulb:
 
