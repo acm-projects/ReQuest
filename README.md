@@ -202,7 +202,7 @@ Our planet is slowly dying and is about to enter an irreversible stage. Take act
       - <a href="https://recyclenation.com/recycling-api/">Recycle API</a>
       - Google
         - <a href="https://cloud.google.com/vision">Google Vision API</a>
-          - <a href="https://www.youtube.com/watch?v=iir0ezSvRLw&t=354s"> Integrating Google Cloud Vision API with React Natvie </a>
+          - <a href="https://www.youtube.com/watch?v=iir0ezSvRLw&t=354s"> Integrating Google Cloud Vision API with React Native </a>
         - <a href="https://developers.google.com/maps/documentation/places/web-service/search-nearby">Google Places API</a>
         - <a href="https://www.youtube.com/watch?v=iOif0eHQbHY"> Javascript Google Places API to Display Nearby Places Info</a>
     - <a href="https://www.youtube.com/watch?v=fgTGADljAeg">Build A REST API With Node.js, Express, & MongoDB - Quick</a>
