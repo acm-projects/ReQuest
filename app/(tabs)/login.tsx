@@ -13,7 +13,7 @@ export default function Login() {
 
       {/* Earth Image */}
       <Image
-        source={require('../../assets/images/img.png')}  // link to the earth image
+        source={require('../../assets/images/plswork.png')}  // link to the earth image
         style={styles.headerImg}
       />
 
@@ -59,8 +59,8 @@ export default function Login() {
 
 const styles = StyleSheet.create({
   headerImg: {
-    width: 160,
-    height: 160,
+    width: 200,
+    height: 200,
     alignSelf: 'center',
     marginBottom: 8,
   },
@@ -79,9 +79,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   footerImg: {
-    width: 70,
+    width: 130,
     height: 70,
     alignSelf: 'auto',
-    marginBottom: 15,
+    marginTop: 22,
   }
 });
