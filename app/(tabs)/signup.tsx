@@ -13,7 +13,7 @@ export default function Signup() {
 
       {/* Header with decorative elements */}
       <Text style={tw`text-4xl font-semibold text-[#6B8068] mt-2`}>Hello!</Text>
-      <Text style={tw`text-2xl font-bold text-black mb-6`}>Register to Get Started, Excited to have you!</Text>
+      <Text style={tw`text-2xl font-bold text-black mb-6`}>Register to Get Started, Excited to have you with us</Text>
 
       {/* Earth Image */}
       <Image
