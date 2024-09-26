@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   },
   footerImg: {
     width: 130,
-    height: 70,
+    height: 85,
     alignSelf: 'auto',
     marginTop: 22,
   }
