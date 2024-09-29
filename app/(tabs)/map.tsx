@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import MapView, { Marker, Region } from 'react-native-maps';
-import { StyleSheet, View, Modal, Text, TouchableOpacity, Linking, Platform, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Modal, Text, TouchableOpacity, Linking, Platform, ActivityIndicator, ScrollView } from 'react-native';
 import * as Location from 'expo-location';
 import axios from 'axios';
 
@@ -115,7 +115,7 @@ export default function App() {
                 ...center,
                 openingHours: placeDetails.opening_hours,
                 rating: placeDetails.rating,
-                description: topReview,
+                description: topReview + " " + placeDetails.about,
               }
             : center
         )
@@ -203,7 +203,8 @@ export default function App() {
                   Rating: {selectedCenter.rating} ⭐
                 </Text>
               )}
-              <Text style={styles.modalDescription}>
+              <ScrollView style = {styles.scrollView} scrollEnabled={isExpanded}>
+                <Text style={styles.modalDescription}>
                 <Text style={{ fontWeight: 'bold' }}>A user said: </Text>
                 <Text style={{ fontStyle: 'italic' }}>
                   {isExpanded 
@@ -213,6 +214,7 @@ export default function App() {
                       : selectedCenter.description)}
                 </Text>
               </Text>
+              </ScrollView>
               <TouchableOpacity onPress={toggleDescription}>
                 <Text style={styles.toggleText}>
                   {isExpanded ? "Show Less" : "Show More"}
@@ -286,6 +288,9 @@ const styles = StyleSheet.create({
   },
   openingHoursContainer: {
     marginVertical: 10,
+  },
+  scrollView: {
+    maxHeight: 175,
   },
   modalDescription: {
     marginVertical: 10,
