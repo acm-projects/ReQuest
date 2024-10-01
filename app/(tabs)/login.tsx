@@ -13,7 +13,7 @@ export default function Login() {
 
       {/* Earth Image */}
       <Image
-        source={require('../../assets/images/plswork.png')}  // link to the earth image
+        source={require('../../assets/images/earthWithHouse.png')}  // link to the earth image
         style={styles.headerImg}
       />
 
