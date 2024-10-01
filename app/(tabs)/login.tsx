@@ -47,7 +47,7 @@ export default function Login() {
       </TouchableOpacity>
 
       <Image
-        source={require('../../assets/images/img3.png')}  // link to the heart image
+        source={require('../../assets/images/loadingHeart.png')}  // link to the heart image
         style={styles.footerImg}
       />
 
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   },
   footerImg: {
     width: 130,
-    height: 85,
+    height: 90,
     alignSelf: 'auto',
     marginTop: 22,
   }
