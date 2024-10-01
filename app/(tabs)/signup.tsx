@@ -1,13 +1,20 @@
 import React from 'react';
 import { Image, StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
+
 import tw from 'twrnc'; 
 
 export default function Signup() {
+  const router = useRouter(); // Use router for navigation
+
+
   return (
     <View style={tw`flex-1 bg-[#F8F5E5] justify-center items-center px-4`}>
       
-      {/* Back Arrow */}
-      <TouchableOpacity style={tw`absolute top-10 left-4`}>
+      <TouchableOpacity 
+        style={tw`absolute top-10 left-4`} 
+        onPress={() => router.push('/welcome')} // Navigate back to the Welcome page
+      >
         <Text style={tw`text-2xl`}>&larr;</Text> 
       </TouchableOpacity>
 
@@ -17,7 +24,7 @@ export default function Signup() {
 
       {/* Earth Image */}
       <Image
-        source={require('../../assets/images/plswork2.png')}  // globe image
+        source={require('../../assets/images/sittingPlanet.png')}  // globe image
         style={styles.earthImg}
       />
 

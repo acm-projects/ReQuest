@@ -1,14 +1,101 @@
-import { Image, StyleSheet, Platform, Text, View, TouchableOpacity } from 'react-native';
-import tw from 'twrnc';
-export default function Welcome() {
-    return (
-        
-        <View style={tw `flex-1 justify-center items-center`}>
-            <View>
-              <Text style={tw `text-center text-lg`}>Welcome to RecycleRoute!</Text>
-            </View>
+import React from 'react';
+import { Image, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router'; // Import useRouter for navigation
+import tw from 'twrnc'; 
+
+const WelcomeScreen = () => {
+  const router = useRouter(); // Use the router to handle navigation
+
+  return (
+    <View style={styles.container}>
+      
+      {/* Top Section with Header */}
+      <View style={styles.topSection}>
+        {/* Back Arrow */}
+        <TouchableOpacity style={tw`absolute top-10 left-4`}>
+          <Text style={tw`text-2xl`}>&larr;</Text> 
+        </TouchableOpacity>
+
+        {/* Header */}
+        <Text style={tw`text-4xl font-semibold text-[#6B8068] mt-2`}>Hello!</Text>
+        <Text style={tw`text-2xl font-bold text-black mb-6`}>Register to Get Started</Text>
+
+        {/* Earth Image */}
+        <Image
+          source={require('../../assets/images/plswork2.png')}  // globe image
+          style={styles.earthImg}
+        />
+      </View>
+
+      {/* Squiggly Line */}
+      <Image 
+        source={require('../../assets/images/squiggly-line.png')}  // Image of a squiggly line
+        style={styles.squigglyLine} 
+      />
+
+      {/* Bottom Section with Buttons */}
+      <View style={styles.bottomSection}>
+        <View style={styles.buttonContainer}>
+          {/* Sign Up Button */}
+          <TouchableOpacity 
+            style={styles.button} 
+            onPress={() => router.push('/signup')} // Navigate to signup.tsx
+          >
+            <Text style={tw`text-white text-center text-lg`}>Sign Up</Text>
+          </TouchableOpacity>
+
+          {/* Log In Button */}
+          <TouchableOpacity 
+            style={styles.button} 
+            onPress={() => router.push('/login')} // Navigate to login.tsx
+          >
+            <Text style={tw`text-white text-center text-lg`}>Log In</Text>
+          </TouchableOpacity>
         </View>
-    );
+      </View>
+    </View>
+  );
 }
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  topSection: {
+    flex: 1,
+    backgroundColor: 'pastelGreen', // this is pastelgreen
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 40,
+  },
+  earthImg: {
+    width: 200,
+    height: 200,
+    marginBottom: 20,
+  },
+  squigglyLine: {
+    width: '100%',
+    height: 0,
+    zIndex: 1,
+  },
+  bottomSection: {
+    flex: 1,
+    backgroundColor: 'beige', // Light pink color for the bottom half
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingHorizontal: 20,
+  },
+  button: {
+    backgroundColor: '#C2D5BA',
+    padding: 15,
+    borderRadius: 10,
+    width: '45%',
+  },
+});
 
+export default WelcomeScreen;
