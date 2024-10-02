@@ -9,7 +9,10 @@ export default function Login() {
 
   return (
     <View style={tw`flex-1 bg-amber-50 justify-center items-center px-4`}>
-      
+      <Image
+        source={require('../../assets/images/img2.png')}
+        style={styles.cornerImg}
+      />
       {/* Back Arrow */}
       <TouchableOpacity 
         style={tw`absolute top-10 left-4`} 
@@ -90,5 +93,16 @@ const styles = StyleSheet.create({
     height: 60,
     alignSelf: 'auto',
     marginTop: 22,
-  }
+  },
+  container: {
+    flex: 1,
+  },
+  cornerImg: {
+    position: 'absolute',
+    top: -30,
+    left: -30,
+    width: 220,
+    height: 220,
+    resizeMode: 'contain',
+  },
 });

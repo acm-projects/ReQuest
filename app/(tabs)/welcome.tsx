@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   },
   topSection: {
     flex: 1,
-    backgroundColor: 'pastelGreen', // this is pastelgreen
+    backgroundColor: tw.color('bg-green-100'), // this is pastelgreen
     justifyContent: 'center',
     alignItems: 'center',
     paddingTop: 40,
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   },
   bottomSection: {
     flex: 1,
-    backgroundColor: 'beige', // Light pink color for the bottom half
+    backgroundColor: tw.color('amber-50'), // Light pink color for the bottom half
     justifyContent: 'center',
     alignItems: 'center',
   },
