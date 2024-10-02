@@ -22,7 +22,7 @@ const WelcomeScreen = () => {
 
         {/* Earth Image */}
         <Image
-          source={require('../../assets/images/planEOnTrash.png')}  // globe image
+          source={require('../../assets/images/recycleEarth.png')}  // globe image
           style={styles.earthImg}
         />
       </View>
