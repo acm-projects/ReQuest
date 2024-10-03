@@ -10,7 +10,14 @@ export default function Signup() {
 
   return (
     <View style={tw`flex-1 bg-[#F8F5E5] justify-center items-center px-4`}>
-      
+      <Image
+        source={require('../../assets/images/signUpLeftCorner.png')}
+        style={styles.cornerImg}
+      />
+      <Image
+        source={require('../../assets/images/rightCorner.png')}
+        style={styles.topRightImg}
+      />
       <TouchableOpacity 
         style={tw`absolute top-10 left-4`} 
         onPress={() => router.push('/welcome')} // Navigate back to the Welcome page
@@ -86,5 +93,24 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: '100%',
     marginTop: 20,
+  },
+    container: {
+    flex: 1,
+  },
+  cornerImg: {
+    position: 'absolute',
+    top: -56,
+    left: -36,
+    width: 220,
+    height: 220,
+    resizeMode: 'contain',
+  },
+  topRightImg: {
+    position: 'absolute',
+    top: -30,
+    right: -55,
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
   },
 });

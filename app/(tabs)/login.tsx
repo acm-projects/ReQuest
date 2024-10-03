@@ -13,6 +13,10 @@ export default function Login() {
         source={require('../../assets/images/img2.png')}
         style={styles.cornerImg}
       />
+      <Image
+        source={require('../../assets/images/rightCorner.png')}
+        style={styles.topRightImg}
+      />
       {/* Back Arrow */}
       <TouchableOpacity 
         style={tw`absolute top-10 left-4`} 
@@ -103,6 +107,14 @@ const styles = StyleSheet.create({
     left: -30,
     width: 220,
     height: 220,
+    resizeMode: 'contain',
+  },
+  topRightImg: {
+    position: 'absolute',
+    top: -22,
+    right: -50,
+    width: 200,
+    height: 200,
     resizeMode: 'contain',
   },
 });
