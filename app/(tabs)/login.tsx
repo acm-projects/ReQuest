@@ -11,7 +11,15 @@ export default function Login() {
     <View style={tw`flex-1 bg-amber-50 justify-center items-center px-4`}>
       <Image
         source={require('../../assets/images/img2.png')}
-        style={styles.cornerImg}
+        style={styles.topLeftImg}
+      />
+      <Image
+        source={require('../../assets/images/bottomLeftImg.png')}
+        style={styles.bottomLeftImg}
+      />
+      <Image
+        source={require('../../assets/images/bottomRightImg.png')}
+        style={styles.bottomRightImg}
       />
       <Image
         source={require('../../assets/images/rightCorner.png')}
@@ -101,7 +109,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  cornerImg: {
+  topLeftImg: {
     position: 'absolute',
     top: -30,
     left: -30,
@@ -116,5 +124,20 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     resizeMode: 'contain',
+  },
+  bottomLeftImg: {
+    position: 'absolute',
+    bottom: -35,
+    left: -60,
+    width: 220,
+    height: 220,
+    resizeMode: 'contain',
+  },
+  bottomRightImg: {
+    position: 'absolute',
+    bottom: -48,
+    right: -24,
+    width: 200,
+    height: 200,
   },
 });
