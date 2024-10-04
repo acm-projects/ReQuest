@@ -10,19 +10,19 @@ export default function Login() {
   return (
     <View style={tw`flex-1 bg-amber-50 justify-center items-center px-4`}>
       <Image
-        source={require('../../assets/images/img2.png')}
+        source={require('../assets/images/img2.png')}
         style={styles.topLeftImg}
       />
       <Image
-        source={require('../../assets/images/bottomLeftImg.png')}
+        source={require('../assets/images/bottomLeftImg.png')}
         style={styles.bottomLeftImg}
       />
       <Image
-        source={require('../../assets/images/bottomRightImg.png')}
+        source={require('../assets/images/bottomRightImg.png')}
         style={styles.bottomRightImg}
       />
       <Image
-        source={require('../../assets/images/rightCorner.png')}
+        source={require('../assets/images/rightCorner.png')}
         style={styles.topRightImg}
       />
       {/* Back Arrow */}
@@ -35,7 +35,7 @@ export default function Login() {
 
       {/* Earth Image */}
       <Image
-        source={require('../../assets/images/birdPlanet.png')}  // link to the earth image
+        source={require('../assets/images/birdPlanet.png')}  // link to the earth image
         style={styles.headerImg}
       />
 
@@ -64,12 +64,14 @@ export default function Login() {
       </TouchableOpacity>
 
       {/* Login Button */}
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button}
+       onPress={() => router.push('../dashboard')}>
         <Text style={tw`text-white text-center text-lg`}>Log In</Text>
+        
       </TouchableOpacity>
 
       <Image
-        source={require('../../assets/images/loadingHeart.png')}  // link to the heart image
+        source={require('../assets/images/loadingHeart.png')}  // link to the heart image
         style={styles.footerImg}
       />
 

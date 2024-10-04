@@ -11,11 +11,11 @@ export default function Signup() {
   return (
     <View style={tw`flex-1 bg-[#F8F5E5] justify-center items-center px-4`}>
       <Image
-        source={require('../../assets/images/signUpLeftCorner.png')}
+        source={require('../assets/images/signUpLeftCorner.png')}
         style={styles.cornerImg}
       />
       <Image
-        source={require('../../assets/images/rightCorner.png')}
+        source={require('../assets/images/rightCorner.png')}
         style={styles.topRightImg}
       />
       <TouchableOpacity 
@@ -31,7 +31,7 @@ export default function Signup() {
 
       {/* Earth Image */}
       <Image
-        source={require('../../assets/images/sittingPlanet.png')}  // globe image
+        source={require('../assets/images/sittingPlanet.png')}  // globe image
         style={styles.earthImg}
       />
 
@@ -66,7 +66,9 @@ export default function Signup() {
       />
 
       {/* Register Button */}
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button}
+        onPress={() => router.push('/welcome')}
+      >
         <Text style={tw`text-white text-center text-lg`}>Register</Text>
       </TouchableOpacity>
     </View>

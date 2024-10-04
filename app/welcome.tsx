@@ -11,10 +11,7 @@ const WelcomeScreen = () => {
       
       {/* Top Section with Header */}
       <View style={styles.topSection}>
-        {/* Back Arrow */}
-        <TouchableOpacity style={tw`absolute top-10 left-4`}>
-          <Text style={tw`text-2xl`}>&larr;</Text> 
-        </TouchableOpacity>
+       
 
         {/* Header */}
         <Text style={tw`text-4xl font-semibold text-[#6B8068] mt-2`}>Hello!</Text>
@@ -22,14 +19,14 @@ const WelcomeScreen = () => {
 
         {/* Earth Image */}
         <Image
-          source={require('../../assets/images/recycleEarth.png')}  // globe image
+          source={require('../assets/images/recycleEarth.png')}  // globe image
           style={styles.earthImg}
         />
       </View>
 
       {/* Squiggly Line */}
       <Image 
-        source={require('../../assets/images/squiggly-line.png')}  // Image of a squiggly line
+        source={require('../assets/images/squiggly-line.png')}  // Image of a squiggly line
         style={styles.squigglyLine} 
       />
 
