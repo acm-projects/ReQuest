@@ -15,7 +15,7 @@ interface RecyclingCenter {
   description?: string; 
 }
 
-export default function App() {
+export default function Map() {
   const [region, setRegion] = useState<Region | null>(null);
   const [recyclingCenters, setRecyclingCenters] = useState<RecyclingCenter[]>([]);
   const [selectedCenter, setSelectedCenter] = useState<RecyclingCenter | null>(null);
@@ -115,7 +115,7 @@ export default function App() {
                 ...center,
                 openingHours: placeDetails.opening_hours,
                 rating: placeDetails.rating,
-                description: topReview + " " + placeDetails.about,
+                description: topReview,
               }
             : center
         )
@@ -128,7 +128,7 @@ export default function App() {
   const handleMarkerPress = (center: RecyclingCenter) => {
     setSelectedCenter(center);
     setModalVisible(true);
-    setIsExpanded(false); // Reset description toggle when a new marker is pressed
+    setIsExpanded(false);
   };
 
   const openMaps = (center: RecyclingCenter) => {

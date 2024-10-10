@@ -1,102 +1,129 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { StyleSheet, Image, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import axios from 'axios';
+import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
 
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const DetectObject = () => {
+  const [imageUri, setImageUri] = useState<string | null>(null);
+  const [labels, setLabels] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-export default function TabTwoScreen() {
+  const pickImage = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (!result.canceled && result.assets && result.assets[0].uri) {
+        setImageUri(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error("Error with image: ", error);
+      setError("Error picking image");
+    }
+  }
+
+  const analyzeImage = async () => {
+    try {
+      if (!imageUri) {
+        alert("Please select an image first");
+        return;
+      }
+
+      const apiKey = process.env.EXPO_PUBLIC_CLOUD_VISION_API_KEY;
+      const apiURL = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
+
+      const fileUri = imageUri!.replace("file://", "");
+      const base64ImageData = await FileSystem.readAsStringAsync(fileUri, {
+        encoding: FileSystem.EncodingType.Base64
+      });
+
+      const requestData = {
+        requests: [
+          {
+            image: {
+              content: base64ImageData,
+            },
+            features: [
+              {
+                type: "LABEL_DETECTION",
+                maxResults: 5
+              }
+            ]
+          }
+        ]
+      };
+
+      const response = await axios.post(apiURL, requestData);
+
+      console.log("Response Data: ", response.data);
+      setLabels(response.data.responses[0].labelAnnotations);
+      setError(null);
+    } catch (error) {
+      console.error("Error with image analyzer: ", error);
+      setError('Error analyzing image, please try again');
+    }
+  }
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={<Ionicons size={310} name="code-slash" style={styles.headerImage} />}>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Explore</ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image source={require('@/assets/images/react-logo.png')} style={{ alignSelf: 'center' }} />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user's current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText> library
-          to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
-  );
+    <View style={styles.container}>
+      <Text style={styles.title}>Google Cloud Vision API Demo</Text>
+      {imageUri && <Image source={{ uri: imageUri }} style={{ width: 300, height: 300, marginBottom: 20 }} />}
+      <TouchableOpacity style={styles.button} onPress={pickImage}>
+        <Text style={styles.text}>Choose an image</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.button} onPress={analyzeImage}>
+        <Text style={styles.text}>Analyze Image</Text>
+      </TouchableOpacity>
+      {error && <Text style={styles.error}>{error}</Text>}
+      {
+        labels.length > 0 && (
+          <View>
+            <Text>Labels:</Text>
+            {
+              labels.map((label, index) => (
+                <Text key={index}>{label.description}</Text>
+              ))
+            }
+          </View>
+        )
+      }
+    </View>
+  )
 }
 
+export default DetectObject;
+
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center'
   },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
   },
+  button: {
+    backgroundColor: '#DDDDDD',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 20,
+  },
+  text: {
+    fontSize: 20,
+  },
+  error: {
+    color: 'red',
+    fontSize: 16,
+    marginTop: 10,
+  }
 });
