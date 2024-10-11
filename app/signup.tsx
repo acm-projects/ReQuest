@@ -18,6 +18,14 @@ export default function Signup() {
         source={require('../assets/images/rightCorner.png')}
         style={styles.topRightImg}
       />
+      <Image
+        source={require('../assets/images/bottomLeftImg.png')}
+        style={styles.bottomLeftImg}
+      />
+      <Image
+        source={require('../assets/images/bottomRightImg.png')}
+        style={styles.bottomRightImg}
+      />
       <TouchableOpacity 
         style={tw`absolute top-10 left-4`} 
         onPress={() => router.push('/welcome')} // Navigate back to the Welcome page
@@ -114,5 +122,20 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     resizeMode: 'contain',
+  },
+  bottomLeftImg: {
+    position: 'absolute',
+    bottom: -39,
+    left: -65,
+    width: 220,
+    height: 220,
+    resizeMode: 'contain',
+  },
+  bottomRightImg: {
+    position: 'absolute',
+    bottom: -49,
+    right: -29,
+    width: 200,
+    height: 200,
   },
 });
