@@ -6,16 +6,57 @@ import tw from 'twrnc';
 const WelcomeScreen = () => {
   const router = useRouter(); // Use the router to handle navigation
 
+  // Helper function to render arched "Welcome to" text
+  // Helper function to render arched "Welcome to" text in a semi-circle
+const renderArchedText = () => {
+  const welcomeText = "Welcome to";
+  const arcRadius = 60; // Adjust the radius for the curvature
+  const totalAngle = Math.PI * 0.6; // 180 degrees for a half-circle
+  const charAngleStep = totalAngle / (welcomeText.length - 1);
+
+  return (
+    <View style={styles.archContainer}>
+      {welcomeText.split('').map((char, index) => {
+        const angle = (index - (welcomeText.length - 1) / 2) * charAngleStep; // Calculate the angle for each character
+        const rotateAngle = `${angle * (190/ Math.PI)}deg`; // Convert radians to degrees
+
+        return (
+          <Text
+            key={index}
+            style={[
+              styles.archText,
+              {
+                transform: [
+                  { rotate: rotateAngle }, // Apply the rotation
+                  { translateY: -arcRadius } // Adjust position along the y-axis
+                ],
+              },
+            ]}
+          >
+            {char}
+          </Text>
+        );
+      })}
+    </View>
+  );
+};
+
+
   return (
     <View style={styles.container}>
       
       {/* Top Section with Header */}
       <View style={styles.topSection}>
-       
+        
+        {/* Arched "Welcome to" Text */}
+        {renderArchedText()}
 
-        {/* Header */}
-        <Text style={tw`text-4xl font-semibold text-[#6B8068] mt-2`}>Hello!</Text>
-        <Text style={tw`text-2xl font-bold text-black mb-6`}>Register to Get Started</Text>
+        {/* RecycleRoute Text */}
+        <Text style={tw`text-5xl font-semibold text-[#6B8068] mt-4`}>RecycleRoute!</Text>
+
+        {/* Reduce, Reuse, Recycle Text */}
+        <Text style={tw`text-2xl font-bold text-black mb-1 mt-4`}>Reduce, Reuse, Recycle.</Text>
+        <Text style={tw`text-2xl font-bold text-black mb-1`}>The Power is Yours!</Text>
 
         {/* Earth Image */}
         <Image
@@ -63,7 +104,18 @@ const styles = StyleSheet.create({
     backgroundColor: tw.color('bg-green-100'), // this is pastelgreen
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 40,
+    paddingTop: 150,
+  },
+  archContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: -40,
+  },
+  archText: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#6B8068',
   },
   earthImg: {
     width: 200,
