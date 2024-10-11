@@ -144,14 +144,24 @@ export default function Chat() {
       justifyContent: 'center',
       alignItems: 'center',
     },
+    text: {
+      fontSize: 20,
+      textAlign: 'center',
+      marginTop: 10,
+      color: 'white',
+      zIndex: 1,
+    }
   });
 
 
   
   return (
     <View style={{ flex: 1 }}>
-      {/* Open Chatbot Button */}
-      <Text>Home Page</Text>
+
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'black' }}>
+      <Text style={styles.text}>Home Page</Text>
+      </View>
+
 
       <Pressable style={styles.floatingButton} onPress={toggleModal}>
         <MaterialCommunityIcons name="robot-happy" size={24} color="white" />
