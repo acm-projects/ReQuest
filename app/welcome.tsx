@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   },
   topSection: {
     flex: 1,
-    backgroundColor: tw.color('bg-green-100'), // this is pastelgreen
+    backgroundColor: tw.color('bg-green-200'), // this is pastelgreen
     justifyContent: 'center',
     alignItems: 'center',
     paddingTop: 150,
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   archText: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#6B8068',
+    color: '#FFFF',
   },
   earthImg: {
     width: 200,
