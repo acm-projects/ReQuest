@@ -62,7 +62,7 @@ const WelcomeScreen = () => {
 
         {/* Reduce, Reuse, Recycle Text */}
         <Text style={tw`text-2xl font-bold text-black mb-1 mt-4`}>Reduce, Reuse, Recycle.</Text>
-        <Text style={tw`text-2xl font-bold text-black mb-1`}>The Power is Yours!.</Text>
+        <Text style={tw`text-2xl font-bold text-black mb-1`}>The Power is Yours!</Text>
       </View>
 
       {/* Bottom Section with Earth Image and Buttons */}
