@@ -1,7 +1,10 @@
-import { Text, StyleSheet, View, SafeAreaView } from 'react-native';
+import { Text, StyleSheet, View, SafeAreaView, Button } from 'react-native';
 import React from 'react';
+import { useRouter } from 'expo-router';
 
 export default function Profile() {
+    const router = useRouter();
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.center}>
@@ -27,5 +30,6 @@ const styles = StyleSheet.create({
         fontSize: 20,
         textAlign: 'center',
         color: 'white',
+        marginBottom: 20, // Add some space between the text and the button
     },
 });

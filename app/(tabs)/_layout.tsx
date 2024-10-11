@@ -14,7 +14,6 @@ export default function TabLayout() {
   const [signedIn, setSignedIn] = useState(false);
   const router = useRouter();
 
-
   // If user is not signed in, show the login/signup screen
   if (!signedIn) {
     return (
@@ -65,7 +64,7 @@ export default function TabLayout() {
               style={styles.button} 
               onPress={() => {
                 setSignedIn(true);
-              }} // Navigate to login.tsx
+              }}
             >
               <Text style={tw`text-white text-center text-lg`}>Skip Login</Text>
             </TouchableOpacity>
