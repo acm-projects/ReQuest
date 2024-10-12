@@ -15,7 +15,7 @@ export default function Login() {
   };
 
   const handleBackToFirst = () => {
-    router.push('../(tabs)');
+    router.back();
   };
 
   return (
