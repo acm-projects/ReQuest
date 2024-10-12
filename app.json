@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "RecycleRoute",  // Name of your app
+    "name": "RecycleRoute",
     "slug": "recycleroute",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,14 +13,34 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yourusername.recycleroute", // Replace with your unique identifier
+      "infoPlist": {
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLSchemes": ["recycleroute"] // For deep linking
+          }
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.yourusername.recycleroute", // Replace with your unique identifier
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "category": ["BROWSABLE", "DEFAULT"],
+          "data": {
+            "scheme": "recycleroute" // For deep linking
+          }
+        }
+      ]
     },
     "web": {
-    }
+      "favicon": "./assets/images/favicon.png" // Update this path
+    },
+    "scheme": "recycleroute" // For deep linking
   }
 }
