@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import tw from 'twrnc';
 import { useRouter } from 'expo-router';
 import { WebView } from 'react-native-webview'; // Ensure you have the react-native-webview package installed
+import { Ionicons } from '@expo/vector-icons'; 
 
 
 import {
@@ -31,7 +32,6 @@ import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { Feather } from '@expo/vector-icons';
 import Groq from 'groq-sdk';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import Ionicons from '@expo/vector-icons/Ionicons';
 
 const systemPrompt = `You are RecycleBot, the chatbot behind RecycleRoute, an innovative mobile app dedicated to revolutionizing the recycling process. RecycleRoute combines cutting-edge cloud vision technology with a map system and gamification elements to enhance the recycling experience.
 
@@ -358,11 +358,39 @@ export function Chat() {
 }
 
 
+
 export default function Dashboard() {
   const router = useRouter(); // Use router for navigation
-
+const tipsAndGuides = [
+  {
+    title: "Tip 1: Reduce Plastic Use",
+    description: "Try to use reusable bags and bottles to minimize plastic waste.",
+    link: "https://www.youtube.com/embed/CSaUzORm8s8", // Embed link format
+  },
+  {
+    title: "Tip 2: Recycle Properly",
+    description: "Make sure to clean and sort your recyclables correctly.",
+    link: "https://www.youtube.com/embed/jsp7mgYv3aI", // Embed link format
+  },
+  {
+    title: "Tip 3: Compost Organic Waste",
+    description: "Consider composting food scraps and yard waste to reduce landfill waste.",
+    link: "https://www.youtube.com/embed/zy70DAaeFBI", // Embed link format
+  },
+  {
+    title: "Tip 4: Save Water",
+    description: "Fix leaks and use water-efficient fixtures to conserve water.",
+    link: "https://www.youtube.com/embed/5J3cw4biWWo", // Replace with your link
+  },
+  {
+    title: "Tip 5: Reduce Food Waste",
+    description: "Plan meals and use leftovers to minimize food waste.",
+    link: "https://www.youtube.com/embed/ishA6kry8nc", // Replace with your link
+  },
+  // Add more tips here (up to 10)
+];
   return (
-    <View style={tw`flex-1 bg-amber-50`}>
+    <ScrollView style={tw`flex-1 bg-amber-50`}>
       {/* Top Section */}
       <View style={tw`flex-1 justify-center items-center`}>
         <Text style={tw`text-2xl font-bold text-black`}>Welcome Back, Name!</Text>
@@ -388,12 +416,34 @@ export default function Dashboard() {
         </View>
       </View>
 
-      {/* Tips and Guide Button */}
-      <TouchableOpacity style={styles.guideButton} onPress={() => router.push('../tipandguide')}>
-        <Text style={tw`text-white text-center text-lg`}>Tips and Guides</Text>
-      </TouchableOpacity>
-        <Chat/>
+       <View style={tw`flex-1 bg-amber-50`}>
+     
+
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        {tipsAndGuides.map((tip, index) => (
+          <View key={index} style={styles.tipContainer}>
+            <Text style={tw`text-xl font-bold`}>{tip.title}</Text>
+            <Text style={tw`text-base text-gray-700`}>{tip.description}</Text>
+            <WebView
+              source={{ uri: tip.link }} // Use the embed link
+              style={styles.video}
+              javaScriptEnabled={true}
+              domStorageEnabled={true}
+              startInLoadingState={true}
+              scalesPageToFit={true}
+            />
+            <TouchableOpacity 
+              onPress={() => Linking.openURL(tip.link.replace('/embed/', '/watch?v='))} // Open link on YouTube
+              style={styles.linkButton}
+            >
+              <Text style={tw`text-blue-600`}>Watch Video on YouTube</Text>
+            </TouchableOpacity>
+          </View>
+        ))}
+      </ScrollView>
     </View>
+        <Chat/>
+    </ScrollView>
   );
 
 }
@@ -402,6 +452,29 @@ const styles = StyleSheet.create({
   boldDivider: {
     borderBottomWidth: 5,
     borderBottomColor: 'black',
+  },
+   scrollView: {
+    padding: 16,
+    flexGrow: 1,
+  },
+  tipContainer: {
+    marginBottom: 20,
+    padding: 10,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1,
+    elevation: 3,
+  },
+  video: {
+    height: 200, // Set a height for the video
+    marginVertical: 10,
+    borderRadius: 8,
+  },
+  linkButton: {
+    marginTop: 10,
   },
   statItem: {
     flexDirection: 'row',
@@ -434,3 +507,4 @@ const styles = StyleSheet.create({
     bottom: 40, // Move the button up closer to the last stat item
   },
 });
+
