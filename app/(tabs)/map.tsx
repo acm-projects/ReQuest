@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import MapView, { Marker, Region } from 'react-native-maps';
-import { StyleSheet, View, Modal, Text, TouchableOpacity, Linking, Platform, ActivityIndicator, ScrollView } from 'react-native';
+import { StyleSheet, View, Modal, Text, TouchableOpacity, Linking, Platform, ActivityIndicator, ScrollView, Switch } from 'react-native';
 import * as Location from 'expo-location';
 import axios from 'axios';
 
@@ -10,18 +10,24 @@ interface RecyclingCenter {
   latitude: number;
   longitude: number;
   address?: string;
-  openingHours?: { open_now: boolean; weekday_text: string[] }; 
-  rating?: number; 
-  description?: string; 
+  openingHours?: { open_now: boolean; weekday_text: string[] };
+  rating?: number;
+  description?: string;
 }
 
 export default function Map() {
   const [region, setRegion] = useState<Region | null>(null);
   const [recyclingCenters, setRecyclingCenters] = useState<RecyclingCenter[]>([]);
+  const [filteredCenters, setFilteredCenters] = useState<RecyclingCenter[]>([]);
   const [selectedCenter, setSelectedCenter] = useState<RecyclingCenter | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [isExpanded, setIsExpanded] = useState(false); // State to toggle description view
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [sortModalVisible, setSortModalVisible] = useState(false);
+  const [filterModalVisible, setFilterModalVisible] = useState(false);
+  const [distance, setDistance] = useState(5);
+  const [showOpen, setShowOpen] = useState(false);
+  const [showHighestRated, setShowHighestRated] = useState(false);
 
   const GOOGLE_PLACES_API_KEY = process.env.EXPO_PUBLIC_CLOUD_VISION_API_KEY;
 
@@ -81,6 +87,7 @@ export default function Map() {
       }));
 
       setRecyclingCenters(centers);
+      setFilteredCenters(centers);
       centers.forEach((center: RecyclingCenter) => fetchPlaceDetails(center.id));
     } catch (error) {
       console.error("Error fetching recycling centers:", error);
@@ -100,14 +107,14 @@ export default function Map() {
           },
         }
       );
-  
+
       const placeDetails = response.data.result;
-  
+
       let topReview = 'No reviews available.';
       if (placeDetails.reviews && placeDetails.reviews.length > 0) {
         topReview = placeDetails.reviews[0].text;
       }
-  
+
       setRecyclingCenters(prevCenters =>
         prevCenters.map(center =>
           center.id === placeId
@@ -143,15 +150,36 @@ export default function Map() {
     setModalVisible(false);
   };
 
-  // Function to toggle the description view
   const toggleDescription = () => {
     setIsExpanded(!isExpanded);
+  };
+
+  const applyFilters = () => {
+    let updatedCenters = [...recyclingCenters];
+
+    if (showOpen) {
+      updatedCenters = updatedCenters.filter(center => center.openingHours?.open_now);
+    }
+
+    if (showHighestRated) {
+      updatedCenters = updatedCenters.filter(center => center.rating && center.rating >= 4); // Adjust the rating threshold as necessary
+    }
+
+    // Here you can add distance filtering logic if needed
+
+    setFilteredCenters(updatedCenters);
+    setFilterModalVisible(false);
+  };
+
+  const handleDistanceChange = (miles: number) => {
+    setDistance(miles);
+    // Apply distance filtering logic if necessary
   };
 
   return (
     <View style={styles.container}>
       {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" style={styles.loadingIndicator} />
+        <ActivityIndicator size="large" color="beige" style={styles.loadingIndicator} />
       ) : (
         region && (
           <MapView
@@ -160,18 +188,58 @@ export default function Map() {
             showsUserLocation={true}
             showsMyLocationButton={true}
           >
-            {recyclingCenters.map((center) => (
+            {filteredCenters.map((center) => (
               <Marker
                 key={center.id}
                 coordinate={{ latitude: center.latitude, longitude: center.longitude }}
                 title={center.name}
                 onPress={() => handleMarkerPress(center)}
+                pinColor="#C2D5BA"
               />
             ))}
           </MapView>
         )
       )}
-      
+
+      {/* Filter Modal */}
+      <Modal transparent={true} visible={filterModalVisible} animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.filterOption}>
+              <Text>Only Show Open</Text>
+              <Switch value={showOpen} onValueChange={setShowOpen} />
+            </View>
+            <View style={styles.filterOption}>
+              <Text>Show Highest Rated Places</Text>
+              <Switch value={showHighestRated} onValueChange={setShowHighestRated} />
+            </View>
+            <TouchableOpacity onPress={applyFilters} style={styles.button}>
+              <Text style={styles.button}>Apply Filters</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Sort Modal */}
+      <Modal transparent={true} visible={sortModalVisible} animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text>Sort by Distance:</Text>
+            {[5, 10, 20].map((miles) => (
+              <TouchableOpacity key={miles} onPress={() => handleDistanceChange(miles)}>
+                <Text>{miles} miles</Text>
+              </TouchableOpacity>
+            ))}
+            <TouchableOpacity onPress={() => { /* Handle custom distance */ }}>
+              <Text>Custom Distance</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setSortModalVisible(false)} style={styles.button}>
+              <Text style={styles.button}>Apply</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
       {selectedCenter && (
         <Modal
           animationType="slide"
@@ -191,52 +259,38 @@ export default function Map() {
                   <Text style={styles.modalText}>
                     {selectedCenter.openingHours.open_now ? "Open Now" : "Closed"}
                   </Text>
-                  <Text style={styles.modalTextSmall}>Timings:</Text>
-                  {selectedCenter.openingHours.weekday_text.map((timing, index) => (
-                    <Text key={index} style={styles.modalTextSmall}>{timing}</Text>
-                  ))}
                 </View>
               )}
               
-              {selectedCenter.rating && (
-                <Text style={styles.modalText}>
-                  Rating: {selectedCenter.rating} ⭐
-                </Text>
-              )}
-              <ScrollView style = {styles.scrollView} scrollEnabled={isExpanded}>
+              <ScrollView style={styles.scrollView}>
                 <Text style={styles.modalDescription}>
-                <Text style={{ fontWeight: 'bold' }}>A user said: </Text>
-                <Text style={{ fontStyle: 'italic' }}>
-                  {isExpanded 
-                    ? selectedCenter.description 
-                    : (selectedCenter.description && selectedCenter.description.split(" ").length > 20 
-                      ? selectedCenter.description.split(" ").slice(0, 20).join(" ") + "..." 
-                      : selectedCenter.description)}
+                  {isExpanded ? selectedCenter.description : selectedCenter.description?.substring(0, 100) + '...'}
                 </Text>
-              </Text>
               </ScrollView>
-              <TouchableOpacity onPress={toggleDescription}>
-                <Text style={styles.toggleText}>
-                  {isExpanded ? "Show Less" : "Show More"}
-                </Text>
-              </TouchableOpacity>
 
-              <TouchableOpacity 
-                style={styles.button}
-                onPress={() => openMaps(selectedCenter)}
-              >
-                <Text style={styles.buttonText}>Get Directions</Text>
+              <TouchableOpacity onPress={toggleDescription}>
+                <Text style={styles.modalText}>{isExpanded ? "Show Less" : "Read More"}</Text>
               </TouchableOpacity>
-              <TouchableOpacity 
-                style={styles.button}
-                onPress={() => setModalVisible(false)} 
-              >
-                <Text style={styles.buttonText}>Close</Text>
+              <TouchableOpacity onPress={() => openMaps(selectedCenter)} style={styles.button}>
+                <Text style={styles.button}>Get Directions</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.button}>
+                <Text style={styles.button}>Close</Text>
               </TouchableOpacity>
             </View>
           </View>
         </Modal>
       )}
+
+      {/* Sort and Filter Buttons */}
+      <View style={styles.bottomLeftModal}>
+        <TouchableOpacity onPress={() => setSortModalVisible(true)} style={styles.button}>
+          <Text style={styles.button}>Sort by Distance</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setFilterModalVisible(true)} style={styles.button}>
+          <Text style={styles.button}>Filter</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -244,15 +298,10 @@ export default function Map() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#ffffff',
   },
   map: {
-    width: '100%',
-    height: '100%',
-  },
-  loadingIndicator: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    ...StyleSheet.absoluteFillObject,
   },
   modalOverlay: {
     flex: 1,
@@ -261,56 +310,53 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContainer: {
-    width: '80%',
+    backgroundColor: '#fff',
     padding: 20,
-    backgroundColor: 'white',
     borderRadius: 10,
     alignItems: 'center',
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
-    textAlign: 'center',
   },
   modalAddress: {
-    marginVertical: 10,
-    textAlign: 'center',
-    fontStyle: 'italic',
+    fontSize: 16,
+    marginBottom: 10,
   },
   modalText: {
-    marginVertical: 5,
-    textAlign: 'center',
+    fontSize: 14,
   },
   modalTextSmall: {
-    marginVertical: 2,
-    textAlign: 'center',
     fontSize: 12,
+  },
+  scrollView: {
+    maxHeight: 80,
+    marginVertical: 10,
+  },
+  modalDescription: {
+    fontSize: 14,
+  },
+  button: {
+    padding: 10,
+    backgroundColor: '#E0E0E0',
+    borderRadius: 8,
+    marginTop: 10,
+  },
+  bottomLeftModal: {
+    position: 'absolute',
+    bottom: 20,
+    left: 10,
+  },
+  loadingIndicator: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  filterOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 5,
   },
   openingHoursContainer: {
     marginVertical: 10,
-  },
-  scrollView: {
-    maxHeight: 175,
-  },
-  modalDescription: {
-    marginVertical: 10,
-    textAlign: 'center',
-  },
-  button: {
-    backgroundColor: '#2196F3',
-    padding: 10,
-    borderRadius: 5,
-    marginVertical: 5,
-    width: '100%',
-  },
-  buttonText: {
-    color: 'white',
-    textAlign: 'center',
-  },
-  toggleText: {
-    color: '#2196F3',
-    textAlign: 'center',
-    marginVertical: 10,
-    fontWeight: 'bold',
   },
 });
