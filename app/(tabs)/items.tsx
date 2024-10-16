@@ -3,14 +3,24 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import { StackNavigationProp } from '@react-navigation/stack';
+
+
+type RootStackParamList = {
+  map: { itemName: string };
+};
+
+type NavigationProp = StackNavigationProp<RootStackParamList, 'map'>;
 
 const DetectObject = () => {
+  const navigation = useNavigation<NavigationProp>(); // Initialize useNavigation with correct type
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [labels, setLabels] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [cart, setCart] = useState<any[]>([]); // Cart state
-  const [cameraPermission, setCameraPermission] = useState<boolean | null>(null); // State to track camera permission
+  const [cart, setCart] = useState<any[]>([]);
+  const [cameraPermission, setCameraPermission] = useState<boolean | null>(null);
 
   const pickImage = async () => {
     try {
@@ -46,19 +56,17 @@ const DetectObject = () => {
       return;
     }
 
-    // Launch the camera after permissions are granted
     const cameraResult = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
     });
 
     if (!cameraResult.canceled && cameraResult.assets && cameraResult.assets[0].uri) {
-        setImageUri(cameraResult.assets[0].uri);
+      setImageUri(cameraResult.assets[0].uri);
     }
-};
-  
+  };
 
   const analyzeImage = async () => {
     try {
@@ -96,7 +104,7 @@ const DetectObject = () => {
       console.log("Response Data: ", response.data);
       setLabels(response.data.responses[0].labelAnnotations);
       setError(null);
-      setModalVisible(true); // Show modal after receiving labels
+      setModalVisible(true);
     } catch (error) {
       console.error("Error with image analyzer: ", error);
       setError('Error analyzing image, please try again');
@@ -105,7 +113,7 @@ const DetectObject = () => {
 
   const addToCart = (label: any) => {
     setCart([...cart, label]);
-    setModalVisible(false); // Close modal after adding to cart
+    setModalVisible(false);
   };
 
   const removeFromCart = (index: number) => {
@@ -114,69 +122,40 @@ const DetectObject = () => {
   };
 
   const openSettings = () => {
-    Linking.openSettings(); // Open app settings
+    Linking.openSettings();
   };
 
   const clearImage = () => {
-    setImageUri(null);
+    setImageUri(null); // Clear the image URI
   };
+
+  const navigateToMap = (itemName: string) => {
+    navigation.navigate('map', { itemName });
+  };
+
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
         <Text style={styles.title}>Recycle Time!</Text>
-        {imageUri && (
-          <View style={{ position: 'relative', marginBottom: 20 }}>
-            <Image source={{ uri: imageUri }} style={{ width: 300, height: 300 }} />
-            <TouchableOpacity
-              onPress={clearImage}
-              style={{
-                position: 'absolute',
-                top: 10,
-                left: 10,
-                backgroundColor: 'rgba(0,0,0,0.5)',
-                borderRadius: 15,
-                width: 30,
-                height: 30,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
-              <Text>X</Text>
+
+        {imageUri ? (
+          <View style={styles.imageContainer}>
+            <TouchableOpacity style={styles.closeButton} onPress={clearImage}>
+              <Text style={styles.closeText}>X</Text>
             </TouchableOpacity>
+            <Image source={{ uri: imageUri }} style={styles.image} />
+          </View>
+        ) : (
+          <View style={styles.noImageContainer}>
+            <Text style={styles.noImageText}>No image selected</Text>
           </View>
         )}
-        {!imageUri && (
-  <View
-    style={{
-      width: 300,
-      height: 300,
-      marginBottom: 20,
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderWidth: 1,
-      borderColor: '#ccc',
-      borderRadius: 10,
-    }}
-  >
-    <Text
-      style={{
-        textAlign: 'center',
-        fontSize: 16,
-        color: '#333',
-      }}
-    >
-      No image selected
-    </Text>
-  </View>
-)}
 
-        {/* Button to choose an image from the library */}
         <TouchableOpacity style={styles.button} onPress={pickImage}>
           <Text style={styles.text}>Choose an image</Text>
         </TouchableOpacity>
 
-        {/* Button to use the camera */}
         <TouchableOpacity style={styles.button} onPress={useCamera}>
           <Text style={styles.text}>Use Camera</Text>
         </TouchableOpacity>
@@ -208,8 +187,8 @@ const DetectObject = () => {
                     <Text>{item.description}</Text>
                   </TouchableOpacity>
                 )}
-                contentContainerStyle={styles.labelList} // Style for the FlatList content
-                style={styles.flatList} // Added FlatList style
+                contentContainerStyle={styles.labelList}
+                style={styles.flatList}
               />
               <TouchableOpacity style={styles.button} onPress={() => setModalVisible(false)}>
                 <Text style={styles.text}>Close</Text>
@@ -225,15 +204,26 @@ const DetectObject = () => {
             cart.map((item, index) => (
               <View key={index} style={styles.cartItem}>
                 <Text>{item.description}</Text>
-                <TouchableOpacity onPress={() => removeFromCart(index)} style={styles.deleteButton}>
-                  <Text style={styles.deleteText}>Delete</Text>
-                </TouchableOpacity>
+                <View style={styles.cartButtonsContainer}>
+                  <TouchableOpacity
+                    style={styles.mapButton}
+                    onPress={() => navigateToMap(item.description)} // Navigate to Map with item name
+                  >
+                    <Text style={styles.mapButtonText}>Go to Map</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => removeFromCart(index)} style={styles.deleteButton}>
+                    <Text style={styles.deleteText}>Delete</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             ))
           ) : (
             <Text style={styles.emptyCartMessage}>You have no items below.</Text>
           )}
         </View>
+
+        {/* Spacer to ensure some space at the bottom when no image is present */}
+        <View style={styles.spacer} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -248,7 +238,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   scrollViewContainer: {
-    paddingBottom: 20, // Add bottom padding for better spacing
+    paddingBottom: 20,
     alignItems: 'center',
   },
   title: {
@@ -256,44 +246,87 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
   },
-  button: {
-    backgroundColor: '#4CAF50', // Green color
-    padding: 10,
-    borderRadius: 5,
+  imageContainer: {
+    position: 'relative', // This allows positioning of the close button
     marginBottom: 20,
-    width: '100%',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    backgroundColor: 'rgba(255, 0, 0, 0.7)', // Semi-transparent red background
+    borderRadius: 15,
+    padding: 5,
+  },
+  closeText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  image: {
+    width: 300,
+    height: 300,
+  },
+  noImageContainer: {
+    width: 300,
+    height: 300,
+    justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
+  },
+  noImageText: {
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#333',
+  },
+  button: {
+    backgroundColor: '#4CAF50',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+    width: '100%',
   },
   text: {
-    fontSize: 20,
     color: 'white',
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
   error: {
     color: 'red',
-    fontSize: 16,
     marginTop: 10,
   },
-  modalTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#007BFF', // Blue color for title
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  modalSubtitle: {
-    fontSize: 16,
-    marginBottom: 10,
-    color: '#555', // Subtitle color
+  modalContainer: {
+    width: '80%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    elevation: 5,
   },
   labelItem: {
-    backgroundColor: '#f0f8ff', // Alice blue
     padding: 10,
-    borderRadius: 5,
-    marginVertical: 5,
-    width: '100%',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  labelList: {
+    maxHeight: 300, // Limit the height of the FlatList
+  },
+  flatList: {
+    marginBottom: 10,
   },
   cartContainer: {
     marginTop: 20,
     width: '100%',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
   },
   cartTitle: {
     fontSize: 20,
@@ -303,42 +336,47 @@ const styles = StyleSheet.create({
   cartItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0',
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 5,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
   },
   deleteButton: {
-    backgroundColor: '#FF6347', // Tomato color for delete button
-    padding: 5,
+    backgroundColor: '#FF5722',
     borderRadius: 5,
+    padding: 5,
   },
   deleteText: {
     color: 'white',
   },
-  emptyCartMessage: {
-    textAlign: 'center',
-    color: '#888',
-    fontStyle: 'italic',
+  mapButton: {
+    backgroundColor: '#2196F3',
+    borderRadius: 5,
+    padding: 5,
+    marginRight: 10,
   },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
+  mapButtonText: {
+    color: 'white',
+  },
+  cartButtonsContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
   },
-  modalContainer: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-    width: '80%',
-    maxHeight: '80%', // Set a max height for modal
+  emptyCartMessage: {
+    textAlign: 'center',
+    color: '#555',
+    paddingVertical: 10,
   },
-  labelList: {
-    paddingBottom: 10,
+  spacer: {
+    height: 100, // Space at the bottom when no image is present
   },
-  flatList: {
-    width: '100%',
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  modalSubtitle: {
+    fontSize: 16,
+    color: '#555',
+    marginBottom: 20,
   },
 });

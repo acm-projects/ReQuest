@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import MapView, { Marker, Region } from 'react-native-maps';
-import { StyleSheet, View, Modal, Text, TouchableOpacity, Linking, Platform, ActivityIndicator, ScrollView } from 'react-native';
+import { StyleSheet, View, Modal, Text, TouchableOpacity, Linking, Platform, ActivityIndicator, ScrollView, TextInput } from 'react-native';
 import * as Location from 'expo-location';
 import axios from 'axios';
+import { Feather } from '@expo/vector-icons';
 
 interface RecyclingCenter {
   id: string;
@@ -21,11 +22,14 @@ export default function Map() {
   const [selectedCenter, setSelectedCenter] = useState<RecyclingCenter | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [filterModalVisible, setFilterModalVisible] = useState(false);
+  const [searchModalVisible, setSearchModalVisible] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState('');
 
   const [loading, setLoading] = useState(true);
-  const [isExpanded, setIsExpanded] = useState(false); // State to toggle description view
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const GOOGLE_PLACES_API_KEY = process.env.EXPO_PUBLIC_CLOUD_VISION_API_KEY;
+
 
   const requestLocationPermission = async (): Promise<boolean> => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -59,16 +63,28 @@ export default function Map() {
     fetchLocationAndCenters();
   }, []);
 
-  const fetchRecyclingCenters = async (lat: number, lng: number) => {
+  const handleSearch = () => {
+    if (region) {
+      fetchRecyclingCenters(region.latitude, region.longitude, searchKeyword);
+    }
+    setSearchModalVisible(false);
+  };
+
+  const fetchRecyclingCenters = async (lat: number, lng: number, keyword: string = '') => {
     setLoading(true);
+    if (keyword) {
+      keyword += ' recycling center'
+    } else {
+      keyword = 'recycling center|waste management|recyclable materials|recycle center';
+    }
     try {
       const response = await axios.get(
-        `https://maps.googleapis.com/maps/api/place/nearbysearch/json`,
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json',
         {
           params: {
             location: `${lat},${lng}`,
             radius: 80467,
-            keyword: 'recycling center|waste management|recyclable materials',
+            keyword: keyword,
             key: GOOGLE_PLACES_API_KEY,
           },
         }
@@ -117,7 +133,7 @@ export default function Map() {
                 ...center,
                 openingHours: placeDetails.opening_hours,
                 rating: placeDetails.rating,
-                description: topReview,
+                description: topReview || 'No reviews available.',
               }
             : center
         )
@@ -168,23 +184,31 @@ export default function Map() {
                 coordinate={{ latitude: center.latitude, longitude: center.longitude }}
                 title={center.name}
                 onPress={() => handleMarkerPress(center)}
-                pinColor = "#C2D5BA"
+                pinColor="#C2D5BA"
               />
             ))}
           </MapView>
         )
       )}
       
-      {/*Button for filters*/}
-       <TouchableOpacity 
-          style={[styles.filterButton, { position: 'absolute', top: 50, left: 30, zIndex: 1 }]}    
-          onPress={() => setFilterModalVisible(true)}
-        >
-          <Text style={styles.buttonText}>Filters</Text>
-        </TouchableOpacity>
-
-    {/*Modal for filters*/} 
-       <Modal
+      {/* Button for filters */}
+      <TouchableOpacity 
+        style={[styles.filterButton, { position: 'absolute', top: 50, left: 30, zIndex: 1 }]}    
+        onPress={() => setFilterModalVisible(true)}
+      >
+        <Text style={styles.buttonText}>Filters</Text>
+      </TouchableOpacity>
+  
+      {/* Search icon */}
+      <TouchableOpacity 
+        style={{ position: 'absolute', top: 50, right: 30, zIndex: 1 }}
+        onPress={() => setSearchModalVisible(true)}
+      >
+        <Feather name="search" size={24} color="black" />
+      </TouchableOpacity>
+  
+      {/* Modal for filters */}
+      <Modal
         visible={filterModalVisible}
         transparent={true}
         animationType="slide"
@@ -200,10 +224,45 @@ export default function Map() {
           </View>
         </View>
       </Modal>
-      
-
-{/* Modal for the recycling locations!!!*/}
-        {selectedCenter && (
+  
+      {/* Modal for search */}
+      <Modal
+        visible={searchModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setSearchModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Item to Recycle</Text>
+            <TextInput
+              style={{
+                height: 40,
+                borderColor: 'gray',
+                borderWidth: 1,
+                marginBottom: 20,
+                paddingHorizontal: 10,
+                width: '100%',
+              }}
+              onChangeText={setSearchKeyword}
+              value={searchKeyword}
+              placeholder="Enter keyword"
+            />
+            <TouchableOpacity onPress={handleSearch} style={styles.button}>
+              <Text style={styles.buttonText}>Search</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setSearchKeyword('')} style={styles.button}>
+              <Text style={styles.buttonText}>Clear</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setSearchModalVisible(false)} style={styles.button}>
+              <Text style={styles.buttonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+  
+      {/* Modal for the recycling locations */}
+      {selectedCenter && (
         <Modal
           animationType="slide"
           transparent={true}
@@ -234,24 +293,24 @@ export default function Map() {
                   Rating: {selectedCenter.rating} ⭐
                 </Text>
               )}
-              <ScrollView style = {styles.scrollView} scrollEnabled={isExpanded}>
+              <ScrollView style={styles.scrollView} scrollEnabled={isExpanded}>
                 <Text style={styles.modalDescription}>
-                <Text style={{ fontWeight: 'bold' }}>Customer Stated: </Text>
-                <Text style={{ fontStyle: 'italic' }}>
-                  {isExpanded 
-                    ? selectedCenter.description 
-                    : (selectedCenter.description && selectedCenter.description.split(" ").length > 20 
-                      ? selectedCenter.description.split(" ").slice(0, 20).join(" ") + "..." 
-                      : selectedCenter.description)}
+                  <Text style={{ fontWeight: 'bold' }}>Customer Stated: </Text>
+                  <Text style={{ fontStyle: 'italic' }}>
+                    {isExpanded 
+                      ? selectedCenter.description 
+                      : (selectedCenter.description && selectedCenter.description.split(" ").length > 20 
+                        ? selectedCenter.description.split(" ").slice(0, 20).join(" ") + "..." 
+                        : selectedCenter.description)}
+                  </Text>
                 </Text>
-              </Text>
               </ScrollView>
               <TouchableOpacity onPress={toggleDescription}>
                 <Text style={styles.toggleText}>
                   {isExpanded ? "Show Less" : "Show More"}
                 </Text>
               </TouchableOpacity>
-
+  
               <TouchableOpacity 
                 style={styles.button}
                 onPress={() => openMaps(selectedCenter)}
@@ -268,8 +327,6 @@ export default function Map() {
           </View>
         </Modal>
       )}
-
-
     </View>
   );
 }
@@ -376,4 +433,3 @@ const styles = StyleSheet.create({
     width: '30%',
   },
 });
-
