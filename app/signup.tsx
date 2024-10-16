@@ -18,6 +18,14 @@ export default function Signup() {
         source={require('../assets/images/rightCorner.png')}
         style={styles.topRightImg}
       />
+      <Image
+        source={require('../assets/images/bottomLeftImg.png')}
+        style={styles.bottomLeftImg}
+      />
+      <Image
+        source={require('../assets/images/bottomRightImg.png')}
+        style={styles.bottomRightImg}
+      />
       <TouchableOpacity 
         style={tw`absolute top-10 left-4`} 
         onPress={() => router.back()} // Navigate back to the Welcome page
@@ -26,8 +34,8 @@ export default function Signup() {
       </TouchableOpacity>
 
       {/* Header with decorative elements */}
-      <Text style={tw`text-4xl font-semibold text-[#6B8068] mt-2`}>Hello!</Text>
-      <Text style={tw`text-2xl font-bold text-black mb-6`}>Register to Get Started</Text>
+      <Text style={tw`text-5xl font-semibold text-[#6B8068] mt-2`}>Hello!</Text>
+      <Text style={tw`text-3xl font-bold text-black mb-6`}>Register to Get Started</Text>
 
       {/* Earth Image */}
       <Image
@@ -82,18 +90,18 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   input: {
-    backgroundColor: '#D6E7F2',
+    backgroundColor: '#ADD8E6',
     padding: 12,
     borderRadius: 10,
-    width: '100%',
+    width: '90%',
     marginBottom: 12,
-    textAlign: 'center',
+    textAlign: 'left',
   },
   button: {
     backgroundColor: '#C2D5BA',
     padding: 15,
     borderRadius: 10,
-    width: '100%',
+    width: '50%',
     marginTop: 20,
   },
     container: {
@@ -114,5 +122,20 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     resizeMode: 'contain',
+  },
+  bottomLeftImg: {
+    position: 'absolute',
+    bottom: -30,
+    left: -65,
+    width: 220,
+    height: 220,
+    resizeMode: 'contain',
+  },
+  bottomRightImg: {
+    position: 'absolute',
+    bottom: -50,
+    right: -24,
+    width: 200,
+    height: 200,
   },
 });

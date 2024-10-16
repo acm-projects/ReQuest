@@ -97,8 +97,8 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   headerImg: {
-    width: 200,
-    height: 200,
+    width: 220,
+    height: 220,
     alignSelf: 'center',
     marginBottom: 8,
   },
@@ -106,14 +106,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#ADD8E6',
     padding: 10,
     borderRadius: 10,
-    width: '100%',
+    width: '95%',
     marginBottom: 15,
   },
   button: {
     backgroundColor: '#C2D5BA',
     padding: 15,
     borderRadius: 10,
-    width: '100%',
+    width: '50%',
     marginTop: 20,
   },
   footerImg: {
