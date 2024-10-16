@@ -67,7 +67,7 @@ export default function Signup() {
 
       {/* Register Button */}
       <TouchableOpacity style={styles.button}
-        onPress={() => router.push('./layout')}
+        onPress={() => router.push('../(tabs)')}
       >
         <Text style={tw`text-white text-center text-lg`}>Register</Text>
       </TouchableOpacity>
