@@ -117,11 +117,59 @@ const DetectObject = () => {
     Linking.openSettings(); // Open app settings
   };
 
+  const clearImage = () => {
+    setImageUri(null);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-        <Text style={styles.title}>Google Cloud Vision API Demo</Text>
-        {imageUri && <Image source={{ uri: imageUri }} style={{ width: 300, height: 300, marginBottom: 20 }} />}
+        <Text style={styles.title}>Recycle Time!</Text>
+        {imageUri && (
+          <View style={{ position: 'relative', marginBottom: 20 }}>
+            <Image source={{ uri: imageUri }} style={{ width: 300, height: 300 }} />
+            <TouchableOpacity
+              onPress={clearImage}
+              style={{
+                position: 'absolute',
+                top: 10,
+                left: 10,
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                borderRadius: 15,
+                width: 30,
+                height: 30,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Text>X</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        {!imageUri && (
+  <View
+    style={{
+      width: 300,
+      height: 300,
+      marginBottom: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderWidth: 1,
+      borderColor: '#ccc',
+      borderRadius: 10,
+    }}
+  >
+    <Text
+      style={{
+        textAlign: 'center',
+        fontSize: 16,
+        color: '#333',
+      }}
+    >
+      No image selected
+    </Text>
+  </View>
+)}
 
         {/* Button to choose an image from the library */}
         <TouchableOpacity style={styles.button} onPress={pickImage}>
