@@ -34,8 +34,8 @@ export default function Signup() {
       </TouchableOpacity>
 
       {/* Header with decorative elements */}
-      <Text style={tw`text-4xl font-semibold text-[#6B8068] mt-2`}>Hello!</Text>
-      <Text style={tw`text-2xl font-bold text-black mb-6`}>Register to Get Started</Text>
+      <Text style={tw`text-5xl font-semibold text-[#6B8068] mt-2`}>Hello!</Text>
+      <Text style={tw`text-3xl font-bold text-black mb-6`}>Register to Get Started</Text>
 
       {/* Earth Image */}
       <Image
@@ -93,15 +93,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#ADD8E6',
     padding: 12,
     borderRadius: 10,
-    width: '100%',
+    width: '90%',
     marginBottom: 12,
-    textAlign: 'center',
+    textAlign: 'left',
   },
   button: {
     backgroundColor: '#C2D5BA',
     padding: 15,
     borderRadius: 10,
-    width: '100%',
+    width: '50%',
     marginTop: 20,
   },
     container: {
@@ -125,15 +125,15 @@ const styles = StyleSheet.create({
   },
   bottomLeftImg: {
     position: 'absolute',
-    bottom: -35,
-    left: -60,
+    bottom: -30,
+    left: -65,
     width: 220,
     height: 220,
     resizeMode: 'contain',
   },
   bottomRightImg: {
     position: 'absolute',
-    bottom: -48,
+    bottom: -50,
     right: -24,
     width: 200,
     height: 200,

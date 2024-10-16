@@ -23,7 +23,7 @@ export default function TabLayout() {
        {/* Top Section with Header */}
        <View style={styles.topSection}>
          <Text style={tw`text-4xl font-semibold text-[#6B8068] mt-2`}>Hello!</Text>
-         <Text style={tw`text-2xl font-bold text-black mb-6`}>Register to Get Started</Text>
+         <Text style={tw`text-3xl font-bold text-black mb-6`}>Register to Get Started</Text>
 
 
          {/* Earth Image */}
