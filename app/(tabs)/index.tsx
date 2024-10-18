@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, } from 'react';
 import tw from 'twrnc';
 import { useRouter } from 'expo-router';
 import { WebView } from 'react-native-webview'; // Ensure you have the react-native-webview package installed
@@ -49,7 +49,9 @@ User Engagement: Encourage users to actively participate in recycling and engage
 
 General Inquiries: Address any additional questions users may have about the app's functionalities, such as account management, troubleshooting, or app updates. Provide clear, helpful, and user-friendly responses to ensure a smooth user experience.
 
-Your responses should be informative, empathetic, and tailored to the user's needs, reflecting the app's mission to simplify and enhance the recycling process while making it an enjoyable and rewarding experience. If user asks for support or a direct line, please refer them to contact arinsood2305@gmail.com`;
+Your responses should be informative, empathetic, and tailored to the user's needs, reflecting the app's mission to simplify and enhance the recycling process while making it an enjoyable and rewarding experience. If user asks for support or a direct line, please refer them to contact arinsood2305@gmail.com
+
+As well as in your responses please try to keep them short your responses should never exceed over 50 words and you want to make sure to say the most important things in the most simple way so the user can see it and easily read it`;
 
 interface Message {
   role: 'user' | 'bot';
@@ -390,12 +392,13 @@ const tipsAndGuides = [
   // Add more tips here (up to 10)
 ];
   return (
-    <ScrollView style={tw`flex-1 bg-amber-50`}>
+
+   <ScrollView style={tw`flex-1 bg-amber-50`}>
       {/* Top Section */}
-      <View style={tw`flex-1 justify-center items-center`}>
+      <SafeAreaView style={tw`flex-1 justify-center items-center`}>
         <Text style={tw`text-2xl font-bold text-black`}>Welcome Back, Name!</Text>
         <Text style={tw`text-lg text-gray-700 mt-2`}>These are your current stats:</Text>
-      </View>
+      </SafeAreaView>
 
       {/* Bold Black Line Divider */}
       <View style={styles.boldDivider} />
@@ -444,6 +447,7 @@ const tipsAndGuides = [
     </View>
         <Chat/>
     </ScrollView>
+     
   );
 
 }
@@ -454,7 +458,7 @@ const styles = StyleSheet.create({
     borderBottomColor: 'black',
   },
    scrollView: {
-    padding: 16,
+    padding: 20,
     flexGrow: 1,
   },
   tipContainer: {
