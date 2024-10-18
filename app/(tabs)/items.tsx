@@ -6,7 +6,6 @@ import * as FileSystem from 'expo-file-system';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 import { StackNavigationProp } from '@react-navigation/stack';
 
-
 type RootStackParamList = {
   map: { itemName: string };
 };
@@ -135,36 +134,58 @@ const DetectObject = () => {
 
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-        <Text style={styles.title}>Recycle Time!</Text>
+<SafeAreaView style={styles.container}>
+  <View style={styles.container}>
+    <Image
+      source={require('../../assets/images/greenTopLeft.png')}
+      style={styles.topLeftImg}
+    />
+    <Image
+      source={require('../../assets/images/greenTopRight.png')}
+      style={styles.topRightImg}
+    />
+    <Image
+      source={require('../../assets/images/greenBottomLeft.png')}
+      style={styles.bottomLeftImg}
+    />
+    <Image
+      source={require('../../assets/images/greenBottomRight.png')}
+      style={styles.bottomRightImg}
+    />
+  </View>
+  <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+    <Text style={[styles.title, {color: 'white'}]}>Scan To See If Your Image Is Recyclable!</Text>
+    <Text style={[styles.title, {color: '#4D9F39'}]}>Where Can You Recycle This?</Text>
 
-        {imageUri ? (
-          <View style={styles.imageContainer}>
-            <TouchableOpacity style={styles.closeButton} onPress={clearImage}>
-              <Text style={styles.closeText}>X</Text>
-            </TouchableOpacity>
-            <Image source={{ uri: imageUri }} style={styles.image} />
-          </View>
-        ) : (
-          <View style={styles.noImageContainer}>
-            <Text style={styles.noImageText}>No image selected</Text>
-          </View>
-        )}
-
-        <TouchableOpacity style={styles.button} onPress={pickImage}>
-          <Text style={styles.text}>Choose an image</Text>
+    {imageUri ? (
+      <View style={styles.imageContainer}>
+        <TouchableOpacity style={styles.closeButton} onPress={clearImage}>
+          <Text style={styles.closeText}>X</Text>
         </TouchableOpacity>
+        <Image source={{ uri: imageUri }} style={styles.image} />
+      </View>
+    ) : (
+      <View style={styles.noImageContainer}>
+        <Text style={styles.noImageText}>No image selected</Text>
+      </View>
+    )}
 
-        <TouchableOpacity style={styles.button} onPress={useCamera}>
-          <Text style={styles.text}>Use Camera</Text>
-        </TouchableOpacity>
+    <TouchableOpacity style={styles.button} onPress={analyzeImage}>
+      <Text style={styles.text}>Analyze Image</Text>
+    </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button} onPress={analyzeImage}>
-          <Text style={styles.text}>Analyze Image</Text>
-        </TouchableOpacity>
+    {/* Wrap the buttons in a row */}
+    <View style={styles.buttonRow}>
+      <TouchableOpacity style={[styles.button, styles.tallButton]} onPress={useCamera}>
+        <Image source={require('../../assets/images/takePhoto.png')} style={styles.buttonImage}/>
+      </TouchableOpacity>
 
-        {error && <Text style={styles.error}>{error}</Text>}
+      <TouchableOpacity style={[styles.button, styles.tallButton]} onPress={pickImage}>
+        <Image source={require('../../assets/images/uploadImage.png')} style={styles.buttonImage}/>
+      </TouchableOpacity>
+    </View>
+
+    {error && <Text style={styles.error}>{error}</Text>}
 
         {/* Modal for label selection */}
         <Modal
@@ -234,8 +255,22 @@ export default DetectObject;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#C2D5BA',
     padding: 20,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '50%',
+    marginVertical: 10,
+  },
+  tallButton: {
+    width: 90,
+    height: 80,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 5,
+    marginLeft: 35,
   },
   scrollViewContainer: {
     paddingBottom: 20,
@@ -252,19 +287,22 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: 'absolute',
-    top: 10,
-    left: 10,
+    top: -10,
+    left: -10,
     backgroundColor: 'rgba(255, 0, 0, 0.7)', // Semi-transparent red background
     borderRadius: 15,
     padding: 5,
+    zIndex: 1,
   },
   closeText: {
     color: 'white',
     fontWeight: 'bold',
+    fontSize: 16,
   },
   image: {
     width: 300,
     height: 300,
+    borderRadius: 20,
   },
   noImageContainer: {
     width: 300,
@@ -281,14 +319,18 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   button: {
-    backgroundColor: '#4CAF50',
-    borderRadius: 5,
+    backgroundColor: '#FFFBF1',
+    borderRadius: 25,
     padding: 10,
     marginBottom: 10,
-    width: '100%',
+    alignItems: 'center',
+  },
+  buttonImage: {
+    width: 60,
+    height: 60,
   },
   text: {
-    color: 'white',
+    color: 'black',
     textAlign: 'center',
     fontWeight: 'bold',
   },
@@ -303,7 +345,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContainer: {
-    width: '80%',
+    width: '75%',
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 20,
@@ -378,5 +420,47 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#555',
     marginBottom: 20,
+  },
+  topLeftImg: {
+    position: 'absolute',
+    top: -90,
+    left: -25,
+    width: 220,
+    height: 220,
+    resizeMode: 'contain',
+  },
+  topRightImg: {
+    position: 'absolute',
+    top: -80,
+    right: -50,
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
+  },
+  bottomLeftImg: {
+    position: 'absolute',
+    bottom: -795,
+    left: -80,
+    width: 220,
+    height: 220,
+    resizeMode: 'contain',
+  },
+  bottomRightImg: {
+    position: 'absolute',
+    bottom: -790,
+    right: -35,
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
+  },
+  buttonRow: {
+    flexDirection: 'row', // This makes the buttons appear side by side
+    justifyContent: 'flex-start', // Adjust spacing between buttons
+    alignItems: 'center',
+    width: '70%',
+    marginBottom: 10, // Add spacing below the row
+  },
+  halfButton: {
+    width: '48%', // Each button takes up 48% of the width to fit side by side with spacing
   },
 });
