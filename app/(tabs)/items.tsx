@@ -218,7 +218,7 @@ const DetectObject = () => {
               </View>
             ))
           ) : (
-            <Text style={styles.emptyCartMessage}>You have no items below.</Text>
+            <Text style={styles.emptyCartMessage}>It's empty in here... Get to it!</Text>
           )}
         </View>
 
