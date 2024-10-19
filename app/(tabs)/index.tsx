@@ -429,7 +429,7 @@ export default function Dashboard() {
   return (
     <SafeAreaView style={tw`flex-1 bg-amber-50`}>
       <View style={tw`flex-1 `}>
-        <Text style={[tw`text-4xl font-bold text-black text-center pt-8 `, { color: '#400908' }]}>Welcome Back, Name!</Text>
+        <Text style={[tw`text-3xl font-bold text-black text-center pt-8 `, { color: '#400908' }]}>Welcome Back, Name!</Text>
         <Text style={tw`text-base text-gray-700 mt-2 text-left pt-16`}>These are your current stats:</Text>
       </View>
 
@@ -454,7 +454,7 @@ export default function Dashboard() {
 <ScrollView
   contentContainerStyle={[
     styles.scrollView,
-    { paddingBottom: 20, alignItems: 'center' },tw`p-10` // Center the items
+    { paddingBottom: 20, alignItems: 'center' },tw`p-20` // Center the items
   ]}
   horizontal={true}
   showsHorizontalScrollIndicator={false}

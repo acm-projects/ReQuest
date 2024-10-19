@@ -104,6 +104,22 @@ export default function Map() {
         address: place.vicinity || 'Address not available',
       }));
 
+       {/* Button for filters */}
+      <TouchableOpacity 
+        style={[styles.filterButton, { position: 'absolute', top: 50, left: 30, zIndex: 1 }]}    
+        onPress={() => setFilterModalVisible(true)}
+      >
+        <Text style={styles.buttonText}>Filters</Text>
+      </TouchableOpacity>
+  
+      {/* Search icon */}
+      <TouchableOpacity 
+        style={{ position: 'absolute', top: 50, right: 30, zIndex: 1 }}
+        onPress={() => setSearchModalVisible(true)}
+      >
+        <Feather name="search" size={24} color="black" />
+      </TouchableOpacity>
+
       setRecyclingCenters(centers);
       centers.forEach((center: RecyclingCenter) => fetchPlaceDetails(center.id));
     } catch (error) {
@@ -223,21 +239,7 @@ export default function Map() {
         )
       )}
       
-      {/* Button for filters */}
-      <TouchableOpacity 
-        style={[styles.filterButton, { position: 'absolute', top: 50, left: 30, zIndex: 1 }]}    
-        onPress={() => setFilterModalVisible(true)}
-      >
-        <Text style={styles.buttonText}>Filters</Text>
-      </TouchableOpacity>
-  
-      {/* Search icon */}
-      <TouchableOpacity 
-        style={{ position: 'absolute', top: 50, right: 30, zIndex: 1 }}
-        onPress={() => setSearchModalVisible(true)}
-      >
-        <Feather name="search" size={24} color="black" />
-      </TouchableOpacity>
+     
   
       {/* Modal for filters */}
       <Modal
