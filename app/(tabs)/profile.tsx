@@ -1,96 +1,81 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
+import { Image, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import tw from 'twrnc';
 
 export default function Profile() {
-  const router = useRouter(); // Use router for navigation
-
   return (
-    <View style={tw`flex-1 bg-amber-50 justify-center items-center px-4`}>
-      {/* Profile Icon */}
-     
-      <Image
-        source={require('../../assets/images/img2.png')} // Adjusted path to images
-        style={styles.topLeftImg}
-      />
-      <Image
-        source={require('../../assets/images/bottomLeftImg.png')}
-        style={styles.bottomLeftImg}
-      />
-      <Image
-        source={require('../../assets/images/bottomRightImg.png')}
-        style={styles.bottomRightImg}
-      />
-      <Image
-        source={require('../../assets/images/rightCorner.png')}
-        style={styles.topRightImg}
-      />
-       <Image
-        source={require('../../assets/images/fireEarth.png')} // Adjust the path to your profile icon image
-        style={styles.profileIcon}
-      />
-      {/* Back Arrow */}
-      
-      {/* Profile Options */}
-      <View style={styles.optionsContainer}>
-        <TouchableOpacity style={styles.optionButton}>
-          <Text style={tw`text-lg`}>Edit Profile Information</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.optionButton}>
-          <Text style={tw`text-lg`}>Notification Settings</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.optionButton}>
-          <Text style={tw`text-lg`}>Change Language</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.optionButton}>
-          <Text style={tw`text-lg`}>Help & Support</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.optionButton}>
-          <Text style={tw`text-lg`}>Contact Us</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.optionButton}>
-          <Text style={tw`text-lg`}>Privacy Policy</Text>
-        </TouchableOpacity>
+    <View style={tw`flex-1`}>
+      {/* top section: profile icon and name */}
+      <View style={styles.topSection}>
+        <Image
+          source={require('../../assets/images/img2.png')} // Adjusted path to images
+          style={styles.topLeftImg}
+        />
+        <Image
+          source={require('../../assets/images/rightCorner.png')}
+          style={styles.topRightImg}
+        />
+        <Image
+          source={require('../../assets/images/fireEarth.png')} // Adjust the path to your profile icon image
+          style={styles.profileIcon}
+        />
       </View>
 
-      {/* Logout Button */}
-      <TouchableOpacity style={styles.logoutButton}>
-        <Text style={tw`text-white text-center`}>Logout</Text>
-      </TouchableOpacity>
+      {/* bottom section */}
+      <View style={styles.bottomSection}>
+        <Image
+          source={require('../../assets/images/profileComponents1.png')}
+          style={styles.profileOne}
+        />
+
+        {/* TouchableOpacity Button */}
+        <TouchableOpacity style={styles.button} onPress={() => console.log('Edit Profile Information')}>
+          <Text style={styles.buttonText}>Edit Profile Information</Text>
+        </TouchableOpacity>
+
+        <Image
+          source={require('../../assets/images/greenBottomLeft.png')}
+          style={styles.bottomLeftImg}
+        />
+        <Image
+          source={require('../../assets/images/greenBottomRight.png')}
+          style={styles.bottomRightImg}
+        />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  profileIcon: {
-    width: '40%', // Set the width of the profile icon to 40% of the screen width
-    height: '20%', // Set the height of the profile icon to 20% of the screen height
-    position: 'absolute',
-    top: 30, // Position it near the top of the screen
-    alignSelf: 'center', // Center it horizontally
+  topSection: {
+    backgroundColor: '#FFFBF1',
+    flex: 3, // Occupies 30% of the screen
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative', // Add relative position to properly handle absolute child positions
+    paddingBottom: 20,
   },
-  optionsContainer: {
-    marginTop: 100, // Adjust this value to create space below the profile icon
-    width: '100%',
-    paddingHorizontal: 10,
-  },
-  optionButton: {
+  bottomSection: {
     backgroundColor: '#C2D5BA',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 10,
+    flex: 7, // Occupies 70% of the screen
+    paddingTop: 30,
+    paddingHorizontal: 20,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    marginTop: -25,
+    alignItems: 'center', // Centers the button and other content horizontally
   },
-  logoutButton: {
-    backgroundColor: '#FF5733', // A distinct color for logout
-    padding: 15,
-    borderRadius: 10,
-    width: '100%',
-    marginTop: 20,
+  profileIcon: {
+    width: 100, 
+    height: 100,
+    borderRadius: 50, 
+    position: 'absolute',
+    top: 75, 
+    alignSelf: 'center',
   },
   topLeftImg: {
     position: 'absolute',
-    top: -30,
+    top: -40,
     left: -30,
     width: 220,
     height: 220,
@@ -106,17 +91,38 @@ const styles = StyleSheet.create({
   },
   bottomLeftImg: {
     position: 'absolute',
-    bottom: -35,
-    left: -60,
+    bottom: -175,
+    left: -90,
     width: 220,
-    height: 220,
+    height: 222,
     resizeMode: 'contain',
   },
   bottomRightImg: {
     position: 'absolute',
-    bottom: -48,
-    right: -24,
+    bottom: -166,
+    right: -59,
     width: 200,
     height: 200,
+    resizeMode: 'contain',
+  },
+  profileOne: {
+    position: 'absolute',
+    top: -80,
+    width: 400,
+    height: 400,
+    resizeMode: 'contain',
+    alignSelf: 'center',
+  },
+  button: {
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    left: -50,
+    borderRadius: 10,
+    marginTop: 30, // Add some margin for spacing
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });

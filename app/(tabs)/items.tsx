@@ -181,7 +181,7 @@ const DetectObject = () => {
       </TouchableOpacity>
 
       <TouchableOpacity style={[styles.button, styles.tallButton]} onPress={pickImage}>
-        <Image source={require('../../assets/images/uploadImage.png')} style={styles.buttonImage}/>
+        <Image source={require('../../assets/images/uploadImage.png')} style={styles.uploadImage}/>
       </TouchableOpacity>
     </View>
 
@@ -328,6 +328,10 @@ const styles = StyleSheet.create({
   buttonImage: {
     width: 60,
     height: 60,
+  },
+  uploadImage: {
+    width: 70,
+    height: 70,
   },
   text: {
     color: 'black',
