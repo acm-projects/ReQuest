@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import MapView, { Marker, Region } from 'react-native-maps';
 import { StyleSheet, View, Modal, Text, TouchableOpacity, Linking, Platform, ActivityIndicator, ScrollView, TextInput } from 'react-native';
 import * as Location from 'expo-location';
 import axios from 'axios';
 import { Feather } from '@expo/vector-icons';
+import {useRoute, RouteProp} from '@react-navigation/native';
 
 interface RecyclingCenter {
   id: string;
@@ -16,6 +17,15 @@ interface RecyclingCenter {
   description?: string; 
 }
 
+type RootStackParamList = {
+  map: { itemName: string }; // Define the route and its expected params
+};
+
+const defaultKeyword = 'recycling center|waste management|recyclable materials|recycle center';
+
+// Define a type for the route prop of the 'map' screen
+type MapScreenRouteProp = RouteProp<RootStackParamList, 'map'>;
+
 export default function Map() {
   const [region, setRegion] = useState<Region | null>(null);
   const [recyclingCenters, setRecyclingCenters] = useState<RecyclingCenter[]>([]);
@@ -27,6 +37,8 @@ export default function Map() {
 
   const [loading, setLoading] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
+  const route = useRoute<MapScreenRouteProp>();
+  const { itemName = '' } = route.params || {};
 
   const GOOGLE_PLACES_API_KEY = process.env.EXPO_PUBLIC_CLOUD_VISION_API_KEY;
 
@@ -63,20 +75,13 @@ export default function Map() {
     fetchLocationAndCenters();
   }, []);
 
-  const handleSearch = () => {
-    if (region) {
-      fetchRecyclingCenters(region.latitude, region.longitude, searchKeyword);
-    }
-    setSearchModalVisible(false);
-  };
+  
 
-  const fetchRecyclingCenters = async (lat: number, lng: number, keyword: string = '') => {
+  const fetchRecyclingCenters = useCallback(async (lat: number, lng: number, keyword: string = '') => {
     setLoading(true);
-    if (keyword) {
-      keyword += ' recycling center'
-    } else {
-      keyword = 'recycling center|waste management|recyclable materials|recycle center';
-    }
+    
+    const searchKeyword = keyword ? `${keyword} recycling center` : defaultKeyword;
+    
     try {
       const response = await axios.get(
         'https://maps.googleapis.com/maps/api/place/nearbysearch/json',
@@ -84,7 +89,7 @@ export default function Map() {
           params: {
             location: `${lat},${lng}`,
             radius: 80467,
-            keyword: keyword,
+            keyword: searchKeyword,
             key: GOOGLE_PLACES_API_KEY,
           },
         }
@@ -105,7 +110,7 @@ export default function Map() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [GOOGLE_PLACES_API_KEY]);
 
   const fetchPlaceDetails = async (placeId: string) => {
     try {
@@ -164,6 +169,33 @@ export default function Map() {
   // Function to toggle the description view
   const toggleDescription = () => {
     setIsExpanded(!isExpanded);
+  };
+
+  useEffect(() => {
+    if (region) {
+      fetchRecyclingCenters(region.latitude, region.longitude, searchKeyword);
+    }
+  }, [region, searchKeyword, fetchRecyclingCenters]);
+
+  useEffect(() => {
+    if (itemName !== '') {
+      setSearchKeyword(itemName);
+      handleSearch();
+    }
+  }, [itemName]);
+
+  const handleSearch = () => {
+    if (region) {
+      fetchRecyclingCenters(region.latitude, region.longitude, searchKeyword);
+    }
+    setSearchModalVisible(false);
+  };
+
+  const clearSearch = () => {
+    setSearchKeyword('');
+    if (region) {
+      fetchRecyclingCenters(region.latitude, region.longitude);
+    }
   };
 
   return (
@@ -251,7 +283,7 @@ export default function Map() {
             <TouchableOpacity onPress={handleSearch} style={styles.button}>
               <Text style={styles.buttonText}>Search</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setSearchKeyword('')} style={styles.button}>
+            <TouchableOpacity onPress={clearSearch} style={styles.button}>
               <Text style={styles.buttonText}>Clear</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setSearchModalVisible(false)} style={styles.button}>
