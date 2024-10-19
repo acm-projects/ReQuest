@@ -33,6 +33,10 @@ export default function Profile() {
           <Text style={styles.buttonText}>Edit Profile Information</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity style={styles.buttonTwo} onPress={() => console.log('Edit Profile Information')}>
+          <Text style={styles.buttonText}>Notification Settings</Text>
+        </TouchableOpacity>
+
         <Image
           source={require('../../assets/images/greenBottomLeft.png')}
           style={styles.bottomLeftImg}
@@ -91,16 +95,16 @@ const styles = StyleSheet.create({
   },
   bottomLeftImg: {
     position: 'absolute',
-    bottom: -175,
-    left: -90,
+    bottom: -75,
+    left: -80,
     width: 220,
     height: 222,
     resizeMode: 'contain',
   },
   bottomRightImg: {
     position: 'absolute',
-    bottom: -166,
-    right: -59,
+    bottom: -76,
+    right: -39,
     width: 200,
     height: 200,
     resizeMode: 'contain',
@@ -119,6 +123,12 @@ const styles = StyleSheet.create({
     left: -50,
     borderRadius: 10,
     marginTop: 30, // Add some margin for spacing
+  },
+  buttonTwo: {
+    top: -25,
+    left: -58,
+    borderRadius: 10,
+    marginTop: 40,
   },
   buttonText: {
     color: 'white',
