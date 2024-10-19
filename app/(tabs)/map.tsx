@@ -34,6 +34,7 @@ export default function Map() {
   const [filterModalVisible, setFilterModalVisible] = useState(false);
   const [searchModalVisible, setSearchModalVisible] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState('');
+  const [currentSearchKeyword, setCurrentSearchKeyword] = useState('');
 
   const [loading, setLoading] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -172,27 +173,26 @@ export default function Map() {
   };
 
   useEffect(() => {
-    if (region) {
-      fetchRecyclingCenters(region.latitude, region.longitude, searchKeyword);
+    if (region && currentSearchKeyword !== '') {
+      fetchRecyclingCenters(region.latitude, region.longitude, currentSearchKeyword);
     }
-  }, [region, searchKeyword, fetchRecyclingCenters]);
+  }, [region, currentSearchKeyword, fetchRecyclingCenters]);
 
   useEffect(() => {
     if (itemName !== '') {
       setSearchKeyword(itemName);
-      handleSearch();
+      setCurrentSearchKeyword(itemName);
     }
   }, [itemName]);
 
   const handleSearch = () => {
-    if (region) {
-      fetchRecyclingCenters(region.latitude, region.longitude, searchKeyword);
-    }
+    setCurrentSearchKeyword(searchKeyword);
     setSearchModalVisible(false);
   };
 
   const clearSearch = () => {
     setSearchKeyword('');
+    setCurrentSearchKeyword('');
     if (region) {
       fetchRecyclingCenters(region.latitude, region.longitude);
     }
