@@ -3,6 +3,18 @@ import tw from 'twrnc';
 import { useRouter } from 'expo-router';
 import { WebView } from 'react-native-webview'; // Ensure you have the react-native-webview package installed
 import { Ionicons } from '@expo/vector-icons'; 
+import { useFonts } from 'expo-font';
+import EStyleSheet from 'react-native-extended-stylesheet';
+import { CartesianChart, Bar, useChartPressState, StackedBar} from "victory-native";
+import { Circle, useFont, vec } from "@shopify/react-native-skia";
+import { LinearGradient, Text as SKText } from "@shopify/react-native-skia";
+import { useDerivedValue } from "react-native-reanimated";
+import * as Font from 'expo-font';
+
+
+
+
+
 
 
 import {
@@ -52,6 +64,8 @@ General Inquiries: Address any additional questions users may have about the app
 Your responses should be informative, empathetic, and tailored to the user's needs, reflecting the app's mission to simplify and enhance the recycling process while making it an enjoyable and rewarding experience. If user asks for support or a direct line, please refer them to contact arinsood2305@gmail.com
 
 As well as in your responses please try to keep them short your responses should never exceed over 50 words and you want to make sure to say the most important things in the most simple way so the user can see it and easily read it`;
+
+
 
 interface Message {
   role: 'user' | 'bot';
@@ -157,6 +171,7 @@ export function Chat() {
       justifyContent: 'center',
       alignItems: 'center',
     },
+    
      scrollView: {
     padding: 16,
     flexGrow: 1,
@@ -225,8 +240,11 @@ export function Chat() {
 
 
   
+
+
+
    return (
-    <View style={{ flex: 1 }}>
+    <View style={{flex: 1} }>
 
 
       <Pressable style={styles.floatingButton} onPress={toggleModal}>
@@ -245,9 +263,9 @@ export function Chat() {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={{
               flex: 1,
-              backgroundColor: 'white',
+              backgroundColor: 'beige',
               marginHorizontal: 20,
-              borderRadius: 10,
+              borderRadius: 20,
             }}
           >
             {/* Close button */}
@@ -299,6 +317,11 @@ export function Chat() {
                 flexGrow: 1,
                 justifyContent: 'flex-end',
                 paddingBottom: 100, // Adjust this padding for TextInput space
+                backgroundColor: 'beige',
+                borderTopLeftRadius: 20,
+                borderTopRightRadius: 20,
+                
+
               }}
             />
 
@@ -307,12 +330,15 @@ export function Chat() {
               style={{
                 width: '100%',
                 paddingHorizontal: 8,
-                backgroundColor: 'white',
+                backgroundColor: 'green',
                 flexDirection: 'row',
                 paddingVertical: 8,
                 alignItems: 'center',
                 borderTopWidth: 1,
                 borderColor: 'gray',
+                borderBottomLeftRadius: 20,
+                borderBottomRightRadius: 20,
+
               }}
             >
               <TextInput
@@ -320,7 +346,7 @@ export function Chat() {
                   flex: 1,
                   borderWidth: 2,
                   borderRadius: 12,
-                  borderColor: 'gray',
+                  borderColor: 'beige',
                   marginRight: 16,
                   paddingHorizontal: 12,
                   maxHeight: 80,
@@ -334,7 +360,7 @@ export function Chat() {
               />
               <Pressable
                 style={{
-                  backgroundColor: chatText.trim() === '' || sendingChat ? 'gray' : 'blue',
+                  backgroundColor: chatText.trim() === '' || sendingChat ? 'gray' : 'beige',
                   width: 48,
                   borderRadius: 24,
                   padding: 8,
@@ -347,7 +373,7 @@ export function Chat() {
                 {sendingChat ? (
                   <ActivityIndicator size="small" color="white" />
                 ) : (
-                  <Feather name="send" size={20} color="white" />
+                  <Feather name="send" size={20} color="black" />
                 )}
               </Pressable>
             </View>
@@ -360,51 +386,58 @@ export function Chat() {
 }
 
 
+          
+
+
+
+
 
 export default function Dashboard() {
-  const router = useRouter(); // Use router for navigation
-const tipsAndGuides = [
-  {
-    title: "Tip 1: Reduce Plastic Use",
-    description: "Try to use reusable bags and bottles to minimize plastic waste.",
-    link: "https://www.youtube.com/embed/CSaUzORm8s8", // Embed link format
-  },
-  {
-    title: "Tip 2: Recycle Properly",
-    description: "Make sure to clean and sort your recyclables correctly.",
-    link: "https://www.youtube.com/embed/jsp7mgYv3aI", // Embed link format
-  },
-  {
-    title: "Tip 3: Compost Organic Waste",
-    description: "Consider composting food scraps and yard waste to reduce landfill waste.",
-    link: "https://www.youtube.com/embed/zy70DAaeFBI", // Embed link format
-  },
-  {
-    title: "Tip 4: Save Water",
-    description: "Fix leaks and use water-efficient fixtures to conserve water.",
-    link: "https://www.youtube.com/embed/5J3cw4biWWo", // Replace with your link
-  },
-  {
-    title: "Tip 5: Reduce Food Waste",
-    description: "Plan meals and use leftovers to minimize food waste.",
-    link: "https://www.youtube.com/embed/ishA6kry8nc", // Replace with your link
-  },
-  // Add more tips here (up to 10)
-];
-  return (
+  const tipsAndGuides = [
+    {
+      title: "Tip 1: Reduce Plastic Use",
+      description: "Try to use reusable bags and bottles to minimize plastic waste.",
+      link: "https://www.youtube.com/embed/CSaUzORm8s8",
+    },
+    {
+      title: "Tip 2: Recycle Properly",
+      description: "Make sure to clean and sort your recyclables correctly.",
+      link: "https://www.youtube.com/embed/jsp7mgYv3aI",
+    },
+    {
+      title: "Tip 3: Compost Organic Waste",
+      description: "Consider composting food scraps and yard waste to reduce landfill waste.",
+      link: "https://www.youtube.com/embed/zy70DAaeFBI",
+    },
+    {
+      title: "Tip 4: Save Water",
+      description: "Fix leaks and use water-efficient fixtures to conserve water.",
+      link: "https://www.youtube.com/embed/5J3cw4biWWo",
+    },
+    {
+      title: "Tip 5: Reduce Food Waste",
+      description: "Plan meals and use leftovers to minimize food waste.",
+      link: "https://www.youtube.com/embed/ishA6kry8nc",
+    },
+  ];
 
-   <ScrollView style={tw`flex-1 bg-amber-50`}>
-      {/* Top Section */}
-      <SafeAreaView style={tw`flex-1 justify-center items-center`}>
-        <Text style={tw`text-2xl font-bold text-black`}>Welcome Back, Name!</Text>
-        <Text style={tw`text-lg text-gray-700 mt-2`}>These are your current stats:</Text>
-      </SafeAreaView>
+  
+
+
+ 
+
+  return (
+    <SafeAreaView style={tw`flex-1 bg-amber-50`}>
+      <View style={tw`flex-1 `}>
+        <Text style={[tw`text-4xl font-bold text-black text-center pt-8 `, { color: '#400908' }]}>Welcome Back, Name!</Text>
+        <Text style={tw`text-base text-gray-700 mt-2 text-left pt-16`}>These are your current stats:</Text>
+      </View>
 
       {/* Bold Black Line Divider */}
-      <View style={styles.boldDivider} />
+      <View />
 
       {/* Stats Sections */}
-      <View style={tw`flex-2 px-6 pt-4`}>
+      <View style={tw`flex-2 px-6 pt-10`}>
         <View style={styles.statItem}>
           <Text style={styles.statText}>Number of items recycled:</Text>
           <Text style={styles.statNumber}>123 items</Text>
@@ -418,64 +451,82 @@ const tipsAndGuides = [
           <Text style={styles.statNumber}>789 kg</Text>
         </View>
       </View>
+<ScrollView
+  contentContainerStyle={[
+    styles.scrollView,
+    { paddingBottom: 20, alignItems: 'center' },tw`p-10` // Center the items
+  ]}
+  horizontal={true}
+  showsHorizontalScrollIndicator={false}
+>
+  {tipsAndGuides.map((tip, index) => (
+    <View key={index} style={[styles.tipBackground, styles.tipBackground]}>
+        <Text style={[tw`text-xl font-bold mt-10`, {width: '60%'}]}>{tip.title}</Text>
+              <Text style={[tw`text-base text-gray-700`, {width: '60%'}]}>{tip.description}</Text>
+              <WebView
+                source={{ uri: tip.link }} // Use the embed link
+                style={[styles.video, { width: '60%' }]} // Ensure the video follows the container width
+                javaScriptEnabled={true}
+                domStorageEnabled={true}
+                startInLoadingState={true}
+                scalesPageToFit={true}
+              />
+              <TouchableOpacity
+                onPress={() => Linking.openURL(tip.link.replace('/embed/', '/watch?v='))} // Open link on YouTube
+                style={styles.linkButton}
+              >
+                <Text style={tw`text-blue-600`}>Watch Video on YouTube</Text>
+              </TouchableOpacity>
 
-       <View style={tw`flex-1 bg-amber-50`}>
      
-
-      <ScrollView contentContainerStyle={styles.scrollView}>
-        {tipsAndGuides.map((tip, index) => (
-          <View key={index} style={styles.tipContainer}>
-            <Text style={tw`text-xl font-bold`}>{tip.title}</Text>
-            <Text style={tw`text-base text-gray-700`}>{tip.description}</Text>
-            <WebView
-              source={{ uri: tip.link }} // Use the embed link
-              style={styles.video}
-              javaScriptEnabled={true}
-              domStorageEnabled={true}
-              startInLoadingState={true}
-              scalesPageToFit={true}
-            />
-            <TouchableOpacity 
-              onPress={() => Linking.openURL(tip.link.replace('/embed/', '/watch?v='))} // Open link on YouTube
-              style={styles.linkButton}
-            >
-              <Text style={tw`text-blue-600`}>Watch Video on YouTube</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
-      </ScrollView>
     </View>
-        <Chat/>
-    </ScrollView>
-     
-  );
+  ))}
+</ScrollView>
 
+     
+
+     
+      <Chat />
+    </SafeAreaView>
+  );
 }
 
-const styles = StyleSheet.create({
-  boldDivider: {
-    borderBottomWidth: 5,
-    borderBottomColor: 'black',
-  },
-   scrollView: {
+const styles = EStyleSheet.create({
+  scrollView: {
     padding: 20,
     flexGrow: 1,
+     marginTop: 50
   },
-  tipContainer: {
-    marginBottom: 20,
-    padding: 10,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1,
-    elevation: 3,
+  text: {
+    color: '#400908',
+    fontSize: '1.5rem',
   },
+  tipBackground: {
+    backgroundColor: '#DCF8C6',  // Green background
+    borderRadius: 12,  // Rounded corners for the background
+    padding: 5,  // Optional padding between background and content
+    marginBottom: 20,  // Space between tips
+  },
+ tipContainer: {
+  marginBottom: 20,
+  padding: 16, // Use numeric value instead of '1rem'
+  backgroundColor: '#fff',
+  borderRadius: 8,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 1 },
+  shadowOpacity: 0.2,
+  shadowRadius: 1,
+  elevation: 3,
+  width: '60%', 
+  height: 200, 
+  alignSelf: 'center', 
+  justifyContent: 'flex-end'
+},
   video: {
-    height: 200, // Set a height for the video
+    height: 100, // Set a height for the video
     marginVertical: 10,
-    borderRadius: 8,
+    borderRadius: 6,
+    width: '70%',
   },
   linkButton: {
     marginTop: 10,
@@ -501,14 +552,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'green',
   },
-  guideButton: {
-    backgroundColor: '#C2D5BA',
-    padding: 15,
-    borderRadius: 10,
-    width: '80%', // Adjusted width for the button
-    alignSelf: 'center', // Center the button horizontally
-    position: 'absolute', // Position the button absolutely
-    bottom: 40, // Move the button up closer to the last stat item
-  },
 });
+
 

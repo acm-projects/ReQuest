@@ -15,6 +15,7 @@ export const Colors = {
      pastelGreen:"#C2D5BA",
     darkGreen: "#728A68",
     beige:"#FEFBF2",
+        textColor: '#400908',
     tabIconDefault: '#687076',
     tabIconSelected: tintColorLight,
   },
@@ -27,6 +28,7 @@ export const Colors = {
     darkGreen: "#728A68",
     beige:"#FEFBF2",
     tabIconDefault: '#9BA1A6',
+    textColor: '#400908',
     tabIconSelected: tintColorDark,
   },
 };
