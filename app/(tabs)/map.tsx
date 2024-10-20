@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import MapView, { Marker, Region } from 'react-native-maps';
 import { StyleSheet, View, Modal, Text, TouchableOpacity, Linking, Platform, ActivityIndicator, ScrollView, TextInput } from 'react-native';
 import * as Location from 'expo-location';
@@ -40,8 +40,11 @@ export default function Map() {
   const [isExpanded, setIsExpanded] = useState(false);
   const route = useRoute<MapScreenRouteProp>();
   const { itemName = '' } = route.params || {};
+  const [prevItemName, setPrevItemName] = useState('');
 
   const GOOGLE_PLACES_API_KEY = process.env.EXPO_PUBLIC_CLOUD_VISION_API_KEY;
+
+  const isInitialRender = useRef(true);
 
 
   const requestLocationPermission = async (): Promise<boolean> => {
@@ -173,15 +176,10 @@ export default function Map() {
   };
 
   useEffect(() => {
-    if (region && currentSearchKeyword !== '') {
-      fetchRecyclingCenters(region.latitude, region.longitude, currentSearchKeyword);
-    }
-  }, [region, currentSearchKeyword, fetchRecyclingCenters]);
-
-  useEffect(() => {
-    if (itemName !== '') {
+    if (itemName !== '' && itemName !== prevItemName) {
       setSearchKeyword(itemName);
       setCurrentSearchKeyword(itemName);
+      setPrevItemName(itemName);
     }
   }, [itemName]);
 
@@ -193,9 +191,17 @@ export default function Map() {
   const clearSearch = () => {
     setSearchKeyword('');
     setCurrentSearchKeyword('');
+    setPrevItemName('');
     if (region) {
       fetchRecyclingCenters(region.latitude, region.longitude);
     }
+  };
+
+  const handleCloseSearchModal = () => {
+    if (searchKeyword === '') {
+      clearSearch();
+    }
+    setSearchModalVisible(false);
   };
 
   return (
@@ -262,7 +268,7 @@ export default function Map() {
         visible={searchModalVisible}
         transparent={true}
         animationType="slide"
-        onRequestClose={() => setSearchModalVisible(false)}
+        onRequestClose={handleCloseSearchModal}
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
@@ -286,7 +292,7 @@ export default function Map() {
             <TouchableOpacity onPress={clearSearch} style={styles.button}>
               <Text style={styles.buttonText}>Clear</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setSearchModalVisible(false)} style={styles.button}>
+            <TouchableOpacity onPress={handleCloseSearchModal} style={styles.button}>
               <Text style={styles.buttonText}>Close</Text>
             </TouchableOpacity>
           </View>
