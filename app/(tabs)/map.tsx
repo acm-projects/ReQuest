@@ -40,7 +40,7 @@ export default function Map() {
   const [isExpanded, setIsExpanded] = useState(false);
   const route = useRoute<MapScreenRouteProp>();
   const { itemName = '' } = route.params || {};
-  const [prevItemName, setPrevItemName] = useState('');
+  const [prevItemName, setPrevItemName] = useState(itemName);
 
   const GOOGLE_PLACES_API_KEY = process.env.EXPO_PUBLIC_CLOUD_VISION_API_KEY;
 
@@ -106,22 +106,6 @@ export default function Map() {
         longitude: place.geometry.location.lng,
         address: place.vicinity || 'Address not available',
       }));
-
-       {/* Button for filters */}
-      <TouchableOpacity 
-        style={[styles.filterButton, { position: 'absolute', top: 50, left: 30, zIndex: 1 }]}    
-        onPress={() => setFilterModalVisible(true)}
-      >
-        <Text style={styles.buttonText}>Filters</Text>
-      </TouchableOpacity>
-  
-      {/* Search icon */}
-      <TouchableOpacity 
-        style={{ position: 'absolute', top: 50, right: 30, zIndex: 1 }}
-        onPress={() => setSearchModalVisible(true)}
-      >
-        <Feather name="search" size={24} color="black" />
-      </TouchableOpacity>
 
       setRecyclingCenters(centers);
       centers.forEach((center: RecyclingCenter) => fetchPlaceDetails(center.id));
@@ -192,6 +176,12 @@ export default function Map() {
   };
 
   useEffect(() => {
+    if (region && currentSearchKeyword !== '') {
+      fetchRecyclingCenters(region.latitude, region.longitude, currentSearchKeyword);
+    }
+  }, [region, currentSearchKeyword, fetchRecyclingCenters]);
+
+  useEffect(() => {
     if (itemName !== '' && itemName !== prevItemName) {
       setSearchKeyword(itemName);
       setCurrentSearchKeyword(itemName);
@@ -225,7 +215,8 @@ export default function Map() {
       {loading ? (
         <ActivityIndicator size="large" color="beige" style={styles.loadingIndicator} />
       ) : (
-        region && (
+        <>
+        {region && (
           <MapView
             style={styles.map}
             region={region}
@@ -241,29 +232,43 @@ export default function Map() {
                 pinColor="#C2D5BA"
               />
             ))}
-          </MapView>
-        )
-      )}
-      
-     
-  
-      {/* Modal for filters */}
-      <Modal
-        visible={filterModalVisible}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setFilterModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Filter Options</Text>
-            {/* Add filter options here */}
-            <TouchableOpacity onPress={() => setFilterModalVisible(false)} style={styles.button}>
-              <Text style={styles.buttonText}>Close</Text>
-            </TouchableOpacity>
-          </View>
+          </MapView>)}
+          {/* Button for filters */}
+      <TouchableOpacity 
+      style={[styles.filterButton, { position: 'absolute', top: 50, left: 30, zIndex: 1 }]}    
+      onPress={() => setFilterModalVisible(true)}
+    >
+      <Text style={styles.buttonText}>Filters</Text>
+    </TouchableOpacity>
+
+    {/* Search icon */}
+    <TouchableOpacity 
+      style={{ position: 'absolute', top: 50, right: 30, zIndex: 1 }}
+      onPress={() => setSearchModalVisible(true)}
+    >
+      <Feather name="search" size={24} color="black" />
+    </TouchableOpacity>
+
+    {/* Modal for filters */}
+    <Modal
+      visible={filterModalVisible}
+      transparent={true}
+      animationType="slide"
+      onRequestClose={() => setFilterModalVisible(false)}
+    >
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalTitle}>Filter Options</Text>
+          {/* Add filter options here */}
+          <TouchableOpacity onPress={() => setFilterModalVisible(false)} style={styles.button}>
+            <Text style={styles.buttonText}>Close</Text>
+          </TouchableOpacity>
         </View>
-      </Modal>
+      </View>
+    </Modal>
+    </>
+        )
+      }
   
       {/* Modal for search */}
       <Modal
