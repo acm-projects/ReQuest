@@ -1,12 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'expo-router';
-import { View, Text, TouchableOpacity, StyleSheet, Image, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, TextInput, ActivityIndicator } from 'react-native';
 import tw from 'twrnc';
 import { useAuth } from '../AuthContext';
 
-export default function Login() {
-  const [ signedIn, setSignedIn ] = useState(false);
+export default function LoginScreen() { // Renamed component to LoginScreen
+  const [signedIn, setSignedIn] = useState(false);
   const router = useRouter();
+  
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate a loading process, e.g., fetching data or loading assets
+    const timer = setTimeout(() => {
+      setIsLoading(false); // Loading done
+    }, 2000); // Adjust the time to how long you need to load content
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#00ff00" />
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
   const handleLogin = () => {
     // Perform login logic here
@@ -129,6 +149,11 @@ const styles = StyleSheet.create({
     width: 220,
     height: 220,
     resizeMode: 'contain',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   topRightImg: {
     position: 'absolute',

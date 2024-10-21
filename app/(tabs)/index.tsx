@@ -433,8 +433,11 @@ export default function Dashboard() {
         <Text style={tw`text-base text-gray-700 mt-2 text-left pt-16`}>These are your current stats:</Text>
       </View>
 
-      {/* Bold Black Line Divider */}
-      <View />
+         <Image
+  source={require('../../assets/images/recycleEarth.png')}
+  style={tw`absolute right-0 top-25 w-44 h-44`} 
+/>
+
 
       {/* Stats Sections */}
       <View style={tw`flex-2 px-6 pt-10`}>
