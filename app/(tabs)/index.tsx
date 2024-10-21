@@ -410,7 +410,7 @@ export default function Dashboard() {
       link: "https://www.youtube.com/embed/zy70DAaeFBI",
     },
     {
-      title: "Tip 4: Save Water",
+      title: "Tip 4: Saving Water Use",
       description: "Fix leaks and use water-efficient fixtures to conserve water.",
       link: "https://www.youtube.com/embed/5J3cw4biWWo",
     },
@@ -429,7 +429,7 @@ export default function Dashboard() {
   return (
     <SafeAreaView style={tw`flex-1 bg-amber-50`}>
       <View style={tw`flex-1 `}>
-        <Text style={[tw`text-3xl font-bold text-black text-center pt-8 `, { color: '#400908' }]}>Welcome Back, Name!</Text>
+        <Text style={[tw`text-3xl font-bold text-black text-center pt-0 `, { color: '#400908' }]}>Welcome Back, Name!</Text>
         <Text style={tw`text-base text-gray-700 mt-2 text-left pt-16`}>These are your current stats:</Text>
       </View>
 
@@ -440,7 +440,7 @@ export default function Dashboard() {
 
 
       {/* Stats Sections */}
-      <View style={tw`flex-2 px-6 pt-10`}>
+            {/* <View style={tw`flex-2 px-6 pt-10`}>
         <View style={styles.statItem}>
           <Text style={styles.statText}>Number of items recycled:</Text>
           <Text style={styles.statNumber}>123 items</Text>
@@ -453,43 +453,39 @@ export default function Dashboard() {
           <Text style={styles.statText}>Reduced Carbon Footprint:</Text>
           <Text style={styles.statNumber}>789 kg</Text>
         </View>
-      </View>
+      </View> */}
+
+      
 <ScrollView
   contentContainerStyle={[
     styles.scrollView,
-    { paddingBottom: 20, alignItems: 'center' },tw`p-20` // Center the items
+    { paddingBottom: 20, alignItems: 'center' }, 
+    tw`mt-50 p-20` // Add margin-top to move it down
   ]}
   horizontal={true}
   showsHorizontalScrollIndicator={false}
 >
   {tipsAndGuides.map((tip, index) => (
-    <View key={index} style={[styles.tipBackground, styles.tipBackground]}>
-        <Text style={[tw`text-xl font-bold mt-10`, {width: '60%'}]}>{tip.title}</Text>
-              <Text style={[tw`text-base text-gray-700`, {width: '60%'}]}>{tip.description}</Text>
-              <WebView
-                source={{ uri: tip.link }} // Use the embed link
-                style={[styles.video, { width: '60%' }]} // Ensure the video follows the container width
-                javaScriptEnabled={true}
-                domStorageEnabled={true}
-                startInLoadingState={true}
-                scalesPageToFit={true}
-              />
-              <TouchableOpacity
-                onPress={() => Linking.openURL(tip.link.replace('/embed/', '/watch?v='))} // Open link on YouTube
-                style={styles.linkButton}
-              >
-                <Text style={tw`text-blue-600`}>Watch Video on YouTube</Text>
-              </TouchableOpacity>
-
-     
+    <View key={index} style={[, tw`bg-green-500 w-60 m-2 p-4 rounded-3xl`]}>
+        <Text style={[tw`text-xl font-bold mt-1`, {width: 'full'}]}>{tip.title}</Text>
+        <WebView
+          source={{ uri: tip.link }}
+          style={tw`w-50 h-60`} // Adjust the video size for responsiveness
+          javaScriptEnabled={true}
+          domStorageEnabled={true}
+          startInLoadingState={true}
+          scalesPageToFit={true}
+        />
+       
     </View>
   ))}
 </ScrollView>
 
+
      
 
      
-      <Chat />
+      <Chat />  
     </SafeAreaView>
   );
 }
@@ -498,7 +494,7 @@ const styles = EStyleSheet.create({
   scrollView: {
     padding: 20,
     flexGrow: 1,
-     marginTop: 50
+    marginTop: 50, // Keeps the ScrollView down
   },
   text: {
     color: '#400908',
@@ -507,29 +503,16 @@ const styles = EStyleSheet.create({
   tipBackground: {
     backgroundColor: '#DCF8C6',  // Green background
     borderRadius: 12,  // Rounded corners for the background
-    padding: 5,  // Optional padding between background and content
+    padding: 16,  // Padding for content inside each tip
     marginBottom: 20,  // Space between tips
+    width: '60%', // Keep tips at 60% width
+    alignSelf: 'center', // Center the tips
   },
- tipContainer: {
-  marginBottom: 20,
-  padding: 16, // Use numeric value instead of '1rem'
-  backgroundColor: '#fff',
-  borderRadius: 8,
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 1 },
-  shadowOpacity: 0.2,
-  shadowRadius: 1,
-  elevation: 3,
-  width: '60%', 
-  height: 200, 
-  alignSelf: 'center', 
-  justifyContent: 'flex-end'
-},
   video: {
     height: 100, // Set a height for the video
     marginVertical: 10,
     borderRadius: 6,
-    width: '70%',
+    width: '100%', // Full width for responsiveness
   },
   linkButton: {
     marginTop: 10,
@@ -556,5 +539,6 @@ const styles = EStyleSheet.create({
     color: 'green',
   },
 });
+
 
 
