@@ -164,12 +164,13 @@ export function Chat() {
       position: 'absolute',
       bottom: 20,
       right: 20,
-      backgroundColor: 'blue',
+      backgroundColor: '#0a7ea4',
       borderRadius: 30,
       width: 60,
       height: 60,
       justifyContent: 'center',
       alignItems: 'center',
+      zIndex : 1,
     },
     
      scrollView: {
@@ -248,8 +249,12 @@ export function Chat() {
 
 
       <Pressable style={styles.floatingButton} onPress={toggleModal}>
-        <MaterialCommunityIcons name="robot-happy" size={24} color="white" />
-      </Pressable>
+  <Image 
+    source={require('../../assets/images/recycleEarth.png')} // Update with your image path
+    style={{ width: 40, height: 40 }} // Adjust size as needed
+    resizeMode="contain" // This will keep the aspect ratio of the image
+  />
+</Pressable>
 
       {/* Chatbot Modal */}
       <Modal
@@ -271,7 +276,7 @@ export function Chat() {
             {/* Close button */}
             <Pressable
               style={{
-                backgroundColor: 'red',
+                backgroundColor: '#400908',
                 padding: 12,
                 borderRadius: 24,
                 position: 'absolute',
@@ -428,64 +433,111 @@ export default function Dashboard() {
 
   return (
     <SafeAreaView style={tw`flex-1 bg-amber-50`}>
-      <View style={tw`flex-1 `}>
-        <Text style={[tw`text-3xl font-bold text-black text-center pt-0 `, { color: '#400908' }]}>Welcome Back, Name!</Text>
-        <Text style={tw`text-base text-gray-700 mt-2 text-left pt-16`}>These are your current stats:</Text>
-      </View>
+<View style={tw`flex-1`}>
+  <View style={tw`pt-7`}> 
+    <Text style={[tw`text-3xl font-bold text-black text-center`, { color: '#400908' }]}>
+      Welcome Back, Name!
+    </Text>
+  </View>
+  <Text style={tw`text-lg text-[#400908] mt-2 ml-3 pt-22 text-left`}>These are your current stats:</Text>
+</View>
+
 
          <Image
   source={require('../../assets/images/recycleEarth.png')}
-  style={tw`absolute right-0 top-25 w-44 h-44`} 
+  style={tw`absolute right-3 top-32 w-30 h-30 z-11`} 
 />
 
 
       {/* Stats Sections */}
-            {/* <View style={tw`flex-2 px-6 pt-10`}>
-        <View style={styles.statItem}>
-          <Text style={styles.statText}>Number of items recycled:</Text>
-          <Text style={styles.statNumber}>123 items</Text>
-        </View>
-        <View style={styles.statItem}>
-          <Text style={styles.statText}>How long the world could last if everyone recycled like you:</Text>
-          <Text style={styles.statNumber}>690 years</Text>
-        </View>
-        <View style={styles.statItem}>
-          <Text style={styles.statText}>Reduced Carbon Footprint:</Text>
-          <Text style={styles.statNumber}>789 kg</Text>
-        </View>
-      </View> */}
+<View style={[{ zIndex: 8 }]}>
+  <View style={[tw`absolute px-8 pt-5 top-[-40]`, { zIndex: 2, width: '90%', alignSelf: 'center' }]}> 
+    <View style={[tw`absolute inset--1 bg-[#DCF8C6]`, { borderRadius: 30, zIndex: -1 }]} />
+    
+    {/* <View style={tw`flex-row justify-between mb-4 max-w-[60%]`}>
+      <Text style={tw`text-[#400908] text-base`}>Number of items recycled:</Text>
+      <Text style={tw`text-green-500 text-lg font-bold text-right`}>123 items</Text>
+    </View> */}
 
+    <View style={tw`flex-row justify-between mb-4`}>
+     
+        <View style={tw`flex-1 max-w-[60%]`}> 
+          <Text style={tw`text-[#400908] text-base`}>Number of items recycled:</Text>
+        </View >
       
-<ScrollView
-  contentContainerStyle={[
-    styles.scrollView,
-    { paddingBottom: 20, alignItems: 'center' }, 
-    tw`mt-50 p-20` // Add margin-top to move it down
-  ]}
-  horizontal={true}
-  showsHorizontalScrollIndicator={false}
->
-  {tipsAndGuides.map((tip, index) => (
-    <View key={index} style={[, tw`bg-green-500 w-60 m-2 p-4 rounded-3xl`]}>
-        <Text style={[tw`text-xl font-bold mt-1`, {width: 'full'}]}>{tip.title}</Text>
-        <WebView
-          source={{ uri: tip.link }}
-          style={tw`w-50 h-60`} // Adjust the video size for responsiveness
-          javaScriptEnabled={true}
-          domStorageEnabled={true}
-          startInLoadingState={true}
-          scalesPageToFit={true}
-        />
-       
+        <View style={tw`flex-1 max-w-[40%]`} >
+        <Text style={tw`text-[#400908] text-3xl font-bold text-right`}>220 items</Text>
+        </View>
     </View>
-  ))}
-</ScrollView>
+    
+     <View style={tw`flex-row justify-between mb-4`}>
+     
+        <View style={tw`flex-1 max-w-[60%]`}> 
+          <Text style={tw`text-[#400908] text-base`}>How long the world would last if everyone recycled like you:</Text>
+        </View >
+      
+        <View style={tw`flex-1 max-w-[40%]`} >
+        <Text style={tw`text-[#400908] text-3xl font-bold text-right`}>800 years</Text>
+        </View>
+    </View>
+
+     <View style={tw`flex-row justify-between mb-4`}>
+     
+        <View style={tw`flex-1 max-w-[60%]`}> 
+          <Text style={tw`text-[#400908] text-base`}>Reduced Carbon Footprint:</Text>
+        </View >
+      
+        <View style={tw`flex-1 max-w-[40%]`} >
+        <Text style={tw`text-[#400908] text-3xl font-bold text-right`}>789 kg</Text>
+        </View>
+    </View>
+    
+    {/* <View style={tw`flex-row justify-between mb-4 max-w-[60%]`}>
+      <Text style={tw`text-[#400908] text-base`}>Reduced Carbon Footprint:</Text>
+      <Text style={tw`text-green-500 text-lg font-bold text-right`}>789 kg</Text>
+    </View> */}
+  </View>
+</View>
+
+
+
+
+
+
+
+
+
+ <View style={tw`flex-1 bg-amber-50`}>
+  <ScrollView
+    contentContainerStyle={[
+      styles.scrollView, 
+      tw`p-15 mt-15`, // Add padding instead of justify-end for spacing
+      { alignItems: 'center', paddingBottom: 0 } // Ensure there's enough space at the bottom
+    ]}
+    horizontal={true}
+    showsHorizontalScrollIndicator={false}
+  >
+    {tipsAndGuides.map((tip, index) => (
+<View key={index} style={[tw`w-60 m-2 p-4 rounded-3xl`, { backgroundColor: '#DCF8C6' }]}>
+  <Text style={[tw`text-xl font-bold mt-1`, { color: '#400908' }]}>{tip.title}</Text> 
+  <WebView
+    source={{ uri: tip.link }}
+    style={tw`w-55 h-60`} 
+    javaScriptEnabled={true}
+    domStorageEnabled={true}
+    startInLoadingState={true}
+    scalesPageToFit={true}
+  />
+</View>
+    ))}
+  </ScrollView>
+</View>
 
 
      
-
-     
-      <Chat />  
+    <View style={{ zIndex: 10 }}>
+    <Chat />
+  </View>
     </SafeAreaView>
   );
 }
@@ -496,9 +548,9 @@ const styles = EStyleSheet.create({
     flexGrow: 1,
     marginTop: 50, // Keeps the ScrollView down
   },
-  text: {
+  textColor: {
     color: '#400908',
-    fontSize: '1.5rem',
+    
   },
   tipBackground: {
     backgroundColor: '#DCF8C6',  // Green background
@@ -517,24 +569,19 @@ const styles = EStyleSheet.create({
   linkButton: {
     marginTop: 10,
   },
-  statItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between', // Align items
-    alignItems: 'center', // Center vertically
-    borderBottomWidth: 2,
-    borderBottomColor: 'gray',
-    paddingVertical: 35, // Original padding
-    marginBottom: 10,
+ statItem: {
+    marginBottom: 20, // Space between items
+    paddingVertical: 10, // Add padding to each stat item
+    zIndex: 2,
+    alignItems: 'flex-start', // Align items to the start
   },
   statText: {
-    flex: 1, // Allow the text to grow and take up available space
-    textAlign: 'left', // Left-align the text
-    fontSize: 16,
+    fontSize: 16, // Adjusted size for better readability
     fontWeight: '600',
-    color: 'black',
+    color: '#400908',
   },
   statNumber: {
-    fontSize: 24,
+    fontSize: 200, // Adjust size for numbers
     fontWeight: 'bold',
     color: 'green',
   },
