@@ -5,6 +5,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 import { StackNavigationProp } from '@react-navigation/stack';
+import { Platform } from 'react-native';
 
 type RootStackParamList = {
   map: { itemName: string };
@@ -67,48 +68,74 @@ const DetectObject = () => {
     }
   };
 
-  const analyzeImage = async () => {
-    try {
-      if (!imageUri) {
-        alert("Please select an image first");
-        return;
+const analyzeImage = async () => {
+  try {
+    if (!imageUri) {
+      alert("Please select an image first");
+      return;
+    }
+
+    const apiKey = process.env.EXPO_PUBLIC_CLOUD_VISION_API_KEY;
+    const apiURL = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
+
+    // Platform-specific URI handling
+    let base64ImageData;
+    if (Platform.OS === 'android') {
+      // For Android, we need to handle the content:// or file:// URI differently
+      const fileUri = imageUri.startsWith('file://') ? 
+        imageUri.replace('file://', '') : 
+        imageUri;
+        
+      try {
+        base64ImageData = await FileSystem.readAsStringAsync(fileUri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+      } catch (readError) {
+        // If direct read fails, try reading the cached image
+        const cacheUri = `${FileSystem.cacheDirectory}temp_image.jpg`;
+        await FileSystem.copyAsync({
+          from: imageUri,
+          to: cacheUri
+        });
+        base64ImageData = await FileSystem.readAsStringAsync(cacheUri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
       }
-
-      const apiKey = process.env.EXPO_PUBLIC_CLOUD_VISION_API_KEY;
-      const apiURL = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
-
-      const fileUri = imageUri!.replace("file://", "");
-      const base64ImageData = await FileSystem.readAsStringAsync(fileUri, {
+    } else {
+      // For iOS, the original code works fine
+      const fileUri = imageUri.replace("file://", "");
+      base64ImageData = await FileSystem.readAsStringAsync(fileUri, {
         encoding: FileSystem.EncodingType.Base64,
       });
-
-      const requestData = {
-        requests: [
-          {
-            image: {
-              content: base64ImageData,
-            },
-            features: [
-              {
-                type: "LABEL_DETECTION",
-                maxResults: 5,
-              },
-            ],
-          },
-        ],
-      };
-
-      const response = await axios.post(apiURL, requestData);
-
-      console.log("Response Data: ", response.data);
-      setLabels(response.data.responses[0].labelAnnotations);
-      setError(null);
-      setModalVisible(true);
-    } catch (error) {
-      console.error("Error with image analyzer: ", error);
-      setError('Error analyzing image, please try again');
     }
-  };
+
+    const requestData = {
+      requests: [
+        {
+          image: {
+            content: base64ImageData,
+          },
+          features: [
+            {
+              type: "LABEL_DETECTION",
+              maxResults: 5,
+            },
+          ],
+        },
+      ],
+    };
+
+    const response = await axios.post(apiURL, requestData);
+
+    console.log("Response Data: ", response.data);
+    setLabels(response.data.responses[0].labelAnnotations);
+    setError(null);
+    setModalVisible(true);
+  } catch (error) {
+    console.error("Error with image analyzer: ", error);
+    setError('Error analyzing image, please try again');
+  }
+};
 
   const addToCart = (label: any) => {
     setCart([...cart, label]);

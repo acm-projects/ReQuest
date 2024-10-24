@@ -55,6 +55,26 @@ export default function Map() {
     }
     return true;
   };
+  
+  useEffect(() => {
+    const handleItemNameChange = async () => {
+      if (itemName && (itemName !== prevItemName || isInitialRender.current)) {
+        console.log('Updating search with itemName:', itemName); // Debug log
+        setSearchKeyword(itemName);
+        setCurrentSearchKeyword(itemName);
+        setPrevItemName(itemName);
+        
+        // If we have the region, trigger a new search
+        if (region) {
+          await fetchRecyclingCenters(region.latitude, region.longitude, itemName);
+        }
+        
+        isInitialRender.current = false;
+      }
+    };
+
+    handleItemNameChange();
+  }, [itemName, region]);
 
   useEffect(() => {
     const fetchLocationAndCenters = async () => {
@@ -84,8 +104,14 @@ export default function Map() {
   const fetchRecyclingCenters = useCallback(async (lat: number, lng: number, keyword: string = '') => {
     setLoading(true);
     
-    const searchKeyword = keyword ? `${keyword} recycling center` : defaultKeyword;
+    // Use trimmed keyword to check if it's really empty
+    const trimmedKeyword = keyword.trim();
+    const searchKeyword = trimmedKeyword ? 
+      `${trimmedKeyword} recycling` : 
+      defaultKeyword;
     
+    console.log('Searching with keyword:', searchKeyword); // Debug log
+
     try {
       const response = await axios.get(
         'https://maps.googleapis.com/maps/api/place/nearbysearch/json',
@@ -115,6 +141,7 @@ export default function Map() {
       setLoading(false);
     }
   }, [GOOGLE_PLACES_API_KEY]);
+
 
   const fetchPlaceDetails = async (placeId: string) => {
     try {
@@ -189,19 +216,24 @@ export default function Map() {
     }
   }, [itemName]);
 
-  const handleSearch = () => {
-    setCurrentSearchKeyword(searchKeyword);
+  const handleSearch = useCallback(() => {
+    if (region) {
+      setCurrentSearchKeyword(searchKeyword);
+      fetchRecyclingCenters(region.latitude, region.longitude, searchKeyword);
+    }
     setSearchModalVisible(false);
-  };
+  }, [region, searchKeyword, fetchRecyclingCenters]);
 
-  const clearSearch = () => {
+  // Update clearSearch to properly reset everything
+  const clearSearch = useCallback(() => {
     setSearchKeyword('');
     setCurrentSearchKeyword('');
     setPrevItemName('');
     if (region) {
-      fetchRecyclingCenters(region.latitude, region.longitude);
+      fetchRecyclingCenters(region.latitude, region.longitude, '');
     }
-  };
+  }, [region, fetchRecyclingCenters]);
+  
 
   const handleCloseSearchModal = () => {
     if (searchKeyword === '') {
