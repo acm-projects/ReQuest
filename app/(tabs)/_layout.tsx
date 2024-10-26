@@ -6,11 +6,14 @@ import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
+import { useContext } from 'react';
 import tw from 'twrnc';
+import { useAuth } from '@/AuthContext';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const [signedIn, setSignedIn] = useState(false);
+  // const [signedIn, setSignedIn] = useState(false);
+  const { signedIn, setSignedIn } = useAuth();
   const router = useRouter();
 
   const renderArchedText = () => {
@@ -151,14 +154,6 @@ export default function TabLayout() {
             onPress={() => router.push('../login')}
           >
             <Text style={tw`text-white text-center text-lg`}>Log In</Text>
-          </TouchableOpacity>
-
-          {/* Skip Login Button */}
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => setSignedIn(true)}
-          >
-            <Text style={tw`text-white text-center text-lg`}>Skip Login</Text>
           </TouchableOpacity>
         </View>
       </View>

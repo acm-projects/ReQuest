@@ -1,13 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react'; 
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { Image, StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-
+import { FIREBASE_AUTH } from '../FirebaseConfig';
+import { User } from 'firebase/auth';
 import tw from 'twrnc'; 
 
 export default function Signup() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [username, setUsername] = useState('');
+  const [isLoading, setIsLoading] = useState(false); 
   const router = useRouter(); // Use router for navigation
-
-
+  const [user, setUser] = useState<User | null>(null);
+  /*useEffect(() => {
+    onAuthStateChanged(FIREBASE_AUTH, (user) => {
+      console.log('user', user);
+      setUser(user);
+    });
+    }, []); */
+    
+  const auth = FIREBASE_AUTH;
+  const signUp = async () => {
+    setIsLoading(true);
+    if (password !== confirmPassword) {
+      alert("Passwords don't match!");
+      setIsLoading(false);
+      return;
+    }
+    try {
+      const response = await createUserWithEmailAndPassword(auth, email, password);
+      console.log(response);
+    } catch (error: any) {
+      console.log(error);
+      alert('Sign in failed: ' + error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
   return (
     <View style={tw`flex-1 bg-[#F8F5E5] justify-center items-center px-4`}>
       <Image
@@ -48,6 +79,8 @@ export default function Signup() {
         style={styles.input}
         placeholder="Enter your username"
         placeholderTextColor="#FFFFFF"
+        value = {username}
+        onChangeText={setUsername}
       />
 
       {/* Email Input */}
@@ -55,6 +88,8 @@ export default function Signup() {
         style={styles.input}
         placeholder="Enter your email"
         placeholderTextColor="#FFFFFF"
+        value={email}
+        onChangeText={setEmail}
       />
 
       {/* Password Input */}
@@ -63,6 +98,8 @@ export default function Signup() {
         placeholder="Enter your password"
         placeholderTextColor="#FFFFFF"
         secureTextEntry
+        value = {password}
+        onChangeText={setPassword}
       />
 
       {/* Confirm Password Input */}
@@ -71,12 +108,12 @@ export default function Signup() {
         placeholder="Confirm password"
         placeholderTextColor="#FFFFFF"
         secureTextEntry
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
       />
 
       {/* Register Button */}
-      <TouchableOpacity style={styles.button}
-        onPress={() => router.push('../(tabs)')}
-      >
+      <TouchableOpacity style={styles.button} onPress={signUp}>
         <Text style={tw`text-white text-center text-lg`}>Register</Text>
       </TouchableOpacity>
     </View>

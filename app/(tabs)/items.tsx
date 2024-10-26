@@ -47,6 +47,9 @@ const DetectObject = () => {
   const [cart, setCart] = useState<any[]>([]);
   const [cameraPermission, setCameraPermission] = useState<boolean | null>(null);
   const [total, setTotal] = useState<number>(0);
+  const [modalMessage, setModalMessage] = useState<string | null>(null);
+  const [modalImage, setModalImage] = useState<any>(null);
+
 
   const pickImage = async () => {
     try {
@@ -151,17 +154,30 @@ const analyzeImage = async () => {
       ],
     };
 
-    const response = await axios.post(apiURL, requestData);
+      const response = await axios.post(apiURL, requestData);
+      console.log("Response Data: ", response.data);
+      const detectedLabels = response.data.responses[0].labelAnnotations || [];
+      setLabels(detectedLabels);
 
-    console.log("Response Data: ", response.data);
-    setLabels(response.data.responses[0].labelAnnotations);
-    setError(null);
-    setModalVisible(true);
-  } catch (error) {
-    console.error("Error with image analyzer: ", error);
-    setError('Error analyzing image, please try again');
-  }
-};
+      const detectedBottle = detectedLabels.some((label: any) => label.description === "Bottle" || label.description === "Drinking water");
+      const detectedPaper = detectedLabels.some((label: any) => label.description === "Paper");
+
+      if (detectedBottle) {
+        setModalMessage("Detected: Plastic Container\nYou CAN recycle this!");
+        setModalImage(require('../../assets/images/waterBottle.png'));
+        setModalVisible(true);
+      } else if (detectedPaper) {
+        setModalMessage("Detected: Paper\nYou CAN recycle this!");
+        setModalImage(require('../../assets/images/paperIcon.png')); 
+        setModalVisible(true);
+      } else {
+        requestData;
+      }
+    } catch (error) {
+      console.error("Error with image analyzer: ", error);
+      setError('Error analyzing image, please try again');
+    }
+  };
 
   const addToCart = (label: any) => {
     setCart([...cart, label]);
@@ -179,12 +195,13 @@ const analyzeImage = async () => {
 
   const clearImage = () => {
     setImageUri(null); // Clear the image URI
+    setLabels([]);
+    setError(null);
   };
 
   const navigateToMap = (itemName: string) => {
     navigation.navigate('map', { itemName });
   };
-
   
   interface ResponseData {
     recyclable: boolean;
@@ -250,60 +267,45 @@ const analyzeImage = async () => {
 
 
   return (
-<SafeAreaView style={styles.container}>
-  <View style={styles.container}>
-    <Image
-      source={require('../../assets/images/greenTopLeft.png')}
-      style={styles.topLeftImg}
-    />
-    <Image
-      source={require('../../assets/images/greenTopRight.png')}
-      style={styles.topRightImg}
-    />
-    <Image
-      source={require('../../assets/images/greenBottomLeft.png')}
-      style={styles.bottomLeftImg}
-    />
-    <Image
-      source={require('../../assets/images/greenBottomRight.png')}
-      style={styles.bottomRightImg}
-    />
-  </View>
-  <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-    <Text style={[styles.title, {color: 'white'}]}>Scan To See If Your Image Is Recyclable!</Text>
-    <Text style={[styles.title, {color: '#4D9F39'}]}>Where Can You Recycle This?</Text>
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+        <Text style={[styles.title, { color: 'white' }]}>
+          Scan To See If Your Image Is Recyclable!
+        </Text>
+        <Text style={[styles.title, { color: '#4D9F39' }]}>
+          Where Can You Recycle This?
+        </Text>
 
-    {imageUri ? (
-      <View style={styles.imageContainer}>
-        <TouchableOpacity style={styles.closeButton} onPress={clearImage}>
-          <Text style={styles.closeText}>X</Text>
+        {imageUri ? (
+          <View style={styles.imageContainer}>
+            <TouchableOpacity style={styles.closeButton} onPress={clearImage}>
+              <Text style={styles.closeText}>X</Text>
+            </TouchableOpacity>
+            <Image source={{ uri: imageUri }} style={styles.image} />
+          </View>
+        ) : (
+          <View style={styles.noImageContainer}>
+            <Text style={styles.noImageText}>No image selected</Text>
+          </View>
+        )}
+
+        <TouchableOpacity style={styles.button} onPress={analyzeImage}>
+          <Text style={styles.text}>Analyze Image</Text>
         </TouchableOpacity>
-        <Image source={{ uri: imageUri }} style={styles.image} />
-      </View>
-    ) : (
-      <View style={styles.noImageContainer}>
-        <Text style={styles.noImageText}>No image selected</Text>
-      </View>
-    )}
 
-    <TouchableOpacity style={styles.button} onPress={analyzeImage}>
-      <Text style={styles.text}>Analyze Image</Text>
-    </TouchableOpacity>
+        <View style={styles.buttonRow}>
+          <TouchableOpacity style={[styles.button, styles.tallButton]} onPress={useCamera}>
+            <Image source={require('../../assets/images/takePhoto.png')} style={styles.buttonImage} />
+          </TouchableOpacity>
 
-    {/* Wrap the buttons in a row */}
-    <View style={styles.buttonRow}>
-      <TouchableOpacity style={[styles.button, styles.tallButton]} onPress={useCamera}>
-        <Image source={require('../../assets/images/takePhoto.png')} style={styles.buttonImage}/>
-      </TouchableOpacity>
+          <TouchableOpacity style={[styles.button, styles.tallButton]} onPress={pickImage}>
+            <Image source={require('../../assets/images/uploadImage.png')} style={styles.uploadImage} />
+          </TouchableOpacity>
+        </View>
 
-      <TouchableOpacity style={[styles.button, styles.tallButton]} onPress={pickImage}>
-        <Image source={require('../../assets/images/uploadImage.png')} style={styles.uploadImage}/>
-      </TouchableOpacity>
-    </View>
+        {error && <Text style={styles.error}>{error}</Text>}
 
-    {error && <Text style={styles.error}>{error}</Text>}
-
-        {/* Modal for label selection */}
+        {/* Modal for image detection */}
         <Modal
           animationType="slide"
           transparent={true}
@@ -311,30 +313,23 @@ const analyzeImage = async () => {
           onRequestClose={() => setModalVisible(false)}
         >
           <View style={styles.modalOverlay}>
-            <View style={styles.modalContainer}>
-              <Text style={styles.modalTitle}>Select a Label</Text>
-              <Text style={styles.modalSubtitle}>
-                (If your item does not appear then please retake the photo with the item in clear focus)
-              </Text>
-              <FlatList
-                data={labels}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => (
-                  <TouchableOpacity style={styles.labelItem} onPress={() => addToCart(item)}>
-                    <Text>{item.description}</Text>
-                  </TouchableOpacity>
-                )}
-                contentContainerStyle={styles.labelList}
-                style={styles.flatList}
-              />
-              <TouchableOpacity style={styles.button} onPress={() => setModalVisible(false)}>
-                <Text style={styles.text}>Close</Text>
-              </TouchableOpacity>
+            <View style={styles.modalContainerNew}>
+              <Text style={styles.modalTitle}>{modalMessage}</Text>
+              {modalImage && <Image source={modalImage} style={styles.waterBottleImage} />}
+              <View style={styles.buttonContainerNew}>
+                <TouchableOpacity style={styles.retakeButton} onPress={() => { setModalVisible(false); clearImage(); }}>
+                  <Text style={styles.text}>Retake Photo</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.continueButton} onPress={() => { if (modalMessage && modalMessage.includes("Plastic")) { addToCart("Plastic"); } else { addToCart("Paper"); } setModalVisible(false); }} >
+                  <Text style={styles.text}>Continue</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </Modal>
 
         <PointsDisplay />
+
 
         {/* Cart display */}
         <View style={styles.cartContainer}>
@@ -364,14 +359,11 @@ const analyzeImage = async () => {
           )}
         </View>
 
-        {/* Spacer to ensure some space at the bottom when no image is present */}
         <View style={styles.spacer} />
       </ScrollView>
     </SafeAreaView>
   );
 };
-
-export default DetectObject;
 
 const styles = StyleSheet.create({
   container: {
@@ -386,12 +378,12 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   tallButton: {
-    width: 90,
-    height: 80,
+    width: 100,
+    height: 100,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 5,
-    marginLeft: 35,
+    marginLeft: 25,
   },
   scrollViewContainer: {
     paddingBottom: 20,
@@ -447,12 +439,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonImage: {
-    width: 60,
-    height: 60,
+    width: 75,
+    height: 75,
   },
   uploadImage: {
-    width: 70,
-    height: 70,
+    width: 85,
+    height: 85,
   },
   text: {
     color: 'black',
@@ -471,7 +463,7 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: '75%',
-    backgroundColor: 'white',
+    backgroundColor: '#728a68',
     borderRadius: 10,
     padding: 20,
     elevation: 5,
@@ -540,6 +532,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
+    textAlign: 'center',
   },
   modalSubtitle: {
     fontSize: 16,
@@ -579,13 +572,52 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   buttonRow: {
-    flexDirection: 'row', // This makes the buttons appear side by side
-    justifyContent: 'flex-start', // Adjust spacing between buttons
+    flexDirection: 'row', 
+    justifyContent: 'flex-start',
     alignItems: 'center',
     width: '70%',
-    marginBottom: 10, // Add spacing below the row
+    marginBottom: 10, 
   },
   halfButton: {
-    width: '48%', // Each button takes up 48% of the width to fit side by side with spacing
+    width: '48%', 
+  },
+    retakeButton: {
+    backgroundColor: '#c2d5ba',
+    borderRadius: 25,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginRight: 10,
+    alignItems: 'center',
+    width: '45%',
+  },
+  continueButton: {
+    backgroundColor: '#c2d5ba',
+    borderRadius: 25,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    width: '45%',
+  },
+  buttonContainerNew: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    width: '100%',
+    marginVertical: 10,
+  },
+  modalContainerNew: {
+    width: '75%',
+    backgroundColor: '#728a68',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+    elevation: 5,
+
+  },
+  waterBottleImage: {
+    width: 100,
+    height: 150,
+    resizeMode: 'contain',
+    marginVertical: 10,
   },
 });
+export default DetectObject;

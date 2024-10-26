@@ -3,14 +3,27 @@ import { useRouter } from 'expo-router';
 import { View, Text, TouchableOpacity, StyleSheet, Image, TextInput, ActivityIndicator } from 'react-native';
 import tw from 'twrnc';
 import { useAuth } from '../AuthContext';
+import { FIREBASE_AUTH } from '../FirebaseConfig';
+import { User } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 export default function LoginScreen() { // Renamed component to LoginScreen
-  const [signedIn, setSignedIn] = useState(false);
+  const {signedIn, setSignedIn} = useAuth();
   const router = useRouter();
-  
+  const auth = FIREBASE_AUTH;
   const [isLoading, setIsLoading] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [user, setUser] = useState<User | null>(null);
+  /*useEffect(() => {
+    onAuthStateChanged(FIREBASE_AUTH, (user) => {
+      console.log('user', user);
+      setUser(user);
+    });
+    }, []);*/
 
-  useEffect(() => {
+
+  /*useEffect(() => {
     // Simulate a loading process, e.g., fetching data or loading assets
     const timer = setTimeout(() => {
       setIsLoading(false); // Loading done
@@ -26,10 +39,19 @@ export default function LoginScreen() { // Renamed component to LoginScreen
         <Text>Loading...</Text>
       </View>
     );
-  }
+  }*/
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     // Perform login logic here
+    try {
+      const response = await signInWithEmailAndPassword(auth, email, password);
+      console.log(response);
+    } catch (error: any) {
+      console.log(error);
+      alert('Sign in failed: ' + error.message);
+    } finally {
+      setIsLoading(false); // Fix typo here as well
+    }
     setSignedIn(true);
     router.push('../(tabs)');
   };
@@ -76,6 +98,8 @@ export default function LoginScreen() { // Renamed component to LoginScreen
         style={styles.input}
         placeholder="Enter your email"
         placeholderTextColor="#FFFFFF"
+        value={email}
+        onChangeText={(text)=> setEmail(text)} //controlled input 
       />
       {/* Password Input */}
       <TextInput
@@ -83,6 +107,8 @@ export default function LoginScreen() { // Renamed component to LoginScreen
         placeholder="Enter your password"
         placeholderTextColor="#FFFFFF"
         secureTextEntry
+        value={password}
+        onChangeText = {(text)=>setPassword(text)} //controlled input
       />
       {/* Forgot Password */}
       <TouchableOpacity>
