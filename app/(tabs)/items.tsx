@@ -378,12 +378,12 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   tallButton: {
-    width: 100,
-    height: 100,
+    width: 140,
+    height: 140,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 5,
-    marginLeft: 25,
+    marginRight: 18,
+    marginLeft: -4,
   },
   scrollViewContainer: {
     paddingBottom: 20,
@@ -433,23 +433,24 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#FFFBF1',
-    borderRadius: 25,
+    borderRadius: 40,
     padding: 10,
     marginBottom: 10,
     alignItems: 'center',
   },
   buttonImage: {
-    width: 75,
-    height: 75,
+    width: 110,
+    height: 110,
   },
   uploadImage: {
-    width: 85,
-    height: 85,
+    width: 110,
+    height: 110,
   },
   text: {
     color: 'black',
     textAlign: 'center',
     fontWeight: 'bold',
+    fontSize: 17,
   },
   error: {
     color: 'red',
@@ -464,7 +465,7 @@ const styles = StyleSheet.create({
   modalContainer: {
     width: '75%',
     backgroundColor: '#728a68',
-    borderRadius: 10,
+    borderRadius: 15,
     padding: 20,
     elevation: 5,
   },
