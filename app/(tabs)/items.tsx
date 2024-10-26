@@ -6,6 +6,31 @@ import * as FileSystem from 'expo-file-system';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Platform } from 'react-native';
+import Groq from 'groq-sdk';
+
+const client = new Groq({
+  apiKey: process.env.EXPO_PUBLIC_GROQ_API_KEY,
+});
+
+const systemPrompt = 
+`You are RecycleBot, an AI assistant for RecycleRoute, a mobile app that gamifies recycling. When provided an item name, you must respond *only* with a JSON object in the format below—nothing else. Do not include any prefacing text or extra information. If you detect an error, still return a JSON object in this exact format.
+
+For recyclable items, return:
+
+{
+  "recyclable": true,
+  "points": <integer from 0 to 5>
+}
+
+For non-recyclable items, return:
+
+{
+  "recyclable": false,
+  "points": 0
+}
+
+Be fair but somewhat strict in awarding points (0-5) based on the difficulty or ease of recycling the item.`
+
 
 type RootStackParamList = {
   map: { itemName: string };
@@ -21,6 +46,7 @@ const DetectObject = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [cart, setCart] = useState<any[]>([]);
   const [cameraPermission, setCameraPermission] = useState<boolean | null>(null);
+  const [total, setTotal] = useState<number>(0);
 
   const pickImage = async () => {
     try {
@@ -159,6 +185,69 @@ const analyzeImage = async () => {
     navigation.navigate('map', { itemName });
   };
 
+  
+  interface ResponseData {
+    recyclable: boolean;
+    points: number;
+  }
+  
+  const handleRecycle = async (itemName: string) => {
+    if (!itemName) {
+      console.error('Unable to recycle item, name error');
+      return;
+    }
+  
+    try {
+      const chatCompletion = await client.chat.completions.create({
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: `I am recycling ${itemName}?` }
+        ],
+        model: 'llama3-8b-8192',
+      });
+  
+      const response = chatCompletion.choices[0].message.content;
+  
+      if (typeof response === 'string') {
+        try {
+          const { recyclable, points }: ResponseData = JSON.parse(response);
+          console.log(`Recyclable: ${recyclable}, Points: ${points}`);
+          
+          if (recyclable === true) {
+            // Use functional update to ensure we're working with latest state
+            setTotal(prevTotal => {
+              const newTotal = prevTotal + points;
+              console.log(`Previous total: ${prevTotal}, Added points: ${points}, New total: ${newTotal}`);
+              return newTotal;
+            });
+            
+            Alert.alert(
+              'Recycling Success!',
+              `Congrats! You have recycled ${itemName} and earned ${points} points!\nTotal Points: ${total + points}`
+            );
+          } else {
+            Alert.alert('Not Recyclable', `Sorry, ${itemName} is not recyclable.`);
+          }
+        } catch (error) {
+          console.error('Error parsing response:', error);
+          Alert.alert('Error', 'Unable to process recycling points');
+        }
+      } else {
+        console.error('Invalid response type');
+        Alert.alert('Error', 'Unable to verify item recyclability');
+      }
+    } catch (error) {
+      console.error('Error during recycle verification:', error);
+      Alert.alert('Error', 'Failed to process recycling request');
+    }
+  };
+
+  const PointsDisplay = () => (
+    <View>
+      <Text>Total Points: {total}</Text>
+    </View>
+  );
+
 
   return (
 <SafeAreaView style={styles.container}>
@@ -245,6 +334,8 @@ const analyzeImage = async () => {
           </View>
         </Modal>
 
+        <PointsDisplay />
+
         {/* Cart display */}
         <View style={styles.cartContainer}>
           <Text style={styles.cartTitle}>Recycling Cart:</Text>
@@ -253,6 +344,9 @@ const analyzeImage = async () => {
               <View key={index} style={styles.cartItem}>
                 <Text>{item.description}</Text>
                 <View style={styles.cartButtonsContainer}>
+                  <TouchableOpacity style = {styles.mapButton}>
+                    <Text style={styles.mapButtonText} onPress={() => handleRecycle(item.description)}>Recycle</Text>
+                  </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.mapButton}
                     onPress={() => navigateToMap(item.description)} // Navigate to Map with item name
