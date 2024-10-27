@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native'; // Import useNavigatio
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Platform } from 'react-native';
 import Groq from 'groq-sdk';
+import {usePoints, PointsProvider} from '../PointsContext';
 
 const client = new Groq({
   apiKey: process.env.EXPO_PUBLIC_GROQ_API_KEY,
@@ -29,7 +30,7 @@ For non-recyclable items, return:
   "points": 0
 }
 
-Be fair but somewhat strict in awarding points (0-5) based on the difficulty or ease of recycling the item.`
+Be fair but somewhat strict in awarding points (0-5) based on the difficulty or ease of recycling the item. For example straws and drinks should be only 1-3 points but stuff like gold and metal should be 5 points due to ease of recycling them.`
 
 
 type RootStackParamList = {
@@ -46,10 +47,7 @@ const DetectObject = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [cart, setCart] = useState<any[]>([]);
   const [cameraPermission, setCameraPermission] = useState<boolean | null>(null);
-  const [total, setTotal] = useState<number>(0);
-  const [modalMessage, setModalMessage] = useState<string | null>(null);
-  const [modalImage, setModalImage] = useState<any>(null);
-
+  const {points, addPoints} = usePoints();
 
   const pickImage = async () => {
     try {
@@ -154,30 +152,17 @@ const analyzeImage = async () => {
       ],
     };
 
-      const response = await axios.post(apiURL, requestData);
-      console.log("Response Data: ", response.data);
-      const detectedLabels = response.data.responses[0].labelAnnotations || [];
-      setLabels(detectedLabels);
+    const response = await axios.post(apiURL, requestData);
 
-      const detectedBottle = detectedLabels.some((label: any) => label.description === "Bottle" || label.description === "Drinking water");
-      const detectedPaper = detectedLabels.some((label: any) => label.description === "Paper");
-
-      if (detectedBottle) {
-        setModalMessage("Detected: Plastic Container\nYou CAN recycle this!");
-        setModalImage(require('../../assets/images/waterBottle.png'));
-        setModalVisible(true);
-      } else if (detectedPaper) {
-        setModalMessage("Detected: Paper\nYou CAN recycle this!");
-        setModalImage(require('../../assets/images/paperIcon.png')); 
-        setModalVisible(true);
-      } else {
-        requestData;
-      }
-    } catch (error) {
-      console.error("Error with image analyzer: ", error);
-      setError('Error analyzing image, please try again');
-    }
-  };
+    console.log("Response Data: ", response.data);
+    setLabels(response.data.responses[0].labelAnnotations);
+    setError(null);
+    setModalVisible(true);
+  } catch (error) {
+    console.error("Error with image analyzer: ", error);
+    setError('Error analyzing image, please try again');
+  }
+};
 
   const addToCart = (label: any) => {
     setCart([...cart, label]);
@@ -195,13 +180,12 @@ const analyzeImage = async () => {
 
   const clearImage = () => {
     setImageUri(null); // Clear the image URI
-    setLabels([]);
-    setError(null);
   };
 
   const navigateToMap = (itemName: string) => {
     navigation.navigate('map', { itemName });
   };
+
   
   interface ResponseData {
     recyclable: boolean;
@@ -227,20 +211,16 @@ const analyzeImage = async () => {
   
       if (typeof response === 'string') {
         try {
-          const { recyclable, points }: ResponseData = JSON.parse(response);
+          const { recyclable, points : earnedPoints }: ResponseData = JSON.parse(response);
           console.log(`Recyclable: ${recyclable}, Points: ${points}`);
           
           if (recyclable === true) {
             // Use functional update to ensure we're working with latest state
-            setTotal(prevTotal => {
-              const newTotal = prevTotal + points;
-              console.log(`Previous total: ${prevTotal}, Added points: ${points}, New total: ${newTotal}`);
-              return newTotal;
-            });
+            addPoints(earnedPoints);
             
             Alert.alert(
               'Recycling Success!',
-              `Congrats! You have recycled ${itemName} and earned ${points} points!\nTotal Points: ${total + points}`
+              `Congrats! You have recycled ${itemName} and earned ${earnedPoints} points!\nTotal Points: ${earnedPoints + points}`
             );
           } else {
             Alert.alert('Not Recyclable', `Sorry, ${itemName} is not recyclable.`);
@@ -261,51 +241,66 @@ const analyzeImage = async () => {
 
   const PointsDisplay = () => (
     <View>
-      <Text>Total Points: {total}</Text>
+      <Text>Total Points: {points}</Text>
     </View>
   );
 
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-        <Text style={[styles.title, { color: 'white' }]}>
-          Scan To See If Your Image Is Recyclable!
-        </Text>
-        <Text style={[styles.title, { color: '#4D9F39' }]}>
-          Where Can You Recycle This?
-        </Text>
+<SafeAreaView style={styles.container}>
+  <View style={styles.container}>
+    <Image
+      source={require('../../assets/images/greenTopLeft.png')}
+      style={styles.topLeftImg}
+    />
+    <Image
+      source={require('../../assets/images/greenTopRight.png')}
+      style={styles.topRightImg}
+    />
+    <Image
+      source={require('../../assets/images/greenBottomLeft.png')}
+      style={styles.bottomLeftImg}
+    />
+    <Image
+      source={require('../../assets/images/greenBottomRight.png')}
+      style={styles.bottomRightImg}
+    />
+  </View>
+  <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+    <Text style={[styles.title, {color: 'white'}]}>Scan To See If Your Image Is Recyclable!</Text>
+    <Text style={[styles.title, {color: '#4D9F39'}]}>Where Can You Recycle This?</Text>
 
-        {imageUri ? (
-          <View style={styles.imageContainer}>
-            <TouchableOpacity style={styles.closeButton} onPress={clearImage}>
-              <Text style={styles.closeText}>X</Text>
-            </TouchableOpacity>
-            <Image source={{ uri: imageUri }} style={styles.image} />
-          </View>
-        ) : (
-          <View style={styles.noImageContainer}>
-            <Text style={styles.noImageText}>No image selected</Text>
-          </View>
-        )}
-
-        <TouchableOpacity style={styles.button} onPress={analyzeImage}>
-          <Text style={styles.text}>Analyze Image</Text>
+    {imageUri ? (
+      <View style={styles.imageContainer}>
+        <TouchableOpacity style={styles.closeButton} onPress={clearImage}>
+          <Text style={styles.closeText}>X</Text>
         </TouchableOpacity>
+        <Image source={{ uri: imageUri }} style={styles.image} />
+      </View>
+    ) : (
+      <View style={styles.noImageContainer}>
+        <Text style={styles.noImageText}>No image selected</Text>
+      </View>
+    )}
 
-        <View style={styles.buttonRow}>
-          <TouchableOpacity style={[styles.button, styles.tallButton]} onPress={useCamera}>
-            <Image source={require('../../assets/images/takePhoto.png')} style={styles.buttonImage} />
-          </TouchableOpacity>
+    <TouchableOpacity style={styles.button} onPress={analyzeImage}>
+      <Text style={styles.text}>Analyze Image</Text>
+    </TouchableOpacity>
 
-          <TouchableOpacity style={[styles.button, styles.tallButton]} onPress={pickImage}>
-            <Image source={require('../../assets/images/uploadImage.png')} style={styles.uploadImage} />
-          </TouchableOpacity>
-        </View>
+    {/* Wrap the buttons in a row */}
+    <View style={styles.buttonRow}>
+      <TouchableOpacity style={[styles.button, styles.tallButton]} onPress={useCamera}>
+        <Image source={require('../../assets/images/takePhoto.png')} style={styles.buttonImage}/>
+      </TouchableOpacity>
 
-        {error && <Text style={styles.error}>{error}</Text>}
+      <TouchableOpacity style={[styles.button, styles.tallButton]} onPress={pickImage}>
+        <Image source={require('../../assets/images/uploadImage.png')} style={styles.uploadImage}/>
+      </TouchableOpacity>
+    </View>
 
-        {/* Modal for image detection */}
+    {error && <Text style={styles.error}>{error}</Text>}
+
+        {/* Modal for label selection */}
         <Modal
           animationType="slide"
           transparent={true}
@@ -313,23 +308,30 @@ const analyzeImage = async () => {
           onRequestClose={() => setModalVisible(false)}
         >
           <View style={styles.modalOverlay}>
-            <View style={styles.modalContainerNew}>
-              <Text style={styles.modalTitle}>{modalMessage}</Text>
-              {modalImage && <Image source={modalImage} style={styles.waterBottleImage} />}
-              <View style={styles.buttonContainerNew}>
-                <TouchableOpacity style={styles.retakeButton} onPress={() => { setModalVisible(false); clearImage(); }}>
-                  <Text style={styles.text}>Retake Photo</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.continueButton} onPress={() => { if (modalMessage && modalMessage.includes("Plastic")) { addToCart("Plastic"); } else { addToCart("Paper"); } setModalVisible(false); }} >
-                  <Text style={styles.text}>Continue</Text>
-                </TouchableOpacity>
-              </View>
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalTitle}>Select a Label</Text>
+              <Text style={styles.modalSubtitle}>
+                (If your item does not appear then please retake the photo with the item in clear focus)
+              </Text>
+              <FlatList
+                data={labels}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => (
+                  <TouchableOpacity style={styles.labelItem} onPress={() => addToCart(item)}>
+                    <Text>{item.description}</Text>
+                  </TouchableOpacity>
+                )}
+                contentContainerStyle={styles.labelList}
+                style={styles.flatList}
+              />
+              <TouchableOpacity style={styles.button} onPress={() => setModalVisible(false)}>
+                <Text style={styles.text}>Close</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </Modal>
 
         <PointsDisplay />
-
 
         {/* Cart display */}
         <View style={styles.cartContainer}>
@@ -359,6 +361,7 @@ const analyzeImage = async () => {
           )}
         </View>
 
+        {/* Spacer to ensure some space at the bottom when no image is present */}
         <View style={styles.spacer} />
       </ScrollView>
     </SafeAreaView>
@@ -378,12 +381,12 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   tallButton: {
-    width: 140,
-    height: 140,
+    width: 90,
+    height: 80,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 18,
-    marginLeft: -4,
+    marginRight: 5,
+    marginLeft: 35,
   },
   scrollViewContainer: {
     paddingBottom: 20,
@@ -433,24 +436,23 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#FFFBF1',
-    borderRadius: 40,
+    borderRadius: 25,
     padding: 10,
     marginBottom: 10,
     alignItems: 'center',
   },
   buttonImage: {
-    width: 110,
-    height: 110,
+    width: 60,
+    height: 60,
   },
   uploadImage: {
-    width: 110,
-    height: 110,
+    width: 70,
+    height: 70,
   },
   text: {
     color: 'black',
     textAlign: 'center',
     fontWeight: 'bold',
-    fontSize: 17,
   },
   error: {
     color: 'red',
@@ -464,8 +466,8 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: '75%',
-    backgroundColor: '#728a68',
-    borderRadius: 15,
+    backgroundColor: 'white',
+    borderRadius: 10,
     padding: 20,
     elevation: 5,
   },
@@ -533,7 +535,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
-    textAlign: 'center',
   },
   modalSubtitle: {
     fontSize: 16,
@@ -573,52 +574,15 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   buttonRow: {
-    flexDirection: 'row', 
-    justifyContent: 'flex-start',
+    flexDirection: 'row', // This makes the buttons appear side by side
+    justifyContent: 'flex-start', // Adjust spacing between buttons
     alignItems: 'center',
     width: '70%',
-    marginBottom: 10, 
+    marginBottom: 10, // Add spacing below the row
   },
   halfButton: {
-    width: '48%', 
-  },
-    retakeButton: {
-    backgroundColor: '#c2d5ba',
-    borderRadius: 25,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    marginRight: 10,
-    alignItems: 'center',
-    width: '45%',
-  },
-  continueButton: {
-    backgroundColor: '#c2d5ba',
-    borderRadius: 25,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    alignItems: 'center',
-    width: '45%',
-  },
-  buttonContainerNew: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    width: '100%',
-    marginVertical: 10,
-  },
-  modalContainerNew: {
-    width: '75%',
-    backgroundColor: '#728a68',
-    borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
-    elevation: 5,
-
-  },
-  waterBottleImage: {
-    width: 100,
-    height: 150,
-    resizeMode: 'contain',
-    marginVertical: 10,
+    width: '48%', // Each button takes up 48% of the width to fit side by side with spacing
   },
 });
+
 export default DetectObject;

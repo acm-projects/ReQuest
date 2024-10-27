@@ -10,6 +10,7 @@ import { useContext } from 'react';
 import tw from 'twrnc';
 import TabBar from "../../components/TabBar";
 import { useAuth } from '@/AuthContext';
+import { PointsProvider } from '../PointsContext'
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -53,6 +54,7 @@ export default function TabLayout() {
   // If user is signed in, show the Tabs layout
   if (signedIn) {
     return (
+      <PointsProvider>
       <Tabs tabBar={props => <TabBar {...props} />}>
       <Tabs.Screen
         name="index"
@@ -86,13 +88,14 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
+    </PointsProvider>
 
     );
   }
 
   // If user is not signed in, show the login/sign up screen
   return (
-    <View style={styles.container}>
+      <View style={styles.container}>
       {/* Top Section with Header */}
       <View style={styles.topSection}>
         <Image

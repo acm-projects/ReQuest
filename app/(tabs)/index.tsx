@@ -1,31 +1,19 @@
-import React, { useEffect, useRef, useState, } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import tw from 'twrnc';
 import { useRouter } from 'expo-router';
-import { WebView } from 'react-native-webview'; // Ensure you have the react-native-webview package installed
-import { Ionicons } from '@expo/vector-icons'; 
+import { WebView } from 'react-native-webview';
+import { Ionicons } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
 import EStyleSheet from 'react-native-extended-stylesheet';
-import { CartesianChart, Bar, useChartPressState, StackedBar} from "victory-native";
-import { Circle, useFont, vec } from "@shopify/react-native-skia";
+import { CartesianChart, Bar, useChartPressState, StackedBar } from "victory-native";
+import { Circle, Points, useFont, vec } from "@shopify/react-native-skia";
 import { LinearGradient, Text as SKText } from "@shopify/react-native-skia";
 import { useDerivedValue } from "react-native-reanimated";
 import * as Font from 'expo-font';
 import TipsCarouselWithDots from '../tipcarouselwithdots';
 import { NativeScrollEvent } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
-import { useCallback } from 'react';
-
-
-
-
-
-
-
-
-
-
-
-
+import { usePoints, PointsProvider } from '../PointsContext';
 import {
   Pressable,
   Linking,
@@ -46,7 +34,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   SafeAreaView,
-  Image, 
+  Image,
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
@@ -78,10 +66,6 @@ As well as in your responses please try to keep them short your responses should
 
 
 
-
- 
-
-
 interface Message {
   role: 'user' | 'bot';
   content: string;
@@ -91,17 +75,16 @@ const client = new Groq({
   apiKey: process.env.EXPO_PUBLIC_GROQ_API_KEY,
 });
 
-export function Chat() {
+const Chat = () => {
   const [chatText, setChatText] = useState<string>('');
   const [textInputHeight, setTextInputHeight] = useState<number>(60);
   const [sendingChat, setSendingChat] = useState<boolean>(false);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [isModalVisible, setModalVisible] = useState(false); // Add modal state
+  const [isModalVisible, setModalVisible] = useState(false);
 
   const translateYRef = useRef<Animated.Value>(new Animated.Value(0)).current;
   const tabBarHeight = useBottomTabBarHeight();
 
-  
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
@@ -119,8 +102,6 @@ export function Chat() {
         }).start();
       }
     );
-
-   
 
     const keyboardWillHideListener = Keyboard.addListener(
       'keyboardWillHide',
@@ -146,14 +127,14 @@ export function Chat() {
 
   const handleSubmit = async () => {
     if (chatText.trim() === '') return;
-  
+
     setSendingChat(true);
     Keyboard.dismiss();
     const userMessage = chatText;
     setChatText('');
-  
+
     setMessages([...messages, { role: 'user', content: userMessage }]);
-  
+
     try {
       const chatCompletion = await client.chat.completions.create({
         messages: [
@@ -162,15 +143,15 @@ export function Chat() {
         ],
         model: 'llama3-8b-8192',
       });
-  
+
       const botResponse = chatCompletion.choices[0].message.content ?? '';
-  
+
       setMessages([...messages, { role: 'user', content: userMessage }, { role: 'bot', content: botResponse }]);
     } catch (error) {
       console.error('Error sending message:', error);
       return alert('Error communicating with chatbot, check your internet or reach out to support');
     }
-  
+
     setSendingChat(false);
   };
 
@@ -254,24 +235,16 @@ export function Chat() {
   },
   });
 
-
-  
-
-
-
    return (
-    <View style={{flex: 1} }>
-
-
+    <View style={{ flex: 1 }}>
       <Pressable style={styles.floatingButton} onPress={toggleModal}>
-  <Image 
-    source={require('../../assets/images/recycleEarth.png')} // Update with your image path
-    style={{ width: 40, height: 40 }} // Adjust size as needed
-    resizeMode="contain" // This will keep the aspect ratio of the image
-  />
-</Pressable>
+        <Image
+          source={require('../../assets/images/recycleEarth.png')}
+          style={{ width: 40, height: 40 }}
+          resizeMode="contain"
+        />
+      </Pressable>
 
-      {/* Chatbot Modal */}
       <Modal
         visible={isModalVisible}
         animationType="slide"
@@ -288,7 +261,6 @@ export function Chat() {
               borderRadius: 20,
             }}
           >
-            {/* Close button */}
             <Pressable
               style={{
                 backgroundColor: '#400908',
@@ -297,53 +269,52 @@ export function Chat() {
                 position: 'absolute',
                 top: 10,
                 left: 10,
-                zIndex: 1, // Ensure it is above other elements
+                zIndex: 1,
               }}
               onPress={toggleModal}
             >
               <Ionicons name="arrow-back" size={24} color="white" />
             </Pressable>
 
-        <View style={{ flex: 1, borderTopLeftRadius: 20, borderTopRightRadius: 20, overflow: 'hidden' }}>
-        <FlatList
-          data={messages}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <View
-              style={{
-                marginVertical: 5,
-                alignSelf: item.role === 'user' ? 'flex-end' : 'flex-start',
-                maxWidth: '80%',
-                borderRadius: 24,
-              }}
-            >
-              <View
-                style={{
-                  backgroundColor: item.role === 'user' ? '#DCF8C6' : '#ECECEC',
-                  padding: 10,
-                  borderRadius: 15,
-                  borderBottomLeftRadius: item.role === 'user' ? 15 : 0,
-                  borderBottomRightRadius: item.role === 'user' ? 0 : 15,
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 1 },
-                  shadowOpacity: 0.2,
-                  shadowRadius: 1,
-                  elevation: 1,
+            <View style={{ flex: 1, borderTopLeftRadius: 20, borderTopRightRadius: 20, overflow: 'hidden' }}>
+              <FlatList
+                data={messages}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => (
+                  <View
+                    style={{
+                      marginVertical: 5,
+                      alignSelf: item.role === 'user' ? 'flex-end' : 'flex-start',
+                      maxWidth: '80%',
+                      borderRadius: 24,
+                    }}
+                  >
+                    <View
+                      style={{
+                        backgroundColor: item.role === 'user' ? '#DCF8C6' : '#ECECEC',
+                        padding: 10,
+                        borderRadius: 15,
+                        borderBottomLeftRadius: item.role === 'user' ? 15 : 0,
+                        borderBottomRightRadius: item.role === 'user' ? 0 : 15,
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 1 },
+                        shadowOpacity: 0.2,
+                        shadowRadius: 1,
+                        elevation: 1,
+                      }}
+                    >
+                      <Text>{item.content}</Text>
+                    </View>
+                  </View>
+                )}
+                contentContainerStyle={{
+                  flexGrow: 1,
+                  justifyContent: 'flex-end',
+                  paddingBottom: 100,
                 }}
-              >
-                <Text>{item.content}</Text>
-              </View>
+              />
             </View>
-          )}
-          contentContainerStyle={{
-            flexGrow: 1,
-            justifyContent: 'flex-end',
-            paddingBottom: 100, // Adjust this padding for TextInput space
-          }}
-        />
-      </View>
 
-            {/* Text Input */}
             <View
               style={{
                 width: '100%',
@@ -354,8 +325,6 @@ export function Chat() {
                 alignItems: 'center',
                 borderTopWidth: 1,
                 borderColor: '#400908',
-                
-
               }}
             >
               <TextInput
@@ -368,14 +337,13 @@ export function Chat() {
                   paddingHorizontal: 12,
                   maxHeight: 80,
                   height: textInputHeight,
-                      paddingVertical: 10, // Adjust this value to vertically center the placeholder text
-
+                  paddingVertical: 10,
                 }}
                 multiline
                 value={chatText}
                 onChangeText={(text) => setChatText(text)}
                 placeholder="Ask a question here"
-                  placeholderTextColor="#400908" // Set your desired color here
+                placeholderTextColor="#400908"
                 onContentSizeChange={handleContentSizeChange}
               />
               <Pressable
@@ -401,32 +369,21 @@ export function Chat() {
         </SafeAreaView>
       </Modal>
     </View>
-
   );
-}
+};
 
 
           
-
-
-
-
-
-
-export default function Dashboard() {
-
- const [activeIndex, setActiveIndex] = useState(0);
-  
-  // 2. All useRef hooks
+const Dashboard = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = useRef(null);
-  
-  // 3. Font loading hook
+  const { points } = usePoints();
+
   const [fontsLoaded] = useFonts({
     'Nerko-One': require('../../assets/fonts/NerkoOne-Regular.ttf'),
     'Gilroy': require('../../assets/fonts/Gilroy-Regular.otf'),
   });
 
-  // 4. useEffect for splash screen
   useEffect(() => {
     async function prepare() {
       try {
@@ -438,28 +395,24 @@ export default function Dashboard() {
     prepare();
   }, []);
 
-  // 5. useCallback for layout
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
 
-  // Screen dimension
   const { width } = Dimensions.get('window');
 
-  // Your onScroll function
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const contentOffsetX = event.nativeEvent.contentOffset.x;
     const currentIndex = Math.round(contentOffsetX / width);
     setActiveIndex(currentIndex);
   };
 
-  // Early return for fonts
   if (!fontsLoaded) {
     return null;
   }
- 
+
   const tipsAndGuides = [
     {
       title: "Tip 1: Reduce Plastic Use",
@@ -488,146 +441,109 @@ export default function Dashboard() {
     },
   ];
 
- 
-
-
- 
+  const PointsDisplay = () => {
+    return (
+      <PointsProvider>
+        {points}
+      </PointsProvider>
+    )
+  }
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-amber-50`}>
-<View style={tw`flex-1`}>
-  <View style={tw`pt-7`}> 
-<Text style={[tw`text-4xl font-bold text-center text-[#400908]`, { fontFamily: 'Nerko-One' }]}>
-      Welcome Back, Name!
-    </Text>
-  </View>
-<Text style={[tw`text-lg text-[#400908] mt-2 ml-3 pt-22 text-left`, { fontFamily: 'Gilroy' }]}>
-  These are your current stats:
-</Text></View>
+      <SafeAreaView style={tw`flex-1 bg-amber-50`}>
+        <View style={tw`flex-1`}>
+          <View style={tw`pt-7`}>
+            <Text style={[tw`text-4xl font-bold text-center text-[#400908]`, { fontFamily: 'Nerko-One' }]}>
+              Welcome Back, Name!
+            </Text>
+          </View>
+          <Text style={[tw`text-lg text-[#400908] mt-2 ml-3 pt-22 text-left`, { fontFamily: 'Gilroy' }]}>
+            These are your current stats:
+          </Text>
+        </View>
 
+        <Image
+          source={require('../../assets/images/recycleEarth.png')}
+          style={tw`absolute right-3 top-32 w-30 h-30 z-11`}
+        />
 
-         <Image
-  source={require('../../assets/images/recycleEarth.png')}
-  style={tw`absolute right-3 top-32 w-30 h-30 z-11`} 
-/>
+        {/* Stats Section */}
+        <View style={[{ zIndex: 8 }]}>
+        <View style={[tw`absolute px-8 pt-5 top-[-40]`, { zIndex: 2, width: '90%', alignSelf: 'center' }]}>
+          <View style={[tw`absolute inset--1 bg-[#DCF8C6]`, { borderRadius: 30, zIndex: -1 }]} />
+          
+          <View style={tw`flex-row justify-between mb-4`}>
+            <View style={tw`flex-1 max-w-[75%]`}>
+              <Text style={[tw`text-[#400908] text-base`, { fontFamily: 'Gilroy' }]}>
+                Points:
+              </Text>
+            </View>
+            <View style={tw`flex-1 max-w-[30%]`}>
+              <Text style={[tw`text-[#400908] text-base font-bold text-right`, { fontFamily: 'Gilroy' }]}>
+                <PointsDisplay />
+              </Text>
+            </View>
+          </View>
 
+          <View style={tw`flex-row justify-between mb-4`}>
+            <View style={tw`flex-1 max-w-[75%]`}>
+              <Text style={[tw`text-[#400908] text-base`
+                , { fontFamily: 'Gilroy' }]}>
+                How long the world would last if everyone recycled like you:
+              </Text>
+            </View>
+            <View style={tw`flex-1 max-w-[30%]`}>
+              <Text style={[tw`text-[#400908] text-base font-bold text-right`, { fontFamily: 'Gilroy' }]}>
+                800 years
+              </Text>
+            </View>
+          </View>
 
-      {/* Stats Sections */}
-<View style={[{ zIndex: 8 }]}>
-  <View style={[tw`absolute px-8 pt-5 top-[-40]`, { zIndex: 2, width: '90%', alignSelf: 'center' }]}>
-    <View style={[tw`absolute inset--1 bg-[#DCF8C6]`, { borderRadius: 30, zIndex: -1 }]} />
-    
-    <View style={tw`flex-row justify-between mb-4`}>
-      <View style={tw`flex-1 max-w-[75%]`}>
-        <Text style={[tw`text-[#400908] text-base`, { fontFamily: 'Gilroy' }]}>
-          Number of items recycled:
-        </Text>
+          <View style={tw`flex-row justify-between mb-4`}>
+            <View style={tw`flex-1 max-w-[75%]`}>
+              <Text style={[tw`text-[#400908] text-base`, { fontFamily: 'Gilroy' }]}>
+                Reduced Carbon Footprint:
+              </Text>
+            </View>
+            <View style={tw`flex-1 max-w-[30%]`}>
+              <Text style={[tw`text-[#400908] text-base font-bold text-right`, { fontFamily: 'Gilroy' }]}>
+                789 kg
+              </Text>
+            </View>
+          </View>
+
+        </View>
       </View>
-      <View style={tw`flex-1 max-w-[30%]`}>
-        <Text style={[tw`text-[#400908] text-base font-bold text-right`, { fontFamily: 'Gilroy' }]}>
-          220 items
-        </Text>
-      </View>
-    </View>
 
-    <View style={tw`flex-row justify-between mb-4`}>
-      <View style={tw`flex-1 max-w-[75%]`}>
-        <Text style={[tw`text-[#400908] text-base`, { fontFamily: 'Gilroy' }]}>
-          How long the world would last if everyone recycled like you:
-        </Text>
-      </View>
-      <View style={tw`flex-1 max-w-[30%]`}>
-        <Text style={[tw`text-[#400908] text-base font-bold text-right`, { fontFamily: 'Gilroy' }]}>
-          800 years
-        </Text>
-      </View>
-    </View>
+        <View style={[styles.dotsContainer, tw`absolute bottom-70 flex-row justify-center`]}>
+          {tipsAndGuides.map((_, index) => (
+            <View
+              key={index}
+              style={[
+                styles.dot,
+                activeIndex === index ? styles.activeDot : styles.inactiveDot,
+                tw`mx-1`
+              ]}
+            />
+          ))}
+        </View>
 
-    <View style={tw`flex-row justify-between mb-4`}>
-      <View style={tw`flex-1 max-w-[75%]`}>
-        <Text style={[tw`text-[#400908] text-base`, { fontFamily: 'Gilroy' }]}>
-          Reduced Carbon Footprint:
-        </Text>
-      </View>
-      <View style={tw`flex-1 max-w-[30%]`}>
-        <Text style={[tw`text-[#400908] text-base font-bold text-right`, { fontFamily: 'Gilroy' }]}>
-          789 kg
-        </Text>
-      </View>
-    </View>
+        <View style={tw`flex-1 bg-amber-50`}>
+          <View style={[tw`flex-1`, { zIndex: 9, alignItems: 'center', justifyContent: 'center' }]}>
+            <TipsCarouselWithDots />
+          </View>
+        </View>
 
-  </View>
-</View>
-
-
-
- <View style={[styles.dotsContainer, tw`absolute bottom-70 flex-row justify-center`]}>
-  {tipsAndGuides.map((_, index) => (
-    <View
-      key={index}
-      style={[
-        styles.dot,
-        activeIndex === index ? styles.activeDot : styles.inactiveDot,
-        tw`mx-1` // Add margin between dots to space them out
-      ]}
-    />
-  ))}
-</View>
-
-
-
-
- <View style={tw`flex-1 bg-amber-50`}>
-   {/* <ScrollView
-    contentContainerStyle={[
-      styles.scrollView, 
-      tw`p-15 mt-15`, // Add padding instead of justify-end for spacing
-      { alignItems: 'center', paddingBottom: 0 } // Ensure there's enough space at the bottom
-    ]}
-    horizontal={true}
-    showsHorizontalScrollIndicator={false}
-    pagingEnabled
-     onScroll={onScroll}
-        scrollEventThrottle={16}
-  >
-    {tipsAndGuides.map((tip, index) => (
-<View key={index} style={[tw`w-60 m-2 p-4 rounded-3xl`, { backgroundColor: '#DCF8C6' }]}>
-  <Text style={[tw`text-xl font-bold mt-1`, { color: '#400908' }]}>{tip.title}</Text> 
-  <WebView
-    source={{ uri: tip.link }}
-    style={tw`w-55 h-60`} 
-    javaScriptEnabled={true}
-    domStorageEnabled={true}
-    startInLoadingState={true}
-    scalesPageToFit={true}
-  />
-</View>
-
-
-
-
-    ))}
-  </ScrollView> 
-
-        */}
-    
-<View style={[tw`flex-1`, { zIndex: 9, alignItems: 'center', justifyContent: 'center' }]}>
-  <TipsCarouselWithDots />
-</View>
-
-
-</View>
-
-
-     
-    <View style={{ zIndex: 10 }}>
-    <Chat />
-  </View>
-    </SafeAreaView>
+        <View style={{ zIndex: 10 }}>
+          <Chat />
+        </View>
+      </SafeAreaView>
   );
-}
+};
 
-const styles = EStyleSheet.create({
+export default Dashboard;
+
+const styles = StyleSheet.create({
  scrollView: {
     padding: 20,
     flexGrow: 1,
