@@ -8,6 +8,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
 import { useContext } from 'react';
 import tw from 'twrnc';
+import TabBar from "../../components/TabBar";
 import { useAuth } from '@/AuthContext';
 
 export default function TabLayout() {
@@ -52,49 +53,40 @@ export default function TabLayout() {
   // If user is signed in, show the Tabs layout
   if (signedIn) {
     return (
-      <Tabs
-        screenOptions={{
-          tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+      <Tabs tabBar={props => <TabBar {...props} />}>
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: "Home",
           headerShown: false,
         }}
-      >
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: 'Home',
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="items"
-          options={{
-            title: 'Items',
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="map"
-          options={{
-            title: 'Map',
-            tabBarIcon: ({ color, focused }) => (
-              <Ionicons name={focused ? 'map' : 'map-outline'} color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="profile"
-          options={{
-            title: 'Profile',
-            tabBarIcon: ({ color, focused }) => (
-              <Ionicons name={focused ? 'person' : 'person-outline'} color={color} />
-            ),
-          }}
-        />
-      </Tabs>
+      />
+   
+      <Tabs.Screen
+        name="items"
+        options={{
+          title: "Items",
+          headerShown: false,
+        }}
+      />
+   
+      <Tabs.Screen
+        name="map"
+        options={{
+          title: "Map",
+          headerShown: false,
+        }}
+      />
+   
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Profile",
+          headerShown: false,
+        }}
+      />
+    </Tabs>
+
     );
   }
 
