@@ -32,6 +32,7 @@ export default function Signup() {
     try {
       const response = await createUserWithEmailAndPassword(auth, email, password);
       console.log(response);
+      router.push('../(tabs)'); 
     } catch (error: any) {
       console.log(error);
       alert('Sign in failed: ' + error.message);

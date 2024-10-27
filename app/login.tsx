@@ -41,20 +41,23 @@ export default function LoginScreen() { // Renamed component to LoginScreen
     );
   }*/
 
-  const handleLogin = async () => {
-    // Perform login logic here
+  const handleLogin = async (): Promise<void> => {
+    setIsLoading(true); 
     try {
       const response = await signInWithEmailAndPassword(auth, email, password);
       console.log(response);
-    } catch (error: any) {
-      console.log(error);
-      alert('Sign in failed: ' + error.message);
+      setSignedIn(true);
+      router.push('../(tabs)'); 
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.log(error);
+        alert('Sign in failed: ' + error.message);
+      }
     } finally {
-      setIsLoading(false); // Fix typo here as well
+      setIsLoading(false); 
     }
-    setSignedIn(true);
-    router.push('../(tabs)');
   };
+
 
   const handleBackToFirst = () => {
     router.back();
