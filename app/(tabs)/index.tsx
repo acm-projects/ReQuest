@@ -10,6 +10,15 @@ import { Circle, useFont, vec } from "@shopify/react-native-skia";
 import { LinearGradient, Text as SKText } from "@shopify/react-native-skia";
 import { useDerivedValue } from "react-native-reanimated";
 import * as Font from 'expo-font';
+import TipsCarouselWithDots from '../tipcarouselwithdots';
+import { NativeScrollEvent } from 'react-native';
+import * as SplashScreen from 'expo-splash-screen';
+import { useCallback } from 'react';
+
+
+
+
+
 
 
 
@@ -38,12 +47,14 @@ import {
   KeyboardAvoidingView,
   SafeAreaView,
   Image, 
+  Dimensions,
   TouchableOpacity,
 } from 'react-native';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { Feather } from '@expo/vector-icons';
 import Groq from 'groq-sdk';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+
 
 const systemPrompt = `You are RecycleBot, the chatbot behind RecycleRoute, an innovative mobile app dedicated to revolutionizing the recycling process. RecycleRoute combines cutting-edge cloud vision technology with a map system and gamification elements to enhance the recycling experience.
 
@@ -65,6 +76,10 @@ Your responses should be informative, empathetic, and tailored to the user's nee
 
 As well as in your responses please try to keep them short your responses should never exceed over 50 words and you want to make sure to say the most important things in the most simple way so the user can see it and easily read it`;
 
+
+
+
+ 
 
 
 interface Message {
@@ -164,7 +179,7 @@ export function Chat() {
       position: 'absolute',
       bottom: 20,
       right: 20,
-      backgroundColor: '#0a7ea4',
+      backgroundColor: 'blue',
       borderRadius: 30,
       width: 60,
       height: 60,
@@ -289,60 +304,58 @@ export function Chat() {
               <Ionicons name="arrow-back" size={24} color="white" />
             </Pressable>
 
-            <FlatList
-              data={messages}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item }) => (
-                <View
-                  style={{
-                    marginVertical: 5,
-                    alignSelf: item.role === 'user' ? 'flex-end' : 'flex-start',
-                    maxWidth: '80%',
-                  }}
-                >
-                  <View
-                    style={{
-                      backgroundColor: item.role === 'user' ? '#DCF8C6' : '#ECECEC',
-                      padding: 10,
-                      borderRadius: 15,
-                      borderBottomLeftRadius: item.role === 'user' ? 15 : 0,
-                      borderBottomRightRadius: item.role === 'user' ? 0 : 15,
-                      shadowColor: '#000',
-                      shadowOffset: { width: 0, height: 1 },
-                      shadowOpacity: 0.2,
-                      shadowRadius: 1,
-                      elevation: 1,
-                    }}
-                  >
-                    <Text>{item.content}</Text>
-                  </View>
-                </View>
-              )}
-              contentContainerStyle={{
-                flexGrow: 1,
-                justifyContent: 'flex-end',
-                paddingBottom: 100, // Adjust this padding for TextInput space
-                backgroundColor: 'beige',
-                borderTopLeftRadius: 20,
-                borderTopRightRadius: 20,
-                
-
+        <View style={{ flex: 1, borderTopLeftRadius: 20, borderTopRightRadius: 20, overflow: 'hidden' }}>
+        <FlatList
+          data={messages}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => (
+            <View
+              style={{
+                marginVertical: 5,
+                alignSelf: item.role === 'user' ? 'flex-end' : 'flex-start',
+                maxWidth: '80%',
+                borderRadius: 24,
               }}
-            />
+            >
+              <View
+                style={{
+                  backgroundColor: item.role === 'user' ? '#DCF8C6' : '#ECECEC',
+                  padding: 10,
+                  borderRadius: 15,
+                  borderBottomLeftRadius: item.role === 'user' ? 15 : 0,
+                  borderBottomRightRadius: item.role === 'user' ? 0 : 15,
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 1 },
+                  shadowOpacity: 0.2,
+                  shadowRadius: 1,
+                  elevation: 1,
+                }}
+              >
+                <Text>{item.content}</Text>
+              </View>
+            </View>
+          )}
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'flex-end',
+            paddingBottom: 100, // Adjust this padding for TextInput space
+          }}
+        />
+      </View>
 
             {/* Text Input */}
             <View
               style={{
                 width: '100%',
                 paddingHorizontal: 8,
-                backgroundColor: 'green',
+                backgroundColor: '#DCF8C6',
                 flexDirection: 'row',
                 paddingVertical: 8,
                 alignItems: 'center',
                 borderTopWidth: 1,
-                borderColor: 'gray',
-                borderBottomLeftRadius: 20,
-                borderBottomRightRadius: 20,
+                borderColor: '#400908',
+                //borderBottomLeftRadius: 20,
+                //borderBottomRightRadius: 20,
 
               }}
             >
@@ -351,21 +364,24 @@ export function Chat() {
                   flex: 1,
                   borderWidth: 2,
                   borderRadius: 12,
-                  borderColor: 'beige',
+                  borderColor: '#400908',
                   marginRight: 16,
                   paddingHorizontal: 12,
                   maxHeight: 80,
                   height: textInputHeight,
+                      paddingVertical: 10, // Adjust this value to vertically center the placeholder text
+
                 }}
                 multiline
                 value={chatText}
                 onChangeText={(text) => setChatText(text)}
                 placeholder="Ask a question here"
+                  placeholderTextColor="#400908" // Set your desired color here
                 onContentSizeChange={handleContentSizeChange}
               />
               <Pressable
                 style={{
-                  backgroundColor: chatText.trim() === '' || sendingChat ? 'gray' : 'beige',
+                  backgroundColor: chatText.trim() === '' || sendingChat ? 'gray' : '#400908',
                   width: 48,
                   borderRadius: 24,
                   padding: 8,
@@ -378,7 +394,7 @@ export function Chat() {
                 {sendingChat ? (
                   <ActivityIndicator size="small" color="white" />
                 ) : (
-                  <Feather name="send" size={20} color="black" />
+                  <Feather name="send" size={20} color="white" />
                 )}
               </Pressable>
             </View>
@@ -397,7 +413,54 @@ export function Chat() {
 
 
 
+
 export default function Dashboard() {
+
+ const [activeIndex, setActiveIndex] = useState(0);
+  
+  // 2. All useRef hooks
+  const scrollRef = useRef(null);
+  
+  // 3. Font loading hook
+  const [fontsLoaded] = useFonts({
+    'Nerko-One': require('../../assets/fonts/NerkoOne-Regular.ttf'),
+    'Gilroy': require('../../assets/fonts/Gilroy-Regular.otf'),
+  });
+
+  // 4. useEffect for splash screen
+  useEffect(() => {
+    async function prepare() {
+      try {
+        await SplashScreen.preventAutoHideAsync();
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+    prepare();
+  }, []);
+
+  // 5. useCallback for layout
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  // Screen dimension
+  const { width } = Dimensions.get('window');
+
+  // Your onScroll function
+  const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const contentOffsetX = event.nativeEvent.contentOffset.x;
+    const currentIndex = Math.round(contentOffsetX / width);
+    setActiveIndex(currentIndex);
+  };
+
+  // Early return for fonts
+  if (!fontsLoaded) {
+    return null;
+  }
+ 
   const tipsAndGuides = [
     {
       title: "Tip 1: Reduce Plastic Use",
@@ -426,7 +489,7 @@ export default function Dashboard() {
     },
   ];
 
-  
+ 
 
 
  
@@ -435,12 +498,13 @@ export default function Dashboard() {
     <SafeAreaView style={tw`flex-1 bg-amber-50`}>
 <View style={tw`flex-1`}>
   <View style={tw`pt-7`}> 
-    <Text style={[tw`text-3xl font-bold text-black text-center`, { color: '#400908' }]}>
+<Text style={[tw`text-4xl font-bold text-center text-[#400908]`, { fontFamily: 'Nerko-One' }]}>
       Welcome Back, Name!
     </Text>
   </View>
-  <Text style={tw`text-lg text-[#400908] mt-2 ml-3 pt-22 text-left`}>These are your current stats:</Text>
-</View>
+<Text style={[tw`text-lg text-[#400908] mt-2 ml-3 pt-22 text-left`, { fontFamily: 'Gilroy' }]}>
+  These are your current stats:
+</Text></View>
 
 
          <Image
@@ -451,64 +515,71 @@ export default function Dashboard() {
 
       {/* Stats Sections */}
 <View style={[{ zIndex: 8 }]}>
-  <View style={[tw`absolute px-8 pt-5 top-[-40]`, { zIndex: 2, width: '90%', alignSelf: 'center' }]}> 
+  <View style={[tw`absolute px-8 pt-5 top-[-40]`, { zIndex: 2, width: '90%', alignSelf: 'center' }]}>
     <View style={[tw`absolute inset--1 bg-[#DCF8C6]`, { borderRadius: 30, zIndex: -1 }]} />
     
-    {/* <View style={tw`flex-row justify-between mb-4 max-w-[60%]`}>
-      <Text style={tw`text-[#400908] text-base`}>Number of items recycled:</Text>
-      <Text style={tw`text-green-500 text-lg font-bold text-right`}>123 items</Text>
-    </View> */}
+    <View style={tw`flex-row justify-between mb-4`}>
+      <View style={tw`flex-1 max-w-[75%]`}>
+        <Text style={[tw`text-[#400908] text-base`, { fontFamily: 'Gilroy' }]}>
+          Number of items recycled:
+        </Text>
+      </View>
+      <View style={tw`flex-1 max-w-[30%]`}>
+        <Text style={[tw`text-[#400908] text-base font-bold text-right`, { fontFamily: 'Gilroy' }]}>
+          220 items
+        </Text>
+      </View>
+    </View>
 
     <View style={tw`flex-row justify-between mb-4`}>
-     
-        <View style={tw`flex-1 max-w-[60%]`}> 
-          <Text style={tw`text-[#400908] text-base`}>Number of items recycled:</Text>
-        </View >
-      
-        <View style={tw`flex-1 max-w-[40%]`} >
-        <Text style={tw`text-[#400908] text-3xl font-bold text-right`}>220 items</Text>
-        </View>
-    </View>
-    
-     <View style={tw`flex-row justify-between mb-4`}>
-     
-        <View style={tw`flex-1 max-w-[60%]`}> 
-          <Text style={tw`text-[#400908] text-base`}>How long the world would last if everyone recycled like you:</Text>
-        </View >
-      
-        <View style={tw`flex-1 max-w-[40%]`} >
-        <Text style={tw`text-[#400908] text-3xl font-bold text-right`}>800 years</Text>
-        </View>
+      <View style={tw`flex-1 max-w-[75%]`}>
+        <Text style={[tw`text-[#400908] text-base`, { fontFamily: 'Gilroy' }]}>
+          How long the world would last if everyone recycled like you:
+        </Text>
+      </View>
+      <View style={tw`flex-1 max-w-[30%]`}>
+        <Text style={[tw`text-[#400908] text-base font-bold text-right`, { fontFamily: 'Gilroy' }]}>
+          800 years
+        </Text>
+      </View>
     </View>
 
-     <View style={tw`flex-row justify-between mb-4`}>
-     
-        <View style={tw`flex-1 max-w-[60%]`}> 
-          <Text style={tw`text-[#400908] text-base`}>Reduced Carbon Footprint:</Text>
-        </View >
-      
-        <View style={tw`flex-1 max-w-[40%]`} >
-        <Text style={tw`text-[#400908] text-3xl font-bold text-right`}>789 kg</Text>
-        </View>
+    <View style={tw`flex-row justify-between mb-4`}>
+      <View style={tw`flex-1 max-w-[75%]`}>
+        <Text style={[tw`text-[#400908] text-base`, { fontFamily: 'Gilroy' }]}>
+          Reduced Carbon Footprint:
+        </Text>
+      </View>
+      <View style={tw`flex-1 max-w-[30%]`}>
+        <Text style={[tw`text-[#400908] text-base font-bold text-right`, { fontFamily: 'Gilroy' }]}>
+          789 kg
+        </Text>
+      </View>
     </View>
-    
-    {/* <View style={tw`flex-row justify-between mb-4 max-w-[60%]`}>
-      <Text style={tw`text-[#400908] text-base`}>Reduced Carbon Footprint:</Text>
-      <Text style={tw`text-green-500 text-lg font-bold text-right`}>789 kg</Text>
-    </View> */}
+
   </View>
 </View>
 
 
 
-
-
+ <View style={[styles.dotsContainer, tw`absolute bottom-70 flex-row justify-center`]}>
+  {tipsAndGuides.map((_, index) => (
+    <View
+      key={index}
+      style={[
+        styles.dot,
+        activeIndex === index ? styles.activeDot : styles.inactiveDot,
+        tw`mx-1` // Add margin between dots to space them out
+      ]}
+    />
+  ))}
+</View>
 
 
 
 
  <View style={tw`flex-1 bg-amber-50`}>
-  <ScrollView
+   {/* <ScrollView
     contentContainerStyle={[
       styles.scrollView, 
       tw`p-15 mt-15`, // Add padding instead of justify-end for spacing
@@ -516,6 +587,9 @@ export default function Dashboard() {
     ]}
     horizontal={true}
     showsHorizontalScrollIndicator={false}
+    pagingEnabled
+     onScroll={onScroll}
+        scrollEventThrottle={16}
   >
     {tipsAndGuides.map((tip, index) => (
 <View key={index} style={[tw`w-60 m-2 p-4 rounded-3xl`, { backgroundColor: '#DCF8C6' }]}>
@@ -529,8 +603,20 @@ export default function Dashboard() {
     scalesPageToFit={true}
   />
 </View>
+
+
+
+
     ))}
-  </ScrollView>
+  </ScrollView> 
+
+        */}
+    
+<View style={[tw`flex-1`, { zIndex: 9, alignItems: 'center', justifyContent: 'center' }]}>
+  <TipsCarouselWithDots />
+</View>
+
+
 </View>
 
 
@@ -543,14 +629,35 @@ export default function Dashboard() {
 }
 
 const styles = EStyleSheet.create({
-  scrollView: {
+ scrollView: {
     padding: 20,
     flexGrow: 1,
-    marginTop: 50, // Keeps the ScrollView down
+    marginTop: 50,
+  },
+  dotsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 30,
+  },
+  dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginHorizontal: 5,
+  },
+  activeDot: {
+    backgroundColor: '#400908', // Active dot color
+  },
+  inactiveDot: {
+    backgroundColor: '#C0C0C0', // Inactive dot color
   },
   textColor: {
     color: '#400908',
     
+  },
+    welcomeText: {
+    fontFamily: 'NerkoOne', // Make sure this matches exactly with the key in useFonts
+    color: '#400908', // If you want to keep this color from your previous styling
   },
   tipBackground: {
     backgroundColor: '#DCF8C6',  // Green background
