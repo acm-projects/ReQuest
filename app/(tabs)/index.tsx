@@ -354,8 +354,7 @@ export function Chat() {
                 alignItems: 'center',
                 borderTopWidth: 1,
                 borderColor: '#400908',
-                //borderBottomLeftRadius: 20,
-                //borderBottomRightRadius: 20,
+                
 
               }}
             >
