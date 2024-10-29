@@ -66,19 +66,19 @@ export default function LoginScreen() { // Renamed component to LoginScreen
   return (
     <View style={tw`flex-1 bg-amber-50 justify-center items-center px-4`}>
       <Image
-        source={require('../assets/images/img2.png')}
+        source={require('../assets/images/lightTopLeft.png')}
         style={styles.topLeftImg}
       />
       <Image
-        source={require('../assets/images/bottomLeftImg.png')}
+        source={require('../assets/images/lightBottomLeft.png')}
         style={styles.bottomLeftImg}
       />
       <Image
-        source={require('../assets/images/bottomRightImg.png')}
+        source={require('../assets/images/lightBottomRight.png')}
         style={styles.bottomRightImg}
       />
       <Image
-        source={require('../assets/images/rightCorner.png')}
+        source={require('../assets/images/lightTopRight.png')}
         style={styles.topRightImg}
       />
       {/* Back Arrow */}
@@ -173,8 +173,8 @@ const styles = StyleSheet.create({
   },
   topLeftImg: {
     position: 'absolute',
-    top: -30,
-    left: -30,
+    top: -51,
+    left: -49,
     width: 220,
     height: 220,
     resizeMode: 'contain',
@@ -186,16 +186,16 @@ const styles = StyleSheet.create({
   },
   topRightImg: {
     position: 'absolute',
-    top: -22,
-    right: -50,
+    top: -28,
+    right: -65,
     width: 200,
     height: 200,
     resizeMode: 'contain',
   },
   bottomLeftImg: {
     position: 'absolute',
-    bottom: -35,
-    left: -60,
+    bottom: -48,
+    left: -67,
     width: 220,
     height: 220,
     resizeMode: 'contain',
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   bottomRightImg: {
     position: 'absolute',
     bottom: -48,
-    right: -24,
+    right: -33,
     width: 200,
     height: 200,
   },

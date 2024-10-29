@@ -8,25 +8,21 @@ export default function Profile() {
       {/* top section: profile icon and name */}
       <View style={styles.topSection}>
         <Image
-          source={require('../../assets/images/img2.png')} // Adjusted path to images
+          source={require('../../assets/images/lightTopLeft.png')} 
           style={styles.topLeftImg}
         />
         <Image
-          source={require('../../assets/images/rightCorner.png')}
+          source={require('../../assets/images/lightTopRight.png')}
           style={styles.topRightImg}
         />
         <Image
-          source={require('../../assets/images/fireEarth.png')} // Adjust the path to your profile icon image
+          source={require('../../assets/images/fireEarth.png')} 
           style={styles.profileIcon}
         />
       </View>
 
       {/* bottom section */}
       <View style={styles.bottomSection}>
-        <Image
-          source={require('../../assets/images/profileComponents1.png')}
-          style={styles.profileOne}
-        />
 
         {/* TouchableOpacity Button */}
         <TouchableOpacity style={styles.button} onPress={() => console.log('Edit Profile Information')}>
@@ -79,16 +75,16 @@ const styles = StyleSheet.create({
   },
   topLeftImg: {
     position: 'absolute',
-    top: -40,
-    left: -30,
+    top: -55,
+    left: -49,
     width: 220,
     height: 220,
     resizeMode: 'contain',
   },
   topRightImg: {
     position: 'absolute',
-    top: -22,
-    right: -50,
+    top: -33,
+    right: -59,
     width: 200,
     height: 200,
     resizeMode: 'contain',

@@ -125,11 +125,11 @@ export default function TabLayout() {
           style={styles.earthImg}
         />
         <Image
-          source={require('../../assets/images/bottomLeftImg.png')}
+          source={require('../../assets/images/lightBottomLeft.png')}
           style={styles.bottomLeftImg}
         />
         <Image
-          source={require('../../assets/images/bottomRightImg.png')}
+          source={require('../../assets/images/lightBottomRight.png')}
           style={styles.bottomRightImg}
         />
 
@@ -222,8 +222,8 @@ const styles = StyleSheet.create({
   },
   bottomLeftImg: {
     position: 'absolute',
-    bottom: -39,
-    left: -65,
+    bottom: -48,
+    left: -69,
     width: 220,
     height: 220,
     resizeMode: 'contain',

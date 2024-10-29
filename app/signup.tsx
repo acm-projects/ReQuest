@@ -41,21 +41,21 @@ export default function Signup() {
     }
   }
   return (
-    <View style={tw`flex-1 bg-[#F8F5E5] justify-center items-center px-4`}>
+    <View style={tw`flex-1 bg-amber-50 justify-center items-center px-4`}>
       <Image
-        source={require('../assets/images/signUpLeftCorner.png')}
+        source={require('../assets/images/lightTopLeft.png')}
         style={styles.cornerImg}
       />
       <Image
-        source={require('../assets/images/rightCorner.png')}
+        source={require('../assets/images/lightTopRight.png')}
         style={styles.topRightImg}
       />
       <Image
-        source={require('../assets/images/bottomLeftImg.png')}
+        source={require('../assets/images/lightBottomLeft.png')}
         style={styles.bottomLeftImg}
       />
       <Image
-        source={require('../assets/images/bottomRightImg.png')}
+        source={require('../assets/images/lightBottomRight.png')}
         style={styles.bottomRightImg}
       />
       <TouchableOpacity 
@@ -148,14 +148,14 @@ const styles = StyleSheet.create({
   cornerImg: {
     position: 'absolute',
     top: -56,
-    left: -36,
+    left: -48,
     width: 220,
     height: 220,
     resizeMode: 'contain',
   },
   topRightImg: {
     position: 'absolute',
-    top: -30,
+    top: -36,
     right: -55,
     width: 200,
     height: 200,
@@ -163,8 +163,8 @@ const styles = StyleSheet.create({
   },
   bottomLeftImg: {
     position: 'absolute',
-    bottom: -30,
-    left: -65,
+    bottom: -49,
+    left: -69,
     width: 220,
     height: 220,
     resizeMode: 'contain',
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
   bottomRightImg: {
     position: 'absolute',
     bottom: -50,
-    right: -24,
+    right: -33,
     width: 200,
     height: 200,
   },
