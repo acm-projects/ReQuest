@@ -1,18 +1,29 @@
-// AuthContext.tsx
 import React, { createContext, useState, useContext, ReactNode } from 'react';
+
+interface User {
+  // id: string;
+  // name: string;
+  // email: string;
+  // photoURL: string;
+  uid: string,
+  // Add other user properties as needed
+}
 
 interface AuthContextType {
   signedIn: boolean;
   setSignedIn: React.Dispatch<React.SetStateAction<boolean>>;
+  user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [signedIn, setSignedIn] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
 
   return (
-    <AuthContext.Provider value={{ signedIn, setSignedIn }}>
+    <AuthContext.Provider value={{ signedIn, setSignedIn, user, setUser }}>
       {children}
     </AuthContext.Provider>
   );
