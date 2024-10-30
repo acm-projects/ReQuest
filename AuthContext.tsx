@@ -6,7 +6,6 @@ interface User {
   // email: string;
   // photoURL: string;
   uid: string,
-  // Add other user properties as needed
 }
 
 interface AuthContextType {

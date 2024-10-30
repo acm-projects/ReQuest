@@ -44,6 +44,8 @@ export default function Signup() {
       email: email, 
       points: 0,
       numRecycled: 0,
+      recyclingCart: [],
+      successfullyRecycled: [],
     });
       console.log(response);
       router.push('../(tabs)'); 
