@@ -13,10 +13,11 @@ import * as Font from 'expo-font';
 import TipsCarouselWithDots from '../tipcarouselwithdots';
 import { NativeScrollEvent } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
-import { usePoints, PointsProvider, useWeight, useImpact, useHistory } from '../PointsContext';
+import { usePoints, PointsProvider, useWeight, useImpact, useHistory, useChartHistory } from '../PointsContext';
 import { db } from '../../FirebaseConfig';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useAuth } from '../../AuthContext';
+import { PieChart } from 'react-native-chart-kit';
 import {
   Pressable,
   ScrollView,
@@ -379,6 +380,10 @@ interface UserData {
   points: number;
 }
 
+interface ChartProps {
+  data: Record<string, number>;
+}
+
 
 const FetchData = async() => {
   
@@ -394,6 +399,7 @@ const Dashboard = () => {
   const { impact } = useImpact();
   const { history } = useHistory();
   const [isInitialized, setIsInitialized] = useState(false);
+  const { chartHistory } = useChartHistory();
 
   // Initial fetch of points from Firebase
   useEffect(() => {
@@ -553,6 +559,37 @@ const Dashboard = () => {
         {history.length}
       </PointsProvider>
   }
+
+  const PieChartComponent = ({ data }: ChartProps) => {
+    // Convert the hashmap to an array for the PieChart
+    const chartData = Object.entries(data).map(([key, value], index) => ({
+      name: key, // The item name
+      count: value, // The count of times it has been recycled
+      color: `hsl(${index * 60}, 70%, 50%)`, // Dynamic colors for each item
+      legendFontColor: '#7F7F7F',
+      legendFontSize: 15,
+    }));
+  
+    return (
+      <View>
+        <Text style={{ fontSize: 18, textAlign: 'center', marginVertical: 10 }}>
+          Recycling Stats
+        </Text>
+        <PieChart
+          data={chartData}
+          width={Dimensions.get('window').width - 20} // Adjust width based on screen size
+          height={220}
+          chartConfig={{
+            color: () => `rgba(0, 0, 0, 0.5)`,
+          }}
+          accessor={'count'} // Data field to display in the chart
+          backgroundColor={'transparent'}
+          paddingLeft={'15'}
+          absolute // Show absolute values on the chart
+        />
+      </View>
+    );
+  };
 
   return (
       <SafeAreaView style={tw`flex-1 bg-amber-50`}>

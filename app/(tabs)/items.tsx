@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native'; // Import useNavigatio
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Platform } from 'react-native';
 import Groq from 'groq-sdk';
-import {usePoints, useWeight, useImpact, useHistory} from '../PointsContext';
+import {usePoints, useWeight, useImpact, useHistory, useChartHistory} from '../PointsContext';
 
 const client = new Groq({
   apiKey: process.env.EXPO_PUBLIC_GROQ_API_KEY,
@@ -55,6 +55,8 @@ const DetectObject = () => {
   const {weight, addWeight} = useWeight();
   const {impact, addImpact} = useImpact();
   const {history, addHistory} = useHistory();
+  const {chartHistory, addChartHistory} = useChartHistory();
+  
 
   const pickImage = async () => {
     try {
@@ -230,6 +232,7 @@ const analyzeImage = async () => {
             addWeight(formattedWeight);
             addImpact(earnedImpact);
             addHistory(`Recycled ${formattedWeight} kg of ${itemName} for ${earnedPoints}`);
+            addChartHistory(itemName);
             
             Alert.alert(
               'Recycling Success!',

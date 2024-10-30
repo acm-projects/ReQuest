@@ -14,6 +14,9 @@ interface PointsContextType {
   history: string[];
   addHistory: (message: string) => void;
   setHistory: (message: string[]) => void;
+  chartHistory: Record<string, number>;
+  addChartHistory: (itemName: string) => void;
+  setChartHistory: (message: Record<string, number>) => void;
 }
 
 const PointsContext = createContext<PointsContextType | undefined>(undefined);
@@ -27,6 +30,7 @@ export const PointsProvider = ({ children }: PointsProviderProps) => {
   const [weight, setWeight] = useState(0);
   const [impact, setImpact] = useState(0);
   const [history, setHistory] = useState<string[]>([]);
+  const [chartHistory, setChartHistory] = useState<Record<string, number>>({});
 
   const addPoints = (amount: number) => {
     setPoints(prev => prev + amount);
@@ -44,8 +48,15 @@ export const PointsProvider = ({ children }: PointsProviderProps) => {
     setHistory(prev => [...prev, message]);
   }
 
+  const addChartHistory = (itemName: string) => {
+    setChartHistory((prevHistory) => ({
+      ...prevHistory,
+      [itemName]: (prevHistory[itemName] || 0) + 1, // Equivalent to Python's .get(itemName, 0) + 1
+    }));
+  };
+
   return (
-    <PointsContext.Provider value={{ points, addPoints, setPoints, weight, setWeight, addWeight, impact, setImpact, addImpact, history, addHistory, setHistory }}>
+    <PointsContext.Provider value={{ points, addPoints, setPoints, weight, setWeight, addWeight, impact, setImpact, addImpact, history, addHistory, setHistory, chartHistory, addChartHistory, setChartHistory }}>
       {children}
     </PointsContext.Provider>
   );
@@ -79,6 +90,14 @@ export const useHistory = () => {
   const context = useContext(PointsContext);
   if (context === undefined) {
     throw new Error('useHistory must be used within a PointsProvider');
+  }
+  return context;
+}
+
+export const useChartHistory = () => {
+  const context = useContext(PointsContext);
+  if (context === undefined) {
+    throw new Error('useChartHistory must be used within a PointsProvider');
   }
   return context;
 }
