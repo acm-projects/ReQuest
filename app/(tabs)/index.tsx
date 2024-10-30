@@ -13,7 +13,7 @@ import * as Font from 'expo-font';
 import TipsCarouselWithDots from '../tipcarouselwithdots';
 import { NativeScrollEvent } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
-import { usePoints, PointsProvider } from '../PointsContext';
+import { usePoints, PointsProvider, useWeight, useImpact, useHistory } from '../PointsContext';
 import {
   Pressable,
   Linking,
@@ -158,7 +158,7 @@ const Chat = () => {
   const styles = StyleSheet.create({
     floatingButton: {
       position: 'absolute',
-      bottom: 20,
+      bottom: 75,
       right: 20,
       backgroundColor: 'blue',
       borderRadius: 30,
@@ -378,6 +378,9 @@ const Dashboard = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = useRef(null);
   const { points } = usePoints();
+  const { weight } = useWeight();
+  const {impact} = useImpact();
+  const {history} = useHistory();
 
   const [fontsLoaded] = useFonts({
     'Nerko-One': require('../../assets/fonts/NerkoOne-Regular.ttf'),
@@ -449,6 +452,50 @@ const Dashboard = () => {
     )
   }
 
+  const WeightDisplay = () => {
+    const formattedWeight = weight.toFixed(2);
+    return (
+      <PointsProvider>
+        {formattedWeight} kg
+      </PointsProvider>
+    )
+  }
+
+  const ImpactDisplay = () => {
+    const formattedImpact = Number(impact.toFixed(5));
+    return (
+      <PointsProvider>
+        {formattedImpact} days
+      </PointsProvider>
+    )
+  }
+
+  const HistoryDisplay = () => {
+    if (history.length === 0) {
+      return (
+        <PointsProvider>
+          No history... yet!
+        </PointsProvider>
+      )
+    }
+    
+    return (
+      <PointsProvider>
+        <Text>
+        {history.map((item, index) => (
+      <Text key={index}>{item}{'\n'}</Text>
+      ))}
+        </Text>
+      </PointsProvider>
+    )
+  }
+
+  const CountItems = () => {
+      <PointsProvider>
+        {history.length}
+      </PointsProvider>
+  }
+
   return (
       <SafeAreaView style={tw`flex-1 bg-amber-50`}>
         <View style={tw`flex-1`}>
@@ -494,12 +541,12 @@ const Dashboard = () => {
             </View>
             <View style={tw`flex-1 max-w-[30%]`}>
               <Text style={[tw`text-[#400908] text-base font-bold text-right`, { fontFamily: 'Gilroy' }]}>
-                800 years
+                <ImpactDisplay />
               </Text>
             </View>
           </View>
 
-          <View style={tw`flex-row justify-between mb-4`}>
+          <View style={tw`flex-row justify-between mb-0`}>
             <View style={tw`flex-1 max-w-[75%]`}>
               <Text style={[tw`text-[#400908] text-base`, { fontFamily: 'Gilroy' }]}>
                 Reduced Carbon Footprint:
@@ -507,10 +554,21 @@ const Dashboard = () => {
             </View>
             <View style={tw`flex-1 max-w-[30%]`}>
               <Text style={[tw`text-[#400908] text-base font-bold text-right`, { fontFamily: 'Gilroy' }]}>
-                789 kg
+                <WeightDisplay/>
               </Text>
             </View>
           </View>
+
+          <View style={tw`flex-1 justify-center items-center mb-4`}>
+          <Text style={[tw`text-[#400908] text-base`, { fontFamily: 'Gilroy' }]}>
+            History:
+          </Text>
+          <ScrollView style={tw`max-h-[40%]`}>
+            <Text style={[tw`text-[#400908] text-base font-bold`, { fontFamily: 'Gilroy', fontSize: 14 }]}>
+              <HistoryDisplay />
+            </Text>
+          </ScrollView>
+        </View>
 
         </View>
       </View>

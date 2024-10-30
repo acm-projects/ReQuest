@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native'; // Import useNavigatio
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Platform } from 'react-native';
 import Groq from 'groq-sdk';
-import {usePoints, PointsProvider} from '../PointsContext';
+import {usePoints, useWeight, useImpact, useHistory} from '../PointsContext';
 
 const client = new Groq({
   apiKey: process.env.EXPO_PUBLIC_GROQ_API_KEY,
@@ -20,18 +20,22 @@ For recyclable items, return:
 
 {
   "recyclable": true,
-  "points": <integer from 0 to 5>
+  "points": <integer from 0 to 5>,
+  "weight": <double for the estimated weight of item in kg>,
+  "lifespan_extension": <double for estimated days world resources last longer with daily recycling like yours>
 }
 
 For non-recyclable items, return:
 
 {
   "recyclable": false,
-  "points": 0
+  "points": 0,
+  "weight": 0,
+  "lifespan_extension": 0
 }
 
-Be fair but somewhat strict in awarding points (0-5) based on the difficulty or ease of recycling the item. For example straws and drinks should be only 1-3 points but stuff like gold and metal should be 5 points due to ease of recycling them.`
-
+Be fair but extremely strict in awarding points (0-5) based on the difficulty or ease of recycling the item, the approximate weight of the item, and the impact. This is important since people want accurate values. 
+You should be consistent. For example, straws and drink containers should be only 1-3 points, but items like gold and metal should be 5 points due to ease of recycling them. Calculate "lifespan_extension" based on the weight of the item, assuming it conserves resources proportional to daily recycling for an average person globally.`
 
 type RootStackParamList = {
   map: { itemName: string };
@@ -48,6 +52,9 @@ const DetectObject = () => {
   const [cart, setCart] = useState<any[]>([]);
   const [cameraPermission, setCameraPermission] = useState<boolean | null>(null);
   const {points, addPoints} = usePoints();
+  const {weight, addWeight} = useWeight();
+  const {impact, addImpact} = useImpact();
+  const {history, addHistory} = useHistory();
 
   const pickImage = async () => {
     try {
@@ -190,6 +197,8 @@ const analyzeImage = async () => {
   interface ResponseData {
     recyclable: boolean;
     points: number;
+    weight: number;
+    lifespan_extension: number;
   }
   
   const handleRecycle = async (itemName: string) => {
@@ -211,19 +220,26 @@ const analyzeImage = async () => {
   
       if (typeof response === 'string') {
         try {
-          const { recyclable, points : earnedPoints }: ResponseData = JSON.parse(response);
-          console.log(`Recyclable: ${recyclable}, Points: ${points}`);
+          const { recyclable, points : earnedPoints, weight : earnedWeight, lifespan_extension: earnedImpact }: ResponseData = JSON.parse(response);
+          const formattedWeight = parseFloat(earnedWeight.toFixed(2));
+          console.log(`Recyclable: ${recyclable}, Points: ${points}, Weight: ${weight}, Impact: ${impact}`);
           
           if (recyclable === true) {
             // Use functional update to ensure we're working with latest state
             addPoints(earnedPoints);
+            addWeight(formattedWeight);
+            addImpact(earnedImpact);
+            addHistory(`Recycled ${formattedWeight} kg of ${itemName} for ${earnedPoints}`);
             
             Alert.alert(
               'Recycling Success!',
-              `Congrats! You have recycled ${itemName} and earned ${earnedPoints} points!\nTotal Points: ${earnedPoints + points}`
+              `Congrats! You have recycled ${itemName}, saving ${formattedWeight} kg of waste, and earned ${earnedPoints} points!\nTotal Points: ${earnedPoints + points}`
             );
+            //Remove item from cart
+            const newCart = cart.filter((item) => item.description !== itemName);
+            setCart(newCart);
           } else {
-            Alert.alert('Not Recyclable', `Sorry, ${itemName} is not recyclable.`);
+            Alert.alert('Not Recyclable', `Sorry, ${itemName} is not recyclable. Please remove from bag.`);
           }
         } catch (error) {
           console.error('Error parsing response:', error);
@@ -242,6 +258,8 @@ const analyzeImage = async () => {
   const PointsDisplay = () => (
     <View>
       <Text>Total Points: {points}</Text>
+      <Text>Total Weight: {weight} kg</Text>
+      <Text>Total Impact: {impact} days</Text>
     </View>
   );
 
