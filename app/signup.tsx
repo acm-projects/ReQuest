@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { Image, StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { FIREBASE_AUTH } from '../FirebaseConfig';
+import { FIREBASE_AUTH, db } from '../FirebaseConfig';
 import { User } from 'firebase/auth';
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
+import { useAuth } from '../AuthContext';
 import tw from 'twrnc'; 
 
 export default function Signup() {
@@ -13,7 +15,7 @@ export default function Signup() {
   const [username, setUsername] = useState('');
   const [isLoading, setIsLoading] = useState(false); 
   const router = useRouter(); // Use router for navigation
-  const [user, setUser] = useState<User | null>(null);
+  const {user, setUser} = useAuth();
   /*useEffect(() => {
     onAuthStateChanged(FIREBASE_AUTH, (user) => {
       console.log('user', user);
@@ -31,6 +33,20 @@ export default function Signup() {
     }
     try {
       const response = await createUserWithEmailAndPassword(auth, email, password);
+      console.log(response.user);
+      console.log(response.user.uid);
+        setUser({
+          uid: response.user.uid,
+        });
+      console.log(user);  
+      const docRef = doc(db, "users", response.user.uid);
+      await setDoc(docRef, {
+      email: email, 
+      points: 0,
+      numRecycled: 0,
+      recyclingCart: [],
+      successfullyRecycled: [],
+    });
       console.log(response);
       router.push('../(tabs)'); 
     } catch (error: any) {

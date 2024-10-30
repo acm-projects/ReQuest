@@ -14,6 +14,9 @@ import TipsCarouselWithDots from '../tipcarouselwithdots';
 import { NativeScrollEvent } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { usePoints, PointsProvider, useWeight, useImpact, useHistory } from '../PointsContext';
+import { db } from '../../FirebaseConfig';
+import { doc, getDoc } from 'firebase/firestore';
+import { useAuth } from '../../AuthContext';
 import {
   Pressable,
   Linking,
@@ -372,16 +375,28 @@ const Chat = () => {
   );
 };
 
-
-          
-const Dashboard = () => {
+interface UserData {
+  email: string;
+  numRecycled: number;
+  points: number;
+}
+         
+const Dashboard = async () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = useRef(null);
-  const { points } = usePoints();
+  // const { points } = usePoints();
   const { weight } = useWeight();
   const {impact} = useImpact();
   const {history} = useHistory();
-
+  const { user } = useAuth();
+  console.log(user);
+  const docRef = doc(db, "users", user?.uid || "default_uid");
+  const docSnap = await getDoc(docRef);
+  const response = docSnap.data();
+  const { email, numRecycled, points } = response as UserData;
+  console.log(email);
+  console.log(numRecycled);
+  console.log(points);
   const [fontsLoaded] = useFonts({
     'Nerko-One': require('../../assets/fonts/NerkoOne-Regular.ttf'),
     'Gilroy': require('../../assets/fonts/Gilroy-Regular.otf'),
@@ -522,8 +537,9 @@ const Dashboard = () => {
           <View style={tw`flex-row justify-between mb-4`}>
             <View style={tw`flex-1 max-w-[75%]`}>
               <Text style={[tw`text-[#400908] text-base`, { fontFamily: 'Gilroy' }]}>
-                Points:
+                Points: { points }
               </Text>
+
             </View>
             <View style={tw`flex-1 max-w-[30%]`}>
               <Text style={[tw`text-[#400908] text-base font-bold text-right`, { fontFamily: 'Gilroy' }]}>
