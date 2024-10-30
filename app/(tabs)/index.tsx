@@ -1,25 +1,24 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import tw from 'twrnc';
-import { useRouter } from 'expo-router';
-import { WebView } from 'react-native-webview';
+//import { useRouter } from 'expo-router';
+//import { WebView } from 'react-native-webview';
 import { Ionicons } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
 import EStyleSheet from 'react-native-extended-stylesheet';
-import { CartesianChart, Bar, useChartPressState, StackedBar } from "victory-native";
-import { Circle, Points, useFont, vec } from "@shopify/react-native-skia";
-import { LinearGradient, Text as SKText } from "@shopify/react-native-skia";
-import { useDerivedValue } from "react-native-reanimated";
+//import { CartesianChart, Bar, useChartPressState, StackedBar } from "victory-native";
+//import { Circle, Points, useFont, vec } from "@shopify/react-native-skia";
+//import { LinearGradient, Text as SKText } from "@shopify/react-native-skia";
+//import { useDerivedValue } from "react-native-reanimated";
 import * as Font from 'expo-font';
 import TipsCarouselWithDots from '../tipcarouselwithdots';
 import { NativeScrollEvent } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { usePoints, PointsProvider, useWeight, useImpact, useHistory } from '../PointsContext';
 import { db } from '../../FirebaseConfig';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useAuth } from '../../AuthContext';
 import {
   Pressable,
-  Linking,
   ScrollView,
   TextInput,
   View,
@@ -39,12 +38,11 @@ import {
   SafeAreaView,
   Image,
   Dimensions,
-  TouchableOpacity,
 } from 'react-native';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { Feather } from '@expo/vector-icons';
 import Groq from 'groq-sdk';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+//import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 
 const systemPrompt = `You are RecycleBot, the chatbot behind RecycleRoute, an innovative mobile app dedicated to revolutionizing the recycling process. RecycleRoute combines cutting-edge cloud vision technology with a map system and gamification elements to enhance the recycling experience.
@@ -380,23 +378,68 @@ interface UserData {
   numRecycled: number;
   points: number;
 }
+
+
+const FetchData = async() => {
+  
+}
          
-const Dashboard = async () => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const scrollRef = useRef(null);
-  // const { points } = usePoints();
-  const { weight } = useWeight();
-  const {impact} = useImpact();
-  const {history} = useHistory();
+const Dashboard = () => {
   const { user } = useAuth();
   console.log(user);
-  const docRef = doc(db, "users", user?.uid || "default_uid");
-  const docSnap = await getDoc(docRef);
-  const response = docSnap.data();
-  const { email, numRecycled, points } = response as UserData;
-  console.log(email);
-  console.log(numRecycled);
-  console.log(points);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const scrollRef = useRef(null);
+  const { points, setPoints } = usePoints();
+  const { weight } = useWeight();
+  const { impact } = useImpact();
+  const { history } = useHistory();
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Initial fetch of points from Firebase
+  useEffect(() => {
+    const fetchData = async () => {
+      if (user && !isInitialized) {
+        try {
+          console.log("Pulling data")
+          const docRef = doc(db, "users", user.uid);
+          const docSnap = await getDoc(docRef);
+          const response = docSnap.data();
+          
+          if (response !== undefined) {
+            setPoints(response.points);
+          }
+        } catch (error) {
+          console.error("Error fetching points:", error);
+        } finally {
+          setIsInitialized(true);
+        }
+      }
+    };
+
+    fetchData();
+  }, [user]);
+
+  // Sync points to Firebase whenever they change
+  useEffect(() => {
+    const updatePoints = async () => {
+      if (user && isInitialized) {
+        try {
+          console.log("Beginning updating")
+          const docRef = doc(db, "users", user.uid);
+          console.log("In the middle of updating")
+          await updateDoc(docRef, {
+            points: points
+          });
+          console.log('Points updated successfully');
+        } catch (error) {
+          console.error("Error updating points:", error);
+        }
+      }
+    };
+
+    updatePoints();
+  }, [points, user, isInitialized]);
+  
   const [fontsLoaded] = useFonts({
     'Nerko-One': require('../../assets/fonts/NerkoOne-Regular.ttf'),
     'Gilroy': require('../../assets/fonts/Gilroy-Regular.otf'),
@@ -462,7 +505,7 @@ const Dashboard = async () => {
   const PointsDisplay = () => {
     return (
       <PointsProvider>
-        {points}
+        { points }
       </PointsProvider>
     )
   }
@@ -537,7 +580,7 @@ const Dashboard = async () => {
           <View style={tw`flex-row justify-between mb-4`}>
             <View style={tw`flex-1 max-w-[75%]`}>
               <Text style={[tw`text-[#400908] text-base`, { fontFamily: 'Gilroy' }]}>
-                Points: { points }
+                Points: {  }
               </Text>
 
             </View>
