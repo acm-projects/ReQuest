@@ -1,22 +1,40 @@
 import { Tabs } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'expo-router';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Image, SafeAreaView } from 'react-native';
 import { useContext } from 'react';
 import tw from 'twrnc';
 import TabBar from "../../components/TabBar";
 import { useAuth } from '@/AuthContext';
 import { PointsProvider } from '../PointsContext'
+import CustomLoadingIndicator from '../CustomLoadingIndicator';
+
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   // const [signedIn, setSignedIn] = useState(false);
   const { signedIn, setSignedIn } = useAuth();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
+  const [showContent, setShowContent] = useState(false);
+
+useEffect(() => {
+    // Simulate loading time or wait for actual data
+    const loadingTimeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000); // Adjust timing as needed
+
+    return () => clearTimeout(loadingTimeout);
+  }, []);
+
+  const handleLoadingComplete = () => {
+    setShowContent(true);
+  };
+
 
   const renderArchedText = () => {
     const welcomeText = "Welcome to";
@@ -51,6 +69,21 @@ export default function TabLayout() {
     );
   };
 
+  if (!showContent) {
+    return (
+      <View style={styles.loadingContainer}>
+        <CustomLoadingIndicator
+          imageSource={require('../../assets/images/recycleEarth.png')}
+          width={200}
+          height={200}
+          isLoading={isLoading}
+          onExitComplete={handleLoadingComplete}
+          direction="top-to-bottom"
+          duration={1500}
+        />
+      </View>
+    );
+  }
   // If user is signed in, show the Tabs layout
   if (signedIn) {
     return (
@@ -97,7 +130,7 @@ export default function TabLayout() {
   return (
       <View style={styles.container}>
       {/* Top Section with Header */}
-      <View style={styles.topSection}>
+      <SafeAreaView style={styles.topSection}>
         <Image
           source={require('../../assets/images/greenTopLeft.png')}
           style={styles.topLeftImg}
@@ -110,12 +143,12 @@ export default function TabLayout() {
         {renderArchedText()}
 
         {/* RecycleRoute Text */}
-        <Text style={tw`text-5xl font-bold uppercase text-[#6B8068] tracking-wide mt-60`}>RECYCLE ROUTE!</Text>
+        <Text style={tw`text-5xl font-bold uppercase text-[#6B8068] tracking-wide mt-60`}>RECYCLEROUTE!</Text>
 
         {/* Reduce, Reuse, Recycle Text */}
         <Text style={tw`text-2xl font-bold text-black mb-1 mt-4`}>Reduce, Reuse, Recycle.</Text>
         <Text style={tw`text-2xl font-bold text-black mb-1`}>The Power is Yours!</Text>
-      </View>
+      </SafeAreaView>
 
       {/* Bottom Section with Earth Image and Buttons */}
       <View style={styles.bottomSection}>
@@ -159,6 +192,12 @@ export default function TabLayout() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#728A68', // Match your app's theme
   },
   topSection: {
     flex: 0.4,

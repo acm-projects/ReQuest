@@ -6,11 +6,15 @@ import { useAuth } from '../AuthContext';
 import { FIREBASE_AUTH } from '../FirebaseConfig';
 import { User } from 'firebase/auth';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import CustomLoadingIndicator from './CustomLoadingIndicator';
+
 
 export default function LoginScreen() { // Renamed component to LoginScreen
   const {signedIn, setSignedIn} = useAuth();
   const router = useRouter();
   const auth = FIREBASE_AUTH;
+  const [showContent, setShowContent] = useState(false);
+  const [isLoginLoading, setIsLoginLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -41,6 +45,19 @@ export default function LoginScreen() { // Renamed component to LoginScreen
     );
   }*/
 
+    useEffect(() => {
+    // Initial loading simulation
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleLoadingComplete = () => {
+    setShowContent(true);
+  };
+
   const handleLogin = async (): Promise<void> => {
     setIsLoading(true); 
     try {
@@ -62,6 +79,23 @@ export default function LoginScreen() { // Renamed component to LoginScreen
   const handleBackToFirst = () => {
     router.back();
   };
+
+
+  if (!showContent || isLoginLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <CustomLoadingIndicator
+          imageSource={require('../assets/images/birdPlanet.png')}
+          width={200}
+          height={200}
+          isLoading={!showContent ? isLoading : isLoginLoading}
+          onExitComplete={handleLoadingComplete}
+          direction="top-to-bottom"
+          duration={1500}
+        />
+      </View>
+    );
+  }
 
   return (
     <View style={tw`flex-1 bg-amber-50 justify-center items-center px-4`}>
@@ -183,6 +217,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#728A68',
   },
   topRightImg: {
     position: 'absolute',
@@ -207,4 +242,5 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
   },
+  
 });

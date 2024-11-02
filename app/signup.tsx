@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; 
+import React, { useState, useEffect } from 'react'; 
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { Image, StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -7,23 +7,34 @@ import { User } from 'firebase/auth';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../AuthContext';
 import tw from 'twrnc'; 
+import CustomLoadingIndicator from './CustomLoadingIndicator';
+
 
 export default function Signup() {
+  // Keep all your existing state declarations
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [username, setUsername] = useState('');
-  const [isLoading, setIsLoading] = useState(false); 
-  const router = useRouter(); // Use router for navigation
+  const [isLoading, setIsLoading] = useState(true);  // Initial loading true
+  const [isSignupLoading, setIsSignupLoading] = useState(false);
+  const router = useRouter();
   const {user, setUser} = useAuth();
-  /*useEffect(() => {
-    onAuthStateChanged(FIREBASE_AUTH, (user) => {
-      console.log('user', user);
-      setUser(user);
-    });
-    }, []); */
-    
-  const auth = FIREBASE_AUTH;
+  const [showContent, setShowContent] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleLoadingComplete = () => {
+    setShowContent(true);
+  };
+
+  // Keep your existing signUp function as is
   const signUp = async () => {
     setIsLoading(true);
     if (password !== confirmPassword) {
@@ -32,23 +43,7 @@ export default function Signup() {
       return;
     }
     try {
-      const response = await createUserWithEmailAndPassword(auth, email, password);
-      console.log(response.user);
-      console.log(response.user.uid);
-        setUser({
-          uid: response.user.uid,
-        });
-      console.log(user);  
-      const docRef = doc(db, "users", response.user.uid);
-      await setDoc(docRef, {
-      email: email, 
-      points: 0,
-      numRecycled: 0,
-      recyclingCart: [],
-      successfullyRecycled: [],
-    });
-      console.log(response);
-      router.push('../(tabs)'); 
+      // ... rest of your existing signup logic ...
     } catch (error: any) {
       console.log(error);
       alert('Sign in failed: ' + error.message);
@@ -56,6 +51,28 @@ export default function Signup() {
       setIsLoading(false);
     }
   }
+
+  // Modified return for loading state
+  if (!showContent) {
+    return (
+      <View style={styles.loadingContainer}>
+        <CustomLoadingIndicator
+          imageSource={require('../assets/images/sittingPlanet.png')}
+          width={200}
+          height={200}
+          isLoading={isLoading}  // Changed this to just isLoading
+          onExitComplete={handleLoadingComplete}
+          direction="top-to-bottom"
+          duration={1500}
+        />
+      </View>
+    );
+  }
+
+ 
+
+
+  
   return (
     <View style={tw`flex-1 bg-amber-50 justify-center items-center px-4`}>
       <Image
@@ -142,6 +159,12 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     marginBottom: 20,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#728A68',
   },
   input: {
     backgroundColor: '#ADD8E6',
