@@ -19,7 +19,7 @@ const FIREBASE_AUTH = initializeAuth(FIREBASE_APP, {
   persistence: getReactNativePersistence(ReactNativeAsyncStorage)
 });
 
-const db = getFirestore(FIREBASE_APP); //not sure whether parenthesis should be empty or not
+const db = getFirestore(FIREBASE_APP); 
 const auth = getAuth();
 
 export { FIREBASE_APP, FIREBASE_AUTH, db };

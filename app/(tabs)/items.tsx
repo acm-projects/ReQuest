@@ -402,13 +402,11 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   tallButton: {
-    width: 90,
-    height: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 5,
-    marginLeft: 35,
-  },
+  width: 110,  
+  height: 100, 
+  justifyContent: 'center',
+  alignItems: 'center',
+},
   scrollViewContainer: {
     paddingBottom: 20,
     alignItems: 'center',
@@ -463,12 +461,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonImage: {
-    width: 60,
-    height: 60,
+    width: 90,
+    height: 90,
   },
   uploadImage: {
-    width: 70,
-    height: 70,
+    width: 91,
+    height: 91,
   },
   text: {
     color: 'black',
@@ -498,7 +496,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ccc',
   },
   labelList: {
-    maxHeight: 300, // Limit the height of the FlatList
+    maxHeight: 300, 
   },
   flatList: {
     marginBottom: 10,
@@ -550,7 +548,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   spacer: {
-    height: 100, // Space at the bottom when no image is present
+    height: 100, 
   },
   modalTitle: {
     fontSize: 20,
@@ -595,14 +593,16 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   buttonRow: {
-    flexDirection: 'row', // This makes the buttons appear side by side
-    justifyContent: 'flex-start', // Adjust spacing between buttons
+    flexDirection: 'row', 
+    justifyContent: 'flex-start', 
     alignItems: 'center',
-    width: '70%',
-    marginBottom: 10, // Add spacing below the row
+    width: '50%',
+    marginVertical: -5, 
+    gap: 5,
+    marginRight: 13,
   },
   halfButton: {
-    width: '48%', // Each button takes up 48% of the width to fit side by side with spacing
+    width: '48%', 
   },
 });
 
