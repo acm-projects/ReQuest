@@ -1,134 +1,93 @@
 import React from 'react';
-import { Image, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { Image, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import tw from 'twrnc';
+import { useRouter } from 'expo-router';
+import { useAuth } from '@/AuthContext';
 
 export default function Profile() {
+  const router = useRouter();
+  const { setSignedIn } = useAuth();
+
+  const handleLogout = () => {
+    setSignedIn(false);
+    router.push('/login');
+  };
+
   return (
-    <View style={tw`flex-1`}>
-      {/* top section: profile icon and name */}
-      <View style={styles.topSection}>
+    <View style={tw`flex-1 bg-[#C2D5BA]`}>
+      {/* Top Section: Profile Icon and Name */}
+      <View style={tw`flex-3 bg-[#FFFBF1] items-center justify-center relative pb-3 w-full`}>
         <Image
-          source={require('../../assets/images/lightTopLeft.png')} 
-          style={styles.topLeftImg}
+          source={require('../../assets/images/img2.png')}
+          style={tw`absolute top-[-30px] left-[-20px] w-[100px] h-[100px] sm:w-[180px] sm:h-[180px]`}
         />
         <Image
-          source={require('../../assets/images/lightTopRight.png')}
-          style={styles.topRightImg}
+          source={require('../../assets/images/rightCorner.png')}
+          style={tw`absolute top-[-15px] right-[-20px] w-[100px] h-[100px] sm:w-[180px] sm:h-[180px]`}
         />
         <Image
-          source={require('../../assets/images/fireEarth.png')} 
-          style={styles.profileIcon}
+          source={require('../../assets/images/fireEarth.png')}
+          style={tw`w-[60px] h-[60px] sm:w-[80px] sm:h-[80px] rounded-full absolute top-[60px]`}
         />
       </View>
 
-      {/* bottom section */}
-      <View style={styles.bottomSection}>
+      {/* Bottom Section */}
+      <View style={tw`flex-7 bg-[#C2D5BA] pt-6 px-4 rounded-t-[20px] items-center relative w-full`}>
+        {/* Buttons Group 1 */}
+        <View style={tw`w-full max-w-[320px] bg-[#C2D5BA] justify-center items-center mb-4 rounded-lg border-2 border-white p-2`}>
+          {[
+            { label: 'Edit Profile Information', icon: require('../../assets/images/profileIcon.png') },
+            { label: 'Notification Settings', icon: require('../../assets/images/notification.png') },
+            { label: 'Change Language', icon: require('../../assets/images/changeLanguage.png') },
+          ].map((item, index) => (
+            <TouchableOpacity key={index} style={tw`my-1 flex-row items-center justify-between w-full`} onPress={() => console.log(item.label)}>
+              <View style={tw`flex-row items-center`}>
+                <Image source={item.icon} style={tw`w-[25px] h-[25px] mr-3`} />
+                <Text style={tw`text-white text-sm text-left`}>{item.label}</Text>
+              </View>
+              <Image source={require('../../assets/images/rightArrow.png')} style={tw`w-[25px] h-[25px]`} />
+            </TouchableOpacity>
+          ))}
+        </View>
 
-        {/* TouchableOpacity Button */}
-        <TouchableOpacity style={styles.button} onPress={() => console.log('Edit Profile Information')}>
-          <Text style={styles.buttonText}>Edit Profile Information</Text>
-        </TouchableOpacity>
+        {/* Buttons Group 2 */}
+        <View style={tw`w-full max-w-[320px] bg-[#C2D5BA] justify-center items-center mb-4 rounded-lg border-2 border-white p-2`}>
+          {[
+            { label: 'Help & Support', icon: require('../../assets/images/help&Support.png') },
+            { label: 'Contact Us', icon: require('../../assets/images/contactUs.png') },
+            { label: 'Privacy Policy', icon: require('../../assets/images/privacyPolicy.png') },
+          ].map((item, index) => (
+            <TouchableOpacity key={index} style={tw`my-1 flex-row items-center justify-between w-full`} onPress={() => console.log(item.label)}>
+              <View style={tw`flex-row items-center`}>
+                <Image source={item.icon} style={tw`w-[25px] h-[25px] mr-3`} />
+                <Text style={tw`text-white text-sm text-left`}>{item.label}</Text>
+              </View>
+              <Image source={require('../../assets/images/rightArrow.png')} style={tw`w-[25px] h-[25px]`} />
+            </TouchableOpacity>
+          ))}
+        </View>
 
-        <TouchableOpacity style={styles.buttonTwo} onPress={() => console.log('Edit Profile Information')}>
-          <Text style={styles.buttonText}>Notification Settings</Text>
-        </TouchableOpacity>
+        {/* Buttons Group 3 */}
+        <View style={tw`w-full max-w-[320px] bg-[#C2D5BA] justify-center items-center mb-4 rounded-lg border-2 border-white p-2`}>
+          <TouchableOpacity style={tw`my-1 flex-row items-center justify-between w-full`} onPress={handleLogout}>
+            <View style={tw`flex-row items-center`}>
+              <Image source={require('../../assets/images/logOut.png')} style={tw`w-[25px] h-[25px] mr-3`} />
+              <Text style={tw`text-white text-sm text-left`}>Log Out</Text>
+            </View>
+            <Image source={require('../../assets/images/rightArrow.png')} style={tw`w-[25px] h-[25px]`} />
+          </TouchableOpacity>
+        </View>
 
+        {/* Bottom Images */}
         <Image
           source={require('../../assets/images/greenBottomLeft.png')}
-          style={styles.bottomLeftImg}
+          style={tw`absolute bottom-[-60px] left-[-30px] w-[100px] h-[100px] sm:w-[180px] sm:h-[180px]`}
         />
         <Image
           source={require('../../assets/images/greenBottomRight.png')}
-          style={styles.bottomRightImg}
+          style={tw`absolute bottom-[-60px] right-[-30px] w-[100px] h-[100px] sm:w-[180px] sm:h-[180px]`}
         />
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  topSection: {
-    backgroundColor: '#FFFBF1',
-    flex: 3, // Occupies 30% of the screen
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative', // Add relative position to properly handle absolute child positions
-    paddingBottom: 20,
-  },
-  bottomSection: {
-    backgroundColor: '#C2D5BA',
-    flex: 7, // Occupies 70% of the screen
-    paddingTop: 30,
-    paddingHorizontal: 20,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    marginTop: -25,
-    alignItems: 'center', // Centers the button and other content horizontally
-  },
-  profileIcon: {
-    width: 100, 
-    height: 100,
-    borderRadius: 50, 
-    position: 'absolute',
-    top: 75, 
-    alignSelf: 'center',
-  },
-  topLeftImg: {
-    position: 'absolute',
-    top: -55,
-    left: -49,
-    width: 220,
-    height: 220,
-    resizeMode: 'contain',
-  },
-  topRightImg: {
-    position: 'absolute',
-    top: -33,
-    right: -59,
-    width: 200,
-    height: 200,
-    resizeMode: 'contain',
-  },
-  bottomLeftImg: {
-    position: 'absolute',
-    bottom: -75,
-    left: -80,
-    width: 220,
-    height: 222,
-    resizeMode: 'contain',
-  },
-  bottomRightImg: {
-    position: 'absolute',
-    bottom: -76,
-    right: -39,
-    width: 200,
-    height: 200,
-    resizeMode: 'contain',
-  },
-  profileOne: {
-    position: 'absolute',
-    top: -80,
-    width: 400,
-    height: 400,
-    resizeMode: 'contain',
-    alignSelf: 'center',
-  },
-  button: {
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-    left: -50,
-    borderRadius: 10,
-    marginTop: 30, // Add some margin for spacing
-  },
-  buttonTwo: {
-    top: -25,
-    left: -58,
-    borderRadius: 10,
-    marginTop: 40,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    textAlign: 'center',
-  },
-});
