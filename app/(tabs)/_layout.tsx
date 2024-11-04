@@ -14,6 +14,7 @@ import { PointsProvider } from '../PointsContext'
 import CustomLoadingIndicator from '../CustomLoadingIndicator';
 
 
+
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   // const [signedIn, setSignedIn] = useState(false);
@@ -143,11 +144,11 @@ useEffect(() => {
         {renderArchedText()}
 
         {/* RecycleRoute Text */}
-        <Text style={tw`text-5xl font-bold uppercase text-[#6B8068] tracking-wide mt-60`}>RECYCLEROUTE!</Text>
+        <Text style={tw`text-7xl font-bold uppercase text-[#6B8068] tracking-wide mt-60`}>ReQuest!</Text>
 
         {/* Reduce, Reuse, Recycle Text */}
-        <Text style={tw`text-2xl font-bold text-black mb-1 mt-4`}>Reduce, Reuse, Recycle.</Text>
-        <Text style={tw`text-2xl font-bold text-black mb-1`}>The Power is Yours!</Text>
+        <Text style={tw`text-2xl font-bold text-white mb-1 mt-4`}>Reduce, Reuse, Recycle.</Text>
+        <Text style={tw`text-2xl font-bold text-white mb-1`}>The Power is Yours!</Text>
       </SafeAreaView>
 
       {/* Bottom Section with Earth Image and Buttons */}
@@ -231,7 +232,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     width: '100%',
     paddingHorizontal: 30,
     position: 'absolute',
@@ -241,7 +242,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#C2D5BA',
     padding: 15,
     borderRadius: 10,
-    width: '30%', // Adjust width to fit three buttons
+    width: 150,
+    marginHorizontal: 10,
   },
     topLeftImg: {
     position: 'absolute',
