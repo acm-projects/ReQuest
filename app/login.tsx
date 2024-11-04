@@ -49,7 +49,7 @@ export default function LoginScreen() { // Renamed component to LoginScreen
     // Initial loading simulation
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 2000);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, []);

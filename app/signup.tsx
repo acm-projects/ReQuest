@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'; 
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { Image, StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import { Image, StyleSheet, Text, View, TextInput, TouchableOpacity, TouchableWithoutFeedback, ScrollView, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { useRouter } from 'expo-router';
 import { FIREBASE_AUTH, db } from '../FirebaseConfig';
 import { User } from 'firebase/auth';
@@ -19,13 +19,13 @@ export default function Signup() {
   const [isLoading, setIsLoading] = useState(true);  // Initial loading true
   const [isSignupLoading, setIsSignupLoading] = useState(false);
   const router = useRouter();
-  const {user, setUser} = useAuth();
+  const {user, setUser, signedIn, setSignedIn} = useAuth();
   const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 2000);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -33,22 +33,51 @@ export default function Signup() {
   const handleLoadingComplete = () => {
     setShowContent(true);
   };
-
+    const auth = FIREBASE_AUTH;
   // Keep your existing signUp function as is
-  const signUp = async () => {
+ const signUp = async (): Promise<boolean> => {  // Add return type
     setIsLoading(true);
     if (password !== confirmPassword) {
       alert("Passwords don't match!");
       setIsLoading(false);
-      return;
+      return false;  // Return false for invalid password
     }
     try {
-      // ... rest of your existing signup logic ...
+      const response = await createUserWithEmailAndPassword(auth, email, password);
+      console.log(response.user);
+      console.log(response.user.uid);
+      
+      setUser({
+        uid: response.user.uid,
+      });
+      setSignedIn(true);
+      
+      console.log(user);  
+      const docRef = doc(db, "users", response.user.uid);
+      await setDoc(docRef, {
+        email: email, 
+        points: 0,
+        numRecycled: 0,
+        recyclingCart: [],
+        successfullyRecycled: [],
+      });
+      console.log(response);
+      return true;  // Return true for successful signup
+
     } catch (error: any) {
       console.log(error);
       alert('Sign in failed: ' + error.message);
+      setSignedIn(false);
+      return false;  // Return false for any errors
     } finally {
       setIsLoading(false);
+    }
+  }
+
+const handleRegisterPress = async () => {
+    const signupSuccessful = await signUp();
+    if (signupSuccessful) {
+      router.push('../(tabs)');  // Make sure this path matches your file structure
     }
   }
 
@@ -69,88 +98,101 @@ export default function Signup() {
     );
   }
 
- 
+
 
 
   
+  
   return (
-    <View style={tw`flex-1 bg-amber-50 justify-center items-center px-4`}>
-      <Image
-        source={require('../assets/images/lightTopLeft.png')}
-        style={styles.cornerImg}
-      />
-      <Image
-        source={require('../assets/images/lightTopRight.png')}
-        style={styles.topRightImg}
-      />
-      <Image
-        source={require('../assets/images/lightBottomLeft.png')}
-        style={styles.bottomLeftImg}
-      />
-      <Image
-        source={require('../assets/images/lightBottomRight.png')}
-        style={styles.bottomRightImg}
-      />
-      <TouchableOpacity 
-        style={tw`absolute top-10 left-4`} 
-        onPress={() => router.back()} // Navigate back to the Welcome page
-      >
-        <Text style={tw`text-2xl`}>&larr;</Text> 
-      </TouchableOpacity>
+    <KeyboardAvoidingView 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={tw`flex-1`}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView 
+          contentContainerStyle={tw`flex-grow`}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={tw`flex-1 bg-amber-50 justify-center items-center px-4`}>
+            <Image
+              source={require('../assets/images/lightTopLeft.png')}
+              style={styles.cornerImg}
+            />
+            <Image
+              source={require('../assets/images/lightTopRight.png')}
+              style={styles.topRightImg}
+            />
+            <Image
+              source={require('../assets/images/lightBottomLeft.png')}
+              style={styles.bottomLeftImg}
+            />
+            <Image
+              source={require('../assets/images/lightBottomRight.png')}
+              style={styles.bottomRightImg}
+            />
+            <TouchableOpacity 
+              style={tw`absolute top-10 left-4`} 
+              onPress={() => router.back()}
+            >
+              <Text style={tw`text-2xl`}>&larr;</Text> 
+            </TouchableOpacity>
 
-      {/* Header with decorative elements */}
-      <Text style={tw`text-5xl font-semibold text-[#6B8068] mt-2`}>Hello!</Text>
-      <Text style={tw`text-3xl font-bold text-black mb-6`}>Register to Get Started</Text>
+            <Text style={tw`text-5xl font-semibold text-[#6B8068] mt-2`}>Hello!</Text>
+            <Text style={tw`text-3xl font-bold text-black mb-6`}>Register to Get Started</Text>
 
-      {/* Earth Image */}
-      <Image
-        source={require('../assets/images/sittingPlanet.png')}  // globe image
-        style={styles.earthImg}
-      />
+            <Image
+              source={require('../assets/images/sittingPlanet.png')}
+              style={styles.earthImg}
+            />
 
-      {/* Username Input */}
-      <TextInput
-        style={styles.input}
-        placeholder="Enter your username"
-        placeholderTextColor="#FFFFFF"
-        value = {username}
-        onChangeText={setUsername}
-      />
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your username"
+              placeholderTextColor="#FFFFFF"
+              value={username}
+              onChangeText={setUsername}
+            />
 
-      {/* Email Input */}
-      <TextInput
-        style={styles.input}
-        placeholder="Enter your email"
-        placeholderTextColor="#FFFFFF"
-        value={email}
-        onChangeText={setEmail}
-      />
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your email"
+              placeholderTextColor="#FFFFFF"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
 
-      {/* Password Input */}
-      <TextInput
-        style={styles.input}
-        placeholder="Enter your password"
-        placeholderTextColor="#FFFFFF"
-        secureTextEntry
-        value = {password}
-        onChangeText={setPassword}
-      />
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your password"
+              placeholderTextColor="#FFFFFF"
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+              autoCapitalize="none"
+            />
 
-      {/* Confirm Password Input */}
-      <TextInput
-        style={styles.input}
-        placeholder="Confirm password"
-        placeholderTextColor="#FFFFFF"
-        secureTextEntry
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-      />
+            <TextInput
+              style={styles.input}
+              placeholder="Confirm password"
+              placeholderTextColor="#FFFFFF"
+              secureTextEntry
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              autoCapitalize="none"
+            />
 
-      {/* Register Button */}
-      <TouchableOpacity style={styles.button} onPress={signUp}>
-        <Text style={tw`text-white text-center text-lg`}>Register</Text>
-      </TouchableOpacity>
-    </View>
+            <TouchableOpacity 
+              style={[styles.button, tw`mb-6`]} // Added margin bottom
+              onPress={handleRegisterPress}
+            >
+              <Text style={tw`text-white text-center text-lg`}>Register</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -168,18 +210,21 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: '#ADD8E6',
-    padding: 12,
+    padding: Platform.OS === 'ios' ? 12 : 10, // Slightly smaller on Android
     borderRadius: 10,
     width: '90%',
     marginBottom: 12,
     textAlign: 'left',
   },
+  
+  // Add more padding to the bottom of the button for keyboard
   button: {
     backgroundColor: '#C2D5BA',
     padding: 15,
     borderRadius: 10,
     width: '50%',
     marginTop: 20,
+    marginBottom: Platform.OS === 'ios' ? 20 : 10,
   },
     container: {
     flex: 1,

@@ -20,7 +20,6 @@ const ITEM_WIDTH = width * 0.9;
 const DOT_SIZE = 10;
 const DOT_SPACING = 10;
 
-// tipcarouselwithdots.tsx
 interface TipsCarouselProps {
   tipsAndGuides: {
     title: string;
@@ -33,7 +32,7 @@ interface TipsCarouselProps {
 const TipsCarouselWithDots: React.FC<TipsCarouselProps> = ({ tipsAndGuides, onIndexChange }) => {
   const scrollX = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef<FlatList>(null);
-
+  
   const [fontsLoaded] = useFonts({
     'Nerko-One': require('../assets/fonts/NerkoOne-Regular.ttf'),
     'Gilroy': require('../assets/fonts/Gilroy-Regular.otf'),
@@ -49,56 +48,84 @@ const TipsCarouselWithDots: React.FC<TipsCarouselProps> = ({ tipsAndGuides, onIn
     viewAreaCoveragePercentThreshold: 50,
   };
 
-  const renderItem = ({ item }: { item: typeof tipsAndGuides[0] }) => (
-    <View
-      style={[
-        tw`rounded-3xl`,
-        {
+  const renderItem = ({ item, index }: { item: typeof tipsAndGuides[0]; index: number }) => {
+    const position = Animated.subtract(index * width, scrollX);
+    const isDisappearing = position.interpolate({
+      inputRange: [-width, 0, width],
+      outputRange: [0.5, 1, 0.5]
+    });
+    
+    const scale = isDisappearing.interpolate({
+      inputRange: [0.5, 1],
+      outputRange: [0.92, 1]
+    });
+
+    const translateY = position.interpolate({
+      inputRange: [-width, 0, width],
+      outputRange: [15, 0, 15]
+    });
+
+    return (
+      <Animated.View
+        style={{
           width: ITEM_WIDTH,
           marginHorizontal: (width - ITEM_WIDTH) / 2,
-          backgroundColor: '#DCF8C6',
-          padding: 16,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }
-      ]}
-    >
-      <Text 
-        style={[
-          tw`text-2xl font-bold mt-1 text-center`,
-          { 
-            color: '#400908',
-            fontFamily: 'Nerko-One',
-            textAlign: 'center',
-            width: '100%'
-          }
-        ]}
+          opacity: isDisappearing,
+          transform: [
+            { scale },
+            { translateY }
+          ]
+        }}
       >
-        {item.title}
-      </Text>
-      <Text 
-        style={[
-          tw`text-base mb-2 text-center`,
-          { 
-            color: '#400908',
-            fontFamily: 'Nerko-One',
-            textAlign: 'center',
-            width: '100%'
-          }
-        ]}
-      >
-        {item.description}
-      </Text>
-      <WebView
-        source={{ uri: item.link }}
-        style={[tw`w-55 h-60`, { alignSelf: 'center' }]}
-        javaScriptEnabled={true}
-        domStorageEnabled={true}
-        startInLoadingState={true}
-        scalesPageToFit={true}
-      />
-    </View>
-  );
+        <View
+          style={[
+            tw`rounded-3xl`,
+            {
+              backgroundColor: '#C2D5BA',
+              padding: 16,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }
+          ]}
+        >
+          <Text 
+            style={[
+              tw`text-2xl font-bold mt-1 text-center`,
+              { 
+                color: '#400908',
+                fontFamily: 'Nerko-One',
+                textAlign: 'center',
+                width: '100%'
+              }
+            ]}
+          >
+            {item.title}
+          </Text>
+          <Text 
+            style={[
+              tw`text-base mb-2 text-center`,
+              { 
+                color: '#400908',
+                fontFamily: 'Nerko-One',
+                textAlign: 'center',
+                width: '100%'
+              }
+            ]}
+          >
+            {item.description}
+          </Text>
+          <WebView
+            source={{ uri: item.link }}
+            style={[tw`w-55 h-60`, { alignSelf: 'center' }]}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
+            startInLoadingState={true}
+            scalesPageToFit={true}
+          />
+        </View>
+      </Animated.View>
+    );
+  };
 
   if (!fontsLoaded) {
     return null;

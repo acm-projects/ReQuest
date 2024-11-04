@@ -43,6 +43,9 @@ import {
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { Feather } from '@expo/vector-icons';
 import Groq from 'groq-sdk';
+import MapWidget from '../MapWidget'; // Adjust path based on where you created the file
+
+
 //import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 
@@ -647,14 +650,22 @@ const tipsAndGuides = [
       </Text>
 
       {/* Floating Earth Image */}
-      <Image
-        source={require('../../assets/images/recycleEarth.png')}
-        style={tw`absolute right-3 top-32 w-30 h-30`}
-      />
+     <Image
+  source={require('../../assets/images/recycleEarth.png')}
+  style={tw`
+    absolute 
+    right-[5%] 
+    top-[9.5%] 
+    h-30 
+    w-30 
+    z-10
+  `}
+  resizeMode="contain"
+/>
 
       {/* Stats Section */}
       <View style={[tw`px-8 pt-5 mt-[50] mb-4`, { width: '90%', alignSelf: 'center' }]}>
-        <View style={[tw`absolute inset--1 bg-[#DCF8C6]`, { borderRadius: 30 }]} />
+        <View style={[tw`absolute inset--1 bg-[#C2D5BA]`, { borderRadius: 30 }]} />
         
         <View style={tw`flex-row justify-between mb-4`}>
           <View style={tw`flex-1 max-w-[75%]`}>
@@ -713,6 +724,7 @@ const tipsAndGuides = [
   <PieChartComponent data={chartData} />
 </View>
 
+<MapWidget />
 
 {/* Dots and Tips Container */}
 <View style={tw`relative`}>
@@ -733,13 +745,14 @@ const tipsAndGuides = [
   </View>
 
   {/* Tips Carousel Section */}
-  <View style={tw`flex-1 mt-1`}>
-    <TipsCarouselWithDots 
-      tipsAndGuides={tipsAndGuides}
-      onIndexChange={setActiveIndex} 
-    />
-  </View>
+ <View style={[tw`flex-1 mt-1`, { minHeight: 500 }]}>
+  <TipsCarouselWithDots
+    tipsAndGuides={tipsAndGuides}
+    onIndexChange={setActiveIndex}
+  />
 </View>
+</View>
+
 
 
     </ScrollView>
@@ -774,7 +787,7 @@ const styles = StyleSheet.create({
     color: '#400908',
   },
   tipBackground: {
-    backgroundColor: '#DCF8C6',
+    backgroundColor: '#C2D5BA',
     borderRadius: 12,
     padding: 16,
     marginBottom: 20,

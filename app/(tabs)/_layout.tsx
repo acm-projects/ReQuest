@@ -26,7 +26,7 @@ useEffect(() => {
     // Simulate loading time or wait for actual data
     const loadingTimeout = setTimeout(() => {
       setIsLoading(false);
-    }, 2000); // Adjust timing as needed
+    }, 3000); // Adjust timing as needed
 
     return () => clearTimeout(loadingTimeout);
   }, []);
