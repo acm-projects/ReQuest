@@ -156,7 +156,7 @@ export default function LoginScreen() { // Renamed component to LoginScreen
         <Text style={tw`text-white text-center text-lg`}>Log In</Text>
       </TouchableOpacity>
       <Image
-        source={require('../assets/images/loadingHeart.png')}
+        source={require('../assets/images/loadH.png')}
         style={styles.footerImg}
       />
       {/* Footer Text */}
@@ -201,9 +201,9 @@ const styles = StyleSheet.create({
   },
   footerImg: {
     width: 100,
-    height: 60,
+    height: 75,
     alignSelf: 'auto',
-    marginTop: 22,
+    marginTop: 25,
   },
   topLeftImg: {
     position: 'absolute',
