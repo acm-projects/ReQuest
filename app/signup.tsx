@@ -8,7 +8,8 @@ import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../AuthContext';
 import tw from 'twrnc'; 
 import CustomLoadingIndicator from './CustomLoadingIndicator';
-
+import { useFonts } from 'expo-font';
+import * as Font from 'expo-font';
 
 export default function Signup() {
   // Keep all your existing state declarations
@@ -21,6 +22,10 @@ export default function Signup() {
   const router = useRouter();
   const {user, setUser, signedIn, setSignedIn} = useAuth();
   const [showContent, setShowContent] = useState(false);
+  const [fontsLoaded] = useFonts({
+    'Nerko-One': require('../assets/fonts/NerkoOne-Regular.ttf'),
+    'Gilroy': require('../assets/fonts/Gilroy-Regular.otf'),
+  });
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -137,8 +142,8 @@ const handleRegisterPress = async () => {
               <Text style={tw`text-2xl`}>&larr;</Text> 
             </TouchableOpacity>
 
-            <Text style={tw`text-5xl font-semibold text-[#6B8068] mt-2`}>Hello!</Text>
-            <Text style={tw`text-3xl font-bold text-black mb-6`}>Register to Get Started</Text>
+            <Text style={[tw`text-8xl font-semibold text-[#6B8068] mt-2`, {fontFamily: 'Nerko-One'}]}>Hello!</Text>
+            <Text style={[tw`text-4xl font-bold text-black mb-6`, {fontFamily: 'Nerko-One'}]}>Register to Get Started</Text>
 
             <Image
               source={require('../assets/images/sittingPlanet.png')}
@@ -146,7 +151,7 @@ const handleRegisterPress = async () => {
             />
 
             <TextInput
-              style={styles.input}
+              style={[styles.input, {fontFamily: 'Gilroy'}]}
               placeholder="Enter your username"
               placeholderTextColor="#FFFFFF"
               value={username}
@@ -154,7 +159,7 @@ const handleRegisterPress = async () => {
             />
 
             <TextInput
-              style={styles.input}
+              style={[styles.input, {fontFamily: 'Gilroy'}]}
               placeholder="Enter your email"
               placeholderTextColor="#FFFFFF"
               value={email}
@@ -164,7 +169,7 @@ const handleRegisterPress = async () => {
             />
 
             <TextInput
-              style={styles.input}
+              style={[styles.input, {fontFamily: 'Gilroy'}]}
               placeholder="Enter your password"
               placeholderTextColor="#FFFFFF"
               secureTextEntry
@@ -174,7 +179,7 @@ const handleRegisterPress = async () => {
             />
 
             <TextInput
-              style={styles.input}
+              style={[styles.input, {fontFamily: 'Gilroy'}]}
               placeholder="Confirm password"
               placeholderTextColor="#FFFFFF"
               secureTextEntry
@@ -187,7 +192,7 @@ const handleRegisterPress = async () => {
               style={[styles.button, tw`mb-6`]} // Added margin bottom
               onPress={handleRegisterPress}
             >
-              <Text style={tw`text-white text-center text-lg`}>Register</Text>
+              <Text style={[tw`text-white text-center text-lg`, {fontFamily: 'Gilroy'}]}>Register</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>

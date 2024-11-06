@@ -510,8 +510,6 @@ const Dashboard = () => {
     return null;
   }
 
-  
-
   const PointsDisplay = () => {
     return (
       <PointsProvider>
@@ -546,8 +544,6 @@ const Dashboard = () => {
         </PointsProvider>
       )
     }
-
-    
     
     return (
       <PointsProvider>
