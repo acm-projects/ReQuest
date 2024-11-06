@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'expo-router';
-import { StyleSheet, View, Text, TouchableOpacity, Image, SafeAreaView } from 'react-native';
+import { Dimensions, StyleSheet, View, Text, TouchableOpacity, Image, SafeAreaView } from 'react-native';
 import { useAuth } from '@/AuthContext';
 import { PointsProvider } from '../PointsContext';
 import CustomLoadingIndicator from '../CustomLoadingIndicator';
@@ -20,16 +20,7 @@ export default function TabLayout() {
     'Nerko-One': require('../../assets/fonts/NerkoOne-Regular.ttf'),
     'Gilroy': require('../../assets/fonts/Gilroy-Regular.otf'),
   });
-  
-
-  const CurvedPartition = () => (
-    <Svg height="60" width="100%" viewBox="0 0 100 100" style={styles.curvedPartition}>
-      <Path
-        d="M0 50 C 25 90, 75 10, 100 50 L 100 100 L 0 100 Z"
-        fill="#C2D5BA"
-      />
-    </Svg>
-  );
+  const screenWidth = Dimensions.get('screen').width;
 
   useEffect(() => {
     const loadingTimeout = setTimeout(() => {
@@ -130,14 +121,22 @@ export default function TabLayout() {
         />
         
         {renderArchedText()}
-        <Text style={[tw`text-8xl font-bold text-[#6B8068] tracking-wide mt-60`, { fontFamily: 'Nerko-One'}]}>ReQuest!</Text>
-        <Text style={[tw`text-4xl font-bold text-white mb-1 mt-4`, {fontFamily: 'Gilroy'}]}>Reduce, Reuse, Recycle.</Text>
-        <Text style={[tw`text-4xl font-bold text-white mb-1`, {fontFamily: 'Gilroy'}]}>The Power is Yours!</Text>
+        <Text style={[tw`text-8xl font-bold text-[#6B8068] tracking-wide mt-55`, { fontFamily: 'Nerko-One'}]}>ReQuest!</Text>
+        <Text style={[tw`text-4xl font-bold text-white mt-5`, {fontFamily: 'Gilroy'}]}>Reduce, Reuse, Recycle.</Text>
+        <Text style={[tw`text-4xl font-bold text-white mt-4`, {fontFamily: 'Gilroy'}]}>The Power is Yours!</Text>
       </SafeAreaView>
-
-      {/* Curved Partition */}
-      <CurvedPartition />
-
+      <View>
+        <Svg
+          height={92}
+          width={screenWidth}
+          viewBox="0 0 1440 320"
+        >
+          <Path
+            fill="#fffbf1"
+            d='M0,160L30,133.3C60,107,120,53,180,48C240,43,300,85,360,133.3C420,181,480,235,540,266.7C600,299,660,309,720,277.3C780,245,840,171,900,160C960,149,1020,203,1080,229.3C1140,256,1200,256,1260,245.3C1320,235,1380,213,1410,202.7L1440,192L1440,320L1410,320C1380,320,1320,320,1260,320C1200,320,1140,320,1080,320C1020,320,960,320,900,320C840,320,780,320,720,320C660,320,600,320,540,320C480,320,420,320,360,320C300,320,240,320,180,320C120,320,60,320,30,320L0,320Z'
+          />
+        </Svg>
+      </View>
       <View style={styles.bottomSection}>
         <Image
           source={require('../../assets/images/recycleEarth.png')}
@@ -183,7 +182,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#728A68',
   },
   topSection: {
-    flex: 0.4,
+    flex: 0.45,
     justifyContent: 'center',
     alignItems: 'center',
     paddingTop: 60,
@@ -194,7 +193,7 @@ const styles = StyleSheet.create({
   },
   bottomSection: {
     flex: 0.6,
-    backgroundColor: tw.color('amber-50'),
+    backgroundColor: '#fffbf1',
     justifyContent: 'center',
     alignItems: 'center',
     paddingTop: 30, 
@@ -205,11 +204,11 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 30,
     position: 'absolute',
-    bottom: 90,
+    bottom: 75,
   },
   button: {
     backgroundColor: '#C2D5BA',
-    padding: 15,
+    padding: 12,
     borderRadius: 10,
     width: 150,
     marginHorizontal: 10,
