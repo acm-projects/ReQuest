@@ -1,32 +1,31 @@
 import { Tabs } from 'expo-router';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'expo-router';
-import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { StyleSheet, View, Text, TouchableOpacity, Image, SafeAreaView } from 'react-native';
-import { useContext } from 'react';
+import { Dimensions, StyleSheet, View, Text, TouchableOpacity, Image, SafeAreaView } from 'react-native';
+import { useAuth } from '@/AuthContext';
+import { PointsProvider } from '../PointsContext';
+import CustomLoadingIndicator from '../CustomLoadingIndicator';
+import Svg, { Path } from 'react-native-svg';
 import tw from 'twrnc';
 import TabBar from "../../components/TabBar";
-import { useAuth } from '@/AuthContext';
-import { PointsProvider } from '../PointsContext'
-import CustomLoadingIndicator from '../CustomLoadingIndicator';
-
+import { useFonts } from 'expo-font';
+import * as Font from 'expo-font';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-  // const [signedIn, setSignedIn] = useState(false);
-  const { signedIn, setSignedIn } = useAuth();
+  const { signedIn } = useAuth();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
+  const [fontsLoaded] = useFonts({
+    'Nerko-One': require('../../assets/fonts/NerkoOne-Regular.ttf'),
+    'Gilroy': require('../../assets/fonts/Gilroy-Regular.otf'),
+  });
+  const screenWidth = Dimensions.get('screen').width;
 
-useEffect(() => {
-    // Simulate loading time or wait for actual data
+  useEffect(() => {
     const loadingTimeout = setTimeout(() => {
       setIsLoading(false);
-    }, 2000); // Adjust timing as needed
+    }, 3000);
 
     return () => clearTimeout(loadingTimeout);
   }, []);
@@ -35,18 +34,17 @@ useEffect(() => {
     setShowContent(true);
   };
 
-
   const renderArchedText = () => {
     const welcomeText = "Welcome to";
-    const arcRadius = 45; // Adjust the radius for the curvature
-    const totalAngle = Math.PI; // 180 degrees for a half-circle
+    const arcRadius = 45;
+    const totalAngle = Math.PI;
     const charAngleStep = totalAngle / (welcomeText.length - 1);
 
     return (
       <View style={styles.archContainer}>
         {welcomeText.split('').map((char, index) => {
-          const angle = (index - (welcomeText.length - 1) / 2) * charAngleStep; // Calculate the angle for each character
-          const rotateAngle = `${angle * (145 / Math.PI)}deg`; // Convert radians to degrees
+          const angle = (index - (welcomeText.length - 1) / 2) * charAngleStep;
+          const rotateAngle = `${angle * (180 / Math.PI)}deg`;
 
           return (
             <Text
@@ -55,8 +53,8 @@ useEffect(() => {
                 styles.archText,
                 {
                   transform: [
-                    { rotate: rotateAngle }, // Apply the rotation
-                    { translateY: -arcRadius } // Adjust position along the y-axis
+                    { rotate: rotateAngle },
+                    { translateY: -arcRadius }
                   ],
                 },
               ]}
@@ -84,52 +82,34 @@ useEffect(() => {
       </View>
     );
   }
-  // If user is signed in, show the Tabs layout
+
   if (signedIn) {
     return (
       <PointsProvider>
-      <Tabs tabBar={props => <TabBar {...props} />}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          headerShown: false,
-        }}
-      />
-   
-      <Tabs.Screen
-        name="items"
-        options={{
-          title: "Items",
-          headerShown: false,
-        }}
-      />
-   
-      <Tabs.Screen
-        name="map"
-        options={{
-          title: "Map",
-          headerShown: false,
-        }}
-      />
-   
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: "Profile",
-          headerShown: false,
-        }}
-      />
-    </Tabs>
-    </PointsProvider>
-
+        <Tabs tabBar={props => <TabBar {...props} />}>
+          <Tabs.Screen
+            name="index"
+            options={{ title: "Home", headerShown: false }}
+          />
+          <Tabs.Screen
+            name="items"
+            options={{ title: "Items", headerShown: false }}
+          />
+          <Tabs.Screen
+            name="map"
+            options={{ title: "Map", headerShown: false }}
+          />
+          <Tabs.Screen
+            name="profile"
+            options={{ title: "Profile", headerShown: false }}
+          />
+        </Tabs>
+      </PointsProvider>
     );
   }
 
-  // If user is not signed in, show the login/sign up screen
   return (
-      <View style={styles.container}>
-      {/* Top Section with Header */}
+    <View style={styles.container}>
       <SafeAreaView style={styles.topSection}>
         <Image
           source={require('../../assets/images/greenTopLeft.png')}
@@ -139,20 +119,25 @@ useEffect(() => {
           source={require('../../assets/images/greenTopRight.png')}
           style={styles.topRightImg}
         />
-        {/* Arched "Welcome to" Text */}
+        
         {renderArchedText()}
-
-        {/* RecycleRoute Text */}
-        <Text style={tw`text-5xl font-bold uppercase text-[#6B8068] tracking-wide mt-60`}>RECYCLEROUTE!</Text>
-
-        {/* Reduce, Reuse, Recycle Text */}
-        <Text style={tw`text-2xl font-bold text-black mb-1 mt-4`}>Reduce, Reuse, Recycle.</Text>
-        <Text style={tw`text-2xl font-bold text-black mb-1`}>The Power is Yours!</Text>
+        <Text style={[tw`text-8xl font-bold text-[#6B8068] tracking-wide mt-55`, { fontFamily: 'Nerko-One'}]}>ReQuest!</Text>
+        <Text style={[tw`text-4xl font-bold text-white mt-5`, {fontFamily: 'Gilroy'}]}>Reduce, Reuse, Recycle.</Text>
+        <Text style={[tw`text-4xl font-bold text-white mt-4`, {fontFamily: 'Gilroy'}]}>The Power is Yours!</Text>
       </SafeAreaView>
-
-      {/* Bottom Section with Earth Image and Buttons */}
+      <View>
+        <Svg
+          height={92}
+          width={screenWidth}
+          viewBox="0 0 1440 320"
+        >
+          <Path
+            fill="#fffbf1"
+            d='M0,160L30,133.3C60,107,120,53,180,48C240,43,300,85,360,133.3C420,181,480,235,540,266.7C600,299,660,309,720,277.3C780,245,840,171,900,160C960,149,1020,203,1080,229.3C1140,256,1200,256,1260,245.3C1320,235,1380,213,1410,202.7L1440,192L1440,320L1410,320C1380,320,1320,320,1260,320C1200,320,1140,320,1080,320C1020,320,960,320,900,320C840,320,780,320,720,320C660,320,600,320,540,320C480,320,420,320,360,320C300,320,240,320,180,320C120,320,60,320,30,320L0,320Z'
+          />
+        </Svg>
+      </View>
       <View style={styles.bottomSection}>
-        {/* Earth Image */}
         <Image
           source={require('../../assets/images/recycleEarth.png')}
           style={styles.earthImg}
@@ -166,22 +151,18 @@ useEffect(() => {
           style={styles.bottomRightImg}
         />
 
-        {/* Bottom Section with Buttons */}
         <View style={styles.buttonContainer}>
-          {/* Sign Up Button */}
           <TouchableOpacity
             style={styles.button}
             onPress={() => router.push('../signup')}
           >
-            <Text style={tw`text-white text-center text-lg`}>Sign Up</Text>
+            <Text style={[tw`text-white text-center text-lg`,{fontFamily: 'Gilroy'}]}>Sign Up</Text>
           </TouchableOpacity>
-
-          {/* Log In Button */}
           <TouchableOpacity
             style={styles.button}
             onPress={() => router.push('../login')}
           >
-            <Text style={tw`text-white text-center text-lg`}>Log In</Text>
+            <Text style={[tw`text-white text-center text-lg`,{fontFamily: 'Gilroy'}]}>Log In</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -192,19 +173,45 @@ useEffect(() => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#C2D5BA',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#728A68', // Match your app's theme
+    backgroundColor: '#728A68',
   },
   topSection: {
-    flex: 0.4,
-    backgroundColor: '#C2D5BA',
+    flex: 0.45,
     justifyContent: 'center',
     alignItems: 'center',
     paddingTop: 60,
+  },
+  curvedPartition: {
+    position: 'absolute',
+    top: '40%', 
+  },
+  bottomSection: {
+    flex: 0.6,
+    backgroundColor: '#fffbf1',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 30, 
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    width: '100%',
+    paddingHorizontal: 30,
+    position: 'absolute',
+    bottom: 75,
+  },
+  button: {
+    backgroundColor: '#C2D5BA',
+    padding: 12,
+    borderRadius: 10,
+    width: 150,
+    marginHorizontal: 10,
   },
   archContainer: {
     flexDirection: 'row',
@@ -222,28 +229,7 @@ const styles = StyleSheet.create({
     height: 300,
     marginBottom: 150,
   },
-  bottomSection: {
-    flex: 0.6,
-    backgroundColor: tw.color('amber-50'),
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    paddingHorizontal: 30,
-    position: 'absolute',
-    bottom: 90,
-  },
-  button: {
-    backgroundColor: '#C2D5BA',
-    padding: 15,
-    borderRadius: 10,
-    width: '30%', // Adjust width to fit three buttons
-  },
-    topLeftImg: {
+  topLeftImg: {
     position: 'absolute',
     top: -40,
     left: -25,

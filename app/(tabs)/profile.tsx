@@ -56,11 +56,11 @@ export default function Profile() {
 
         {/* Decorative Corner Images */}
         <Image
-          source={require('../../assets/images/img2.png')}
+          source={require('../../assets/images/lightTopLeft.png')}
           style={tw`absolute top-[-30px] left-[-20px] w-[100px] h-[100px] sm:w-[180px] sm:h-[180px]`}
         />
         <Image
-          source={require('../../assets/images/rightCorner.png')}
+          source={require('../../assets/images/lightTopRight.png')}
           style={tw`absolute top-[-15px] right-[-20px] w-[100px] h-[100px] sm:w-[180px] sm:h-[180px]`}
         />
       </View>

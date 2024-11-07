@@ -39,7 +39,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       translateY.value = Math.min(Math.max(newY, 0), SCREEN_HEIGHT * 0.35);
     },
     onEnd: (event) => {
-      const snapPoint = event.velocityY > 0 ? SCREEN_HEIGHT * 0.25 : 0;
+      const snapPoint = event.velocityY > 0 ? SCREEN_HEIGHT * 0.28 : 0;
       translateY.value = withSpring(snapPoint, {
         damping: 20,
         stiffness: 90,

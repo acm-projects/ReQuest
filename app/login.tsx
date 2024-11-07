@@ -7,7 +7,8 @@ import { FIREBASE_AUTH } from '../FirebaseConfig';
 import { User } from 'firebase/auth';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import CustomLoadingIndicator from './CustomLoadingIndicator';
-
+import { useFonts } from 'expo-font';
+import * as Font from 'expo-font';
 
 export default function LoginScreen() { // Renamed component to LoginScreen
   const {signedIn, setSignedIn} = useAuth();
@@ -19,6 +20,10 @@ export default function LoginScreen() { // Renamed component to LoginScreen
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState<User | null>(null);
+  const [fontsLoaded] = useFonts({
+    'Nerko-One': require('../assets/fonts/NerkoOne-Regular.ttf'),
+    'Gilroy': require('../assets/fonts/Gilroy-Regular.otf'),
+  });
   /*useEffect(() => {
     onAuthStateChanged(FIREBASE_AUTH, (user) => {
       console.log('user', user);
@@ -49,7 +54,7 @@ export default function LoginScreen() { // Renamed component to LoginScreen
     // Initial loading simulation
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 2000);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -79,7 +84,6 @@ export default function LoginScreen() { // Renamed component to LoginScreen
   const handleBackToFirst = () => {
     router.back();
   };
-
 
   if (!showContent || isLoginLoading) {
     return (
@@ -128,11 +132,11 @@ export default function LoginScreen() { // Renamed component to LoginScreen
         style={styles.headerImg}
       />
       {/* Welcome Text */}
-      <Text style={tw`text-2xl font-semibold text-emerald-600 mt-4`}>Welcome Back!</Text>
-      <Text style={tw`text-2xl font-bold text-black`}>Glad to See You Again</Text>
+      <Text style={[tw`text-5xl font-semibold text-emerald-600 mt-4`, { fontFamily: 'Nerko-One' }]}>Welcome Back!</Text>
+      <Text style={[tw`text-3xl font-bold text-black`, { fontFamily: 'Nerko-One'}]}>Glad to See You Again</Text>
       {/* Email Input */}
       <TextInput
-        style={styles.input}
+        style={[styles.input, {fontFamily: 'Gilroy'}]}
         placeholder="Enter your email"
         placeholderTextColor="#FFFFFF"
         value={email}
@@ -140,7 +144,7 @@ export default function LoginScreen() { // Renamed component to LoginScreen
       />
       {/* Password Input */}
       <TextInput
-        style={styles.input}
+        style={[styles.input, {fontFamily: 'Gilroy'}]}
         placeholder="Enter your password"
         placeholderTextColor="#FFFFFF"
         secureTextEntry
@@ -149,18 +153,18 @@ export default function LoginScreen() { // Renamed component to LoginScreen
       />
       {/* Forgot Password */}
       <TouchableOpacity>
-        <Text style={tw`text-right w-full text-green-600`}>Forgot password?</Text>
+        <Text style={[tw`text-right w-full text-green-600`, {fontFamily: 'Gilroy'}]}>Forgot password?</Text>
       </TouchableOpacity>
       {/* Login Button */}
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={tw`text-white text-center text-lg`}>Log In</Text>
+        <Text style={[tw`text-white text-center text-lg`, {fontFamily: 'Gilroy'}]}>Log In</Text>
       </TouchableOpacity>
       <Image
-        source={require('../assets/images/loadingHeart.png')}
+        source={require('../assets/images/loadH.png')}
         style={styles.footerImg}
       />
       {/* Footer Text */}
-      <Text style={tw`text-emerald-600 mt-6`}>Thank you for recycling responsibly!</Text>
+      <Text style={[tw`text-emerald-600 mt-6`, {fontFamily: 'Gilroy'}]}>Thank you for recycling responsibly!</Text>
     </View>
   );
 }
@@ -201,9 +205,9 @@ const styles = StyleSheet.create({
   },
   footerImg: {
     width: 100,
-    height: 60,
+    height: 75,
     alignSelf: 'auto',
-    marginTop: 22,
+    marginTop: 25,
   },
   topLeftImg: {
     position: 'absolute',

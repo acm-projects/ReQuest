@@ -43,6 +43,9 @@ import {
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { Feather } from '@expo/vector-icons';
 import Groq from 'groq-sdk';
+import MapWidget from '../MapWidget'; // Adjust path based on where you created the file
+
+
 //import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 
@@ -288,12 +291,26 @@ const Chat = () => {
                       marginVertical: 5,
                       alignSelf: item.role === 'user' ? 'flex-end' : 'flex-start',
                       maxWidth: '80%',
-                      borderRadius: 24,
+                      flexDirection: 'row',
+                      alignItems: 'flex-end',
                     }}
                   >
+                    {item.role === 'bot' && (
+                      <Image
+                        source={require('../../assets/images/recycleEarth.png')}
+                        style={{
+                          width: 30,
+                          height: 30,
+                          marginRight: 8,
+                          borderRadius: 15,
+                        }}
+                        resizeMode="contain"
+                      />
+                    )}
+                    
                     <View
                       style={{
-                        backgroundColor: item.role === 'user' ? '#DCF8C6' : '#ECECEC',
+                        backgroundColor: item.role === 'user' ? '#728A68' : '#B6AD90',
                         padding: 10,
                         borderRadius: 15,
                         borderBottomLeftRadius: item.role === 'user' ? 15 : 0,
@@ -303,10 +320,19 @@ const Chat = () => {
                         shadowOpacity: 0.2,
                         shadowRadius: 1,
                         elevation: 1,
+                        flex: 1,
                       }}
                     >
-                      <Text>{item.content}</Text>
+                      <Text style={{ 
+                        color: 'white',
+                        fontFamily: 'Gilroy',
+                        fontSize: 16,
+                      }}>
+                        {item.content}
+                      </Text>
                     </View>
+                    
+                    {item.role === 'user' && <View style={{ width: 30, marginLeft: 8 }} />}
                   </View>
                 )}
                 contentContainerStyle={{
@@ -321,7 +347,7 @@ const Chat = () => {
               style={{
                 width: '100%',
                 paddingHorizontal: 8,
-                backgroundColor: '#DCF8C6',
+                backgroundColor: '#728A68',
                 flexDirection: 'row',
                 paddingVertical: 8,
                 alignItems: 'center',
@@ -340,17 +366,21 @@ const Chat = () => {
                   maxHeight: 80,
                   height: textInputHeight,
                   paddingVertical: 10,
+                  backgroundColor: '#728A68',
+                  color: 'white',
+                  fontFamily: 'Gilroy',
+                  fontSize: 16,
                 }}
                 multiline
                 value={chatText}
                 onChangeText={(text) => setChatText(text)}
                 placeholder="Ask a question here"
-                placeholderTextColor="#400908"
+                placeholderTextColor="rgba(255, 255, 255, 0.6)"
                 onContentSizeChange={handleContentSizeChange}
               />
               <Pressable
                 style={{
-                  backgroundColor: chatText.trim() === '' || sendingChat ? 'gray' : '#400908',
+                  backgroundColor: chatText.trim() === '' || sendingChat ? 'gray' : '#592524',
                   width: 48,
                   borderRadius: 24,
                   padding: 8,
@@ -480,34 +510,6 @@ const Dashboard = () => {
     return null;
   }
 
-  const tipsAndGuides = [
-    {
-      title: "Tip 1: Reduce Plastic Use",
-      description: "Try to use reusable bags and bottles to minimize plastic waste.",
-      link: "https://www.youtube.com/embed/CSaUzORm8s8",
-    },
-    {
-      title: "Tip 2: Recycle Properly",
-      description: "Make sure to clean and sort your recyclables correctly.",
-      link: "https://www.youtube.com/embed/jsp7mgYv3aI",
-    },
-    {
-      title: "Tip 3: Compost Organic Waste",
-      description: "Consider composting food scraps and yard waste to reduce landfill waste.",
-      link: "https://www.youtube.com/embed/zy70DAaeFBI",
-    },
-    {
-      title: "Tip 4: Saving Water Use",
-      description: "Fix leaks and use water-efficient fixtures to conserve water.",
-      link: "https://www.youtube.com/embed/5J3cw4biWWo",
-    },
-    {
-      title: "Tip 5: Reduce Food Waste",
-      description: "Plan meals and use leftovers to minimize food waste.",
-      link: "https://www.youtube.com/embed/ishA6kry8nc",
-    },
-  ];
-
   const PointsDisplay = () => {
     return (
       <PointsProvider>
@@ -565,7 +567,7 @@ const Dashboard = () => {
     const chartData = Object.entries(data).map(([key, value], index) => ({
       name: key, // The item name
       count: value, // The count of times it has been recycled
-      color: `hsl(${index * 60}, 70%, 50%)`, // Dynamic colors for each item
+color: `hsl(120, 30%, ${65 + (index * -9)}%)` ,// Starts at 65% lightness and increases by 5%
       legendFontColor: '#7F7F7F',
       legendFontSize: 15,
     }));
@@ -591,71 +593,116 @@ const Dashboard = () => {
     );
   };
 
-  return (
-      <SafeAreaView style={tw`flex-1 bg-amber-50`}>
-        <View style={tw`flex-1`}>
-          <View style={tw`pt-7`}>
-            <Text style={[tw`text-4xl font-bold text-center text-[#400908]`, { fontFamily: 'Nerko-One' }]}>
-              Welcome Back, Name!
+  const chartData = {
+    'Plastic': 45,
+    'Paper': 30,
+    'Glass': 25,
+    'Metal': 15,
+    'Other': 10,
+  };
+const tipsAndGuides = [
+  {
+    title: "Tip 1: Reduce Plastic Use",
+    description: "Try to use reusable bags and bottles to minimize plastic waste.",
+    link: "https://www.youtube.com/embed/CSaUzORm8s8",
+  },
+  {
+    title: "Tip 2: Recycle Properly",
+    description: "Make sure to clean and sort your recyclables correctly.",
+    link: "https://www.youtube.com/embed/jsp7mgYv3aI",
+  },
+  {
+    title: "Tip 3: Compost Organic Waste",
+    description: "Consider composting food scraps and yard waste to reduce landfill waste.",
+    link: "https://www.youtube.com/embed/zy70DAaeFBI",
+  },
+  {
+    title: "Tip 4: Saving Water Use",
+    description: "Fix leaks and use water-efficient fixtures to conserve water.",
+    link: "https://www.youtube.com/embed/5J3cw4biWWo",
+  },
+  {
+    title: "Tip 5: Reduce Food Waste",
+    description: "Plan meals and use leftovers to minimize food waste.",
+    link: "https://www.youtube.com/embed/ishA6kry8nc",
+  },
+];
+ return (
+  <SafeAreaView style={tw`flex-1 bg-amber-50`}>
+    <ScrollView 
+      style={tw`flex-1`}
+      contentContainerStyle={tw`pb-20`} // Add padding at bottom for content
+      showsVerticalScrollIndicator={false}
+    >
+      {/* Header Section */}
+      <View style={tw`pt-7`}>
+        <Text style={[tw`text-4xl font-bold text-center text-[#400908]`, { fontFamily: 'Nerko-One' }]}>
+          Welcome Back, Name!
+        </Text>
+      </View>
+      
+      <Text style={[tw`text-lg text-[#400908] mt-2 ml-3 pt-22 text-left`, { fontFamily: 'Gilroy' }]}>
+        These are your current stats:
+      </Text>
+
+      {/* Floating Earth Image */}
+     <Image
+  source={require('../../assets/images/recycleEarth.png')}
+  style={tw`
+    absolute 
+    right-[5%] 
+    top-[8%] 
+    h-30 
+    w-30 
+    z-10
+  `}
+  resizeMode="contain"
+/>
+
+      {/* Stats Section */}
+      <View style={[tw`px-8 pt-5 mt-[50] mb-4`, { width: '90%', alignSelf: 'center' }]}>
+        <View style={[tw`absolute inset--1 bg-[#C2D5BA]`, { borderRadius: 30 }]} />
+        
+        <View style={tw`flex-row justify-between mb-4`}>
+          <View style={tw`flex-1 max-w-[75%]`}>
+            <Text style={[tw`text-[#400908] text-base`, { fontFamily: 'Gilroy' }]}>
+              Points: {  }
             </Text>
           </View>
-          <Text style={[tw`text-lg text-[#400908] mt-2 ml-3 pt-22 text-left`, { fontFamily: 'Gilroy' }]}>
-            These are your current stats:
-          </Text>
+          <View style={tw`flex-1 max-w-[30%]`}>
+            <Text style={[tw`text-[#400908] text-base font-bold text-right`, { fontFamily: 'Gilroy' }]}>
+              <PointsDisplay />
+            </Text>
+          </View>
         </View>
 
-        <Image
-          source={require('../../assets/images/recycleEarth.png')}
-          style={tw`absolute right-3 top-32 w-30 h-30 z-11`}
-        />
-
-        {/* Stats Section */}
-        <View style={[{ zIndex: 8 }]}>
-        <View style={[tw`absolute px-8 pt-5 top-[-40]`, { zIndex: 2, width: '90%', alignSelf: 'center' }]}>
-          <View style={[tw`absolute inset--1 bg-[#DCF8C6]`, { borderRadius: 30, zIndex: -1 }]} />
-          
-          <View style={tw`flex-row justify-between mb-4`}>
-            <View style={tw`flex-1 max-w-[75%]`}>
-              <Text style={[tw`text-[#400908] text-base`, { fontFamily: 'Gilroy' }]}>
-                Points: {  }
-              </Text>
-
-            </View>
-            <View style={tw`flex-1 max-w-[30%]`}>
-              <Text style={[tw`text-[#400908] text-base font-bold text-right`, { fontFamily: 'Gilroy' }]}>
-                <PointsDisplay />
-              </Text>
-            </View>
+        <View style={tw`flex-row justify-between mb-4`}>
+          <View style={tw`flex-1 max-w-[75%]`}>
+            <Text style={[tw`text-[#400908] text-base`, { fontFamily: 'Gilroy' }]}>
+              How long the world would last if everyone recycled like you:
+            </Text>
           </View>
-
-          <View style={tw`flex-row justify-between mb-4`}>
-            <View style={tw`flex-1 max-w-[75%]`}>
-              <Text style={[tw`text-[#400908] text-base`
-                , { fontFamily: 'Gilroy' }]}>
-                How long the world would last if everyone recycled like you:
-              </Text>
-            </View>
-            <View style={tw`flex-1 max-w-[30%]`}>
-              <Text style={[tw`text-[#400908] text-base font-bold text-right`, { fontFamily: 'Gilroy' }]}>
-                <ImpactDisplay />
-              </Text>
-            </View>
+          <View style={tw`flex-1 max-w-[30%]`}>
+            <Text style={[tw`text-[#400908] text-base font-bold text-right`, { fontFamily: 'Gilroy' }]}>
+              <ImpactDisplay />
+            </Text>
           </View>
+        </View>
 
-          <View style={tw`flex-row justify-between mb-0`}>
-            <View style={tw`flex-1 max-w-[75%]`}>
-              <Text style={[tw`text-[#400908] text-base`, { fontFamily: 'Gilroy' }]}>
-                Reduced Carbon Footprint:
-              </Text>
-            </View>
-            <View style={tw`flex-1 max-w-[30%]`}>
-              <Text style={[tw`text-[#400908] text-base font-bold text-right`, { fontFamily: 'Gilroy' }]}>
-                <WeightDisplay/>
-              </Text>
-            </View>
+        <View style={tw`flex-row justify-between mb-0`}>
+          <View style={tw`flex-1 max-w-[75%]`}>
+            <Text style={[tw`text-[#400908] text-base`, { fontFamily: 'Gilroy' }]}>
+              Reduced Carbon Footprint:
+            </Text>
           </View>
+          <View style={tw`flex-1 max-w-[30%]`}>
+            <Text style={[tw`text-[#400908] text-base font-bold text-right`, { fontFamily: 'Gilroy' }]}>
+              <WeightDisplay/>
+            </Text>
+          </View>
+        </View>
 
-          <View style={tw`flex-1 justify-center items-center mb-4`}>
+        <View style={tw`flex-1 justify-center items-center mb-4`}>
           <Text style={[tw`text-[#400908] text-base`, { fontFamily: 'Gilroy' }]}>
             History:
           </Text>
@@ -665,40 +712,60 @@ const Dashboard = () => {
             </Text>
           </ScrollView>
         </View>
-
-        </View>
       </View>
 
-        <View style={[styles.dotsContainer, tw`absolute bottom-70 flex-row justify-center`]}>
-          {tipsAndGuides.map((_, index) => (
-            <View
-              key={index}
-              style={[
-                styles.dot,
-                activeIndex === index ? styles.activeDot : styles.inactiveDot,
-                tw`mx-1`
-              ]}
-            />
-          ))}
-        </View>
+<View style={tw`h-4`} />
 
-        <View style={tw`flex-1 bg-amber-50`}>
-          <View style={[tw`flex-1`, { zIndex: 9, alignItems: 'center', justifyContent: 'center' }]}>
-            <TipsCarouselWithDots />
-          </View>
-        </View>
+<View style={tw`mt-4 mb-4`}>
+  <PieChartComponent data={chartData} />
+</View>
 
-        <View style={{ zIndex: 10 }}>
-          <Chat />
-        </View>
-      </SafeAreaView>
-  );
-};
+<MapWidget />
 
-export default Dashboard;
+{/* Dots and Tips Container */}
+<View style={tw`relative`}>
+  {/* Dots Indicator */}
+ 
+
+  {/* Tips Carousel Section */}
+ <View style={[tw`flex-1 mt-1`, { minHeight: 500 }]}>
+  <TipsCarouselWithDots
+    tipsAndGuides={tipsAndGuides}
+    onIndexChange={setActiveIndex}
+  />
+</View>
+ <View style={[tw`w-full items-center justify-center py-2`, { backgroundColor: 'transparent', position: 'relative', zIndex: 2 }]}>
+    <View style={dotStyles.dotsContainer}>
+      {tipsAndGuides.map((_, index) => (
+        <Animated.View
+          key={index}
+          style={[
+            dotStyles.dot,
+            activeIndex === index ? dotStyles.activeDot : dotStyles.inactiveDot,
+            tw`mx-1`
+          ]}
+        />
+      ))}
+    </View>
+  </View>
+</View>
+
+
+
+    </ScrollView>
+
+    {/* Fixed Chat Button */}
+    <View style={[tw`absolute bottom-9 right-4`, { zIndex: 999 }]}>
+      <Chat />
+    </View>
+  </SafeAreaView>
+);
+ };
+
+
 
 const styles = StyleSheet.create({
- scrollView: {
+  scrollView: {
     padding: 20,
     flexGrow: 1,
     marginTop: 50,
@@ -708,60 +775,75 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 30,
   },
-  dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    marginHorizontal: 5,
-  },
-  activeDot: {
-    backgroundColor: '#400908', // Active dot color
-  },
-  inactiveDot: {
-    backgroundColor: '#C0C0C0', // Inactive dot color
-  },
+  
   textColor: {
     color: '#400908',
-    
   },
-    welcomeText: {
-    fontFamily: 'NerkoOne', // Make sure this matches exactly with the key in useFonts
-    color: '#400908', // If you want to keep this color from your previous styling
+  welcomeText: {
+    fontFamily: 'NerkoOne',
+    color: '#400908',
   },
   tipBackground: {
-    backgroundColor: '#DCF8C6',  // Green background
-    borderRadius: 12,  // Rounded corners for the background
-    padding: 16,  // Padding for content inside each tip
-    marginBottom: 20,  // Space between tips
-    width: '60%', // Keep tips at 60% width
-    alignSelf: 'center', // Center the tips
+    backgroundColor: '#C2D5BA',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+    width: '60%',
+    alignSelf: 'center',
   },
   video: {
-    height: 100, // Set a height for the video
+    height: 100,
     marginVertical: 10,
     borderRadius: 6,
-    width: '100%', // Full width for responsiveness
+    width: '100%',
   },
   linkButton: {
     marginTop: 10,
   },
- statItem: {
-    marginBottom: 20, // Space between items
-    paddingVertical: 10, // Add padding to each stat item
+  statItem: {
+    marginBottom: 20,
+    paddingVertical: 10,
     zIndex: 2,
-    alignItems: 'flex-start', // Align items to the start
+    alignItems: 'flex-start',
   },
   statText: {
-    fontSize: 16, // Adjusted size for better readability
+    fontSize: 16,
     fontWeight: '600',
     color: '#400908',
   },
   statNumber: {
-    fontSize: 200, // Adjust size for numbers
+    fontSize: 200,
     fontWeight: 'bold',
     color: 'green',
   },
 });
 
+const dotStyles = StyleSheet.create({
+  dot: {
+    width: 8, // Start smaller for inactive dots
+    height: 8,
+    borderRadius: 4,
+    marginHorizontal: 6,
+    backgroundColor: '#C0C0C0',
+    transform: [{ scale: 1 }], // Default scale
+  },
+  activeDot: {
+    backgroundColor: '#400908', // Your maroon color
+    transform: [{ scale: 1.5 }], // Make active dot 50% larger
+    width: 8,
+    height: 8,
+  },
+  inactiveDot: {
+    backgroundColor: '#C0C0C0',
+    opacity: 0.5, // Make inactive dots slightly transparent
+  },
+  dotsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 30,
+    alignItems: 'center', // This helps with alignment when dots are different sizes
+  },
+});
 
+export default Dashboard;
 
