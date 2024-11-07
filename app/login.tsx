@@ -138,7 +138,7 @@ export default function LoginScreen() { // Renamed component to LoginScreen
       <TextInput
         style={[styles.input, {fontFamily: 'Gilroy'}]}
         placeholder="Enter your email"
-        placeholderTextColor="#FFFFFF"
+        placeholderTextColor="black"
         value={email}
         onChangeText={(text)=> setEmail(text)} //controlled input 
       />
@@ -146,7 +146,7 @@ export default function LoginScreen() { // Renamed component to LoginScreen
       <TextInput
         style={[styles.input, {fontFamily: 'Gilroy'}]}
         placeholder="Enter your password"
-        placeholderTextColor="#FFFFFF"
+        placeholderTextColor="black"
         secureTextEntry
         value={password}
         onChangeText = {(text)=>setPassword(text)} //controlled input
@@ -157,14 +157,14 @@ export default function LoginScreen() { // Renamed component to LoginScreen
       </TouchableOpacity>
       {/* Login Button */}
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={[tw`text-white text-center text-lg`, {fontFamily: 'Gilroy'}]}>Log In</Text>
+        <Text style={[tw`text-black text-center text-lg`, {fontFamily: 'Gilroy'}]}>Log In</Text>
       </TouchableOpacity>
       <Image
         source={require('../assets/images/loadH.png')}
         style={styles.footerImg}
       />
       {/* Footer Text */}
-      <Text style={[tw`text-emerald-600 mt-6`, {fontFamily: 'Gilroy'}]}>Thank you for recycling responsibly!</Text>
+      <Text style={[tw`text-emerald-600 mt-4`, {fontFamily: 'Gilroy'}]}>Thank you for recycling responsibly!</Text>
     </View>
   );
 }
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 75,
     alignSelf: 'auto',
-    marginTop: 25,
+    marginTop: 50,
   },
   topLeftImg: {
     position: 'absolute',

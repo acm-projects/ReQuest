@@ -153,7 +153,7 @@ const handleRegisterPress = async () => {
             <TextInput
               style={[styles.input, {fontFamily: 'Gilroy'}]}
               placeholder="Enter your username"
-              placeholderTextColor="#FFFFFF"
+              placeholderTextColor="black"
               value={username}
               onChangeText={setUsername}
             />
@@ -161,7 +161,7 @@ const handleRegisterPress = async () => {
             <TextInput
               style={[styles.input, {fontFamily: 'Gilroy'}]}
               placeholder="Enter your email"
-              placeholderTextColor="#FFFFFF"
+              placeholderTextColor="black"
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
@@ -171,7 +171,7 @@ const handleRegisterPress = async () => {
             <TextInput
               style={[styles.input, {fontFamily: 'Gilroy'}]}
               placeholder="Enter your password"
-              placeholderTextColor="#FFFFFF"
+              placeholderTextColor="black"
               secureTextEntry
               value={password}
               onChangeText={setPassword}
@@ -181,7 +181,7 @@ const handleRegisterPress = async () => {
             <TextInput
               style={[styles.input, {fontFamily: 'Gilroy'}]}
               placeholder="Confirm password"
-              placeholderTextColor="#FFFFFF"
+              placeholderTextColor="black"
               secureTextEntry
               value={confirmPassword}
               onChangeText={setConfirmPassword}
@@ -192,7 +192,7 @@ const handleRegisterPress = async () => {
               style={[styles.button, tw`mb-6`]} // Added margin bottom
               onPress={handleRegisterPress}
             >
-              <Text style={[tw`text-white text-center text-lg`, {fontFamily: 'Gilroy'}]}>Register</Text>
+              <Text style={[tw`text-black text-center text-lg`, {fontFamily: 'Gilroy'}]}>Register</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>

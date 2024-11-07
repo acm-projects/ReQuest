@@ -10,8 +10,8 @@ import Groq from 'groq-sdk';
 import {usePoints, useWeight, useImpact, useHistory, useChartHistory} from '../PointsContext';
 import BottomSheet from '../BottomSheet'; 
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-
-
+import { useFonts } from 'expo-font';
+import * as Font from 'expo-font';
 
 const client = new Groq({
   apiKey: process.env.EXPO_PUBLIC_GROQ_API_KEY,
@@ -61,6 +61,10 @@ const DetectObject = () => {
   const {history, addHistory} = useHistory();
   const {chartHistory, addChartHistory} = useChartHistory();
   const [recycledItems, setRecycledItems] = useState<Set<string>>(new Set());
+  const [fontsLoaded] = useFonts({
+    'Nerko-One': require('../../assets/fonts/NerkoOne-Regular.ttf'),
+    'Gilroy': require('../../assets/fonts/Gilroy-Regular.otf'),
+  });
 
 
   
@@ -368,8 +372,8 @@ const analyzeImage = async () => {
   </Modal>
 
     <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-      <Text style={[styles.title, {color: 'white'}]}>Scan To See If Your Image Is Recyclable!</Text>
-      <Text style={[styles.title, {color: '#4D9F39'}]}>Where Can You Recycle This?</Text>
+      <Text style={[styles.title2, {fontFamily: 'Nerko-One'}]}>Scan To See If Your Image Is Recyclable!</Text>
+      <Text style={[styles.title, {fontFamily: 'Nerko-One', color: "green"}]}>Where Can You Recycle This?</Text>
 
       {imageUri ? (
         <View style={styles.imageContainer}>
@@ -385,7 +389,7 @@ const analyzeImage = async () => {
       )}
 
       <TouchableOpacity style={styles.button} onPress={analyzeImage}>
-        <Text style={styles.text}>Analyze Image</Text>
+        <Text style={[styles.text, {fontFamily: 'Gilroy'}]}>Analyze Image</Text>
       </TouchableOpacity>
 
       {/* Wrap the buttons in a row */}
@@ -476,9 +480,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: 24,
+    fontSize: 35,
     fontWeight: 'bold',
     marginBottom: 20,
+  },
+  title2: {
+    fontSize: 35,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   imageContainer: {
     position: 'relative', // This allows positioning of the close button
