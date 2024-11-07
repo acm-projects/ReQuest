@@ -127,7 +127,7 @@ export default function TabLayout() {
       </SafeAreaView>
       <View>
         <Svg
-          height={92}
+          height={97}
           width={screenWidth}
           viewBox="0 0 1440 320"
         >
@@ -156,13 +156,13 @@ export default function TabLayout() {
             style={styles.button}
             onPress={() => router.push('../signup')}
           >
-            <Text style={[tw`text-white text-center text-lg`,{fontFamily: 'Gilroy'}]}>Sign Up</Text>
+            <Text style={[tw`text-black text-center text-lg`,{fontFamily: 'Gilroy'}]}>Sign Up</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
             onPress={() => router.push('../login')}
           >
-            <Text style={[tw`text-white text-center text-lg`,{fontFamily: 'Gilroy'}]}>Log In</Text>
+            <Text style={[tw`text-black text-center text-lg`,{fontFamily: 'Gilroy'}]}>Log In</Text>
           </TouchableOpacity>
         </View>
       </View>

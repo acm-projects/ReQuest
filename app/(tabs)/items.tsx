@@ -520,6 +520,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 10,
+    backgroundColor: '#8AA984',
   },
   noImageText: {
     textAlign: 'center',
