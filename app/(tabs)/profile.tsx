@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { Image, View, Text, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 import tw from 'twrnc';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/AuthContext';
@@ -34,9 +34,10 @@ export default function Profile() {
   const levelProgress = (level / 3) * 100; // Convert level to a percentage (e.g., level 2 -> 66%)
 
   return (
-    <ScrollView style={tw`flex-1 bg-[#C2D5BA] pb-56 pt-0`}>
+    <SafeAreaView style={tw`flex-1 bg-amber-50`}>
+    <ScrollView style={tw`flex-1 bg-[#C2D5BA] pb-40 pt-0`}>
       {/* Top Section: Profile Picture, Name, and Level Feature */}
-      <View style={tw`flex-3 bg-[#FFFBF1] items-center justify-center relative pb-24 w-full`}>
+      <View style={tw`flex-3 bg-[#FFFBF1] items-center justify-center relative pb-15 w-full`}>
         
         {/* Circular Profile Picture */}
         <View style={tw`items-center mt-10`}>
@@ -67,11 +68,11 @@ export default function Profile() {
 
       {/* Level Progress Bar */}
       <View style={tw`px-6 w-full mt-6`}>
-        <Text style={tw`text-center text-lg font-semibold mt-2`}>Level Progress</Text>
+        <Text style={tw`text-center text-lg font-semibold mt--20`}>Level Progress</Text>
         <View style={tw`w-full h-6 bg-gray-200 rounded-full overflow-hidden`}>
           <View style={[tw`h-full rounded-full`, { width: `${levelProgress}%`, backgroundColor: '#4CAF50' }]} />
         </View>
-        <View style={tw`flex-row justify-between mt-2`}>
+        <View style={tw`flex-row justify-between mt-3`}>
           <Text style={tw`font-bold text-sm text-[#444]`}>Beginner</Text>
           <Text style={tw`font-bold text-sm text-[#444]`}>Intermediate</Text>
           <Text style={tw`font-bold text-sm text-[#444]`}>Advanced</Text>
@@ -82,7 +83,7 @@ export default function Profile() {
       {/* Bottom Section with Buttons */}
       <View style={tw`bg-[#C2D5BA] pt-5 px-4 rounded-t-[20px] items-center w-full`}>
         {/* Buttons Group 1 */}
-        <View style={tw`w-full max-w-[320px] bg-[#C2D5BA] justify-center items-center mb-4 rounded-lg border-2 border-white p-4`}>
+        <View style={tw`w-full max-w-[320px] bg-[#C2D5BA] justify-center items-center mb-2 rounded-lg border-2 border-white p-4`}>
           {[
             { label: 'Edit Profile Information', icon: require('../../assets/images/profileIcon.png') },
             { label: 'Notification Settings', icon: require('../../assets/images/notification.png') },
@@ -99,7 +100,7 @@ export default function Profile() {
         </View>
 
         {/* Buttons Group 2 */}
-        <View style={tw`w-full max-w-[320px] bg-[#C2D5BA] justify-center items-center mb-4 rounded-lg border-2 border-white p-4`}>
+        <View style={tw`w-full max-w-[320px] bg-[#C2D5BA] justify-center items-center mb-2 rounded-lg border-2 border-white p-0`}>
           {[
             { label: 'Help & Support', icon: require('../../assets/images/help&Support.png') },
             { label: 'Contact Us', icon: require('../../assets/images/contactUs.png') },
@@ -116,7 +117,7 @@ export default function Profile() {
         </View>
 
         {/* Log Out Button */}
-        <View style={tw`w-full max-w-[320px] justify-center items-center mb-4 rounded-lg border-2 border-white p-4`}>
+        <View style={tw`w-full max-w-[320px] justify-center items-center mb-40 rounded-lg border-2 border-white p-0`}>
           <TouchableOpacity style={tw`my-2 flex-row items-center justify-between w-full`} onPress={handleLogout}>
             <View style={tw`flex-row items-center`}>
               <Image source={require('../../assets/images/logOut.png')} style={tw`w-[25px] h-[25px] mr-3`} />
@@ -137,5 +138,6 @@ export default function Profile() {
         />
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }
