@@ -8,6 +8,10 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { Platform } from 'react-native';
 import Groq from 'groq-sdk';
 import {usePoints, useWeight, useImpact, useHistory, useChartHistory} from '../PointsContext';
+import BottomSheet from '../BottomSheet'; 
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
+
 
 const client = new Groq({
   apiKey: process.env.EXPO_PUBLIC_GROQ_API_KEY,
@@ -56,7 +60,17 @@ const DetectObject = () => {
   const {impact, addImpact} = useImpact();
   const {history, addHistory} = useHistory();
   const {chartHistory, addChartHistory} = useChartHistory();
+  const [recycledItems, setRecycledItems] = useState<Set<string>>(new Set());
+
+
   
+    const [recycleSuccessModal, setRecycleSuccessModal] = useState({
+      visible: false,
+      itemName: '',
+      weight: 0,
+      points: 0,
+      totalPoints: 0
+    });
 
   const pickImage = async () => {
     try {
@@ -207,6 +221,8 @@ const analyzeImage = async () => {
     if (!itemName) {
       console.error('Unable to recycle item, name error');
       return;
+
+      
     }
   
     try {
@@ -226,24 +242,27 @@ const analyzeImage = async () => {
           const formattedWeight = parseFloat(earnedWeight.toFixed(2));
           console.log(`Recyclable: ${recyclable}, Points: ${points}, Weight: ${weight}, Impact: ${impact}`);
           
-          if (recyclable === true) {
-            // Use functional update to ensure we're working with latest state
-            addPoints(earnedPoints);
-            addWeight(formattedWeight);
-            addImpact(earnedImpact);
-            addHistory(`Recycled ${formattedWeight} kg of ${itemName} for ${earnedPoints}`);
-            addChartHistory(itemName);
-            
-            Alert.alert(
-              'Recycling Success!',
-              `Congrats! You have recycled ${itemName}, saving ${formattedWeight} kg of waste, and earned ${earnedPoints} points!\nTotal Points: ${earnedPoints + points}`
-            );
-            //Remove item from cart
-            const newCart = cart.filter((item) => item.description !== itemName);
-            setCart(newCart);
-          } else {
-            Alert.alert('Not Recyclable', `Sorry, ${itemName} is not recyclable. Please remove from bag.`);
-          }
+              if (recyclable === true) {
+          addPoints(earnedPoints);
+          addWeight(formattedWeight);
+          addImpact(earnedImpact);
+          addHistory(`Recycled ${formattedWeight} kg of ${itemName} for ${earnedPoints}`);
+          addChartHistory(itemName);
+          
+          setRecycledItems(prev => new Set(prev).add(itemName));
+          setRecycleSuccessModal({
+            visible: true,
+            itemName,
+            weight: formattedWeight,
+            points: earnedPoints,
+            totalPoints: earnedPoints + points
+          });
+          
+          const newCart = cart.filter((item) => item.description !== itemName);
+          setCart(newCart);
+  } else {
+    Alert.alert('Not Recyclable', `Sorry, ${itemName} is not recyclable. Please remove from bag.`);
+  }
         } catch (error) {
           console.error('Error parsing response:', error);
           Alert.alert('Error', 'Unable to process recycling points');
@@ -258,134 +277,179 @@ const analyzeImage = async () => {
     }
   };
 
-  const PointsDisplay = () => (
+  {/* 
+    
+    const PointsDisplay = () => (
     <View>
       <Text>Total Points: {points}</Text>
       <Text>Total Weight: {weight} kg</Text>
       <Text>Total Impact: {impact} days</Text>
     </View>
   );
+    
+    */}
+
+  
 
 
   return (
-<SafeAreaView style={styles.container}>
-  <View style={styles.container}>
-    <Image
-      source={require('../../assets/images/greenTopLeft.png')}
-      style={styles.topLeftImg}
-    />
-    <Image
-      source={require('../../assets/images/greenTopRight.png')}
-      style={styles.topRightImg}
-    />
-    <Image
-      source={require('../../assets/images/greenBottomLeft.png')}
-      style={styles.bottomLeftImg}
-    />
-    <Image
-      source={require('../../assets/images/greenBottomRight.png')}
-      style={styles.bottomRightImg}
-    />
-  </View>
-  <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-    <Text style={[styles.title, {color: 'white'}]}>Scan To See If Your Image Is Recyclable!</Text>
-    <Text style={[styles.title, {color: '#4D9F39'}]}>Where Can You Recycle This?</Text>
-
-    {imageUri ? (
-      <View style={styles.imageContainer}>
-        <TouchableOpacity style={styles.closeButton} onPress={clearImage}>
-          <Text style={styles.closeText}>X</Text>
-        </TouchableOpacity>
-        <Image source={{ uri: imageUri }} style={styles.image} />
-      </View>
-    ) : (
-      <View style={styles.noImageContainer}>
-        <Text style={styles.noImageText}>No image selected</Text>
-      </View>
-    )}
-
-    <TouchableOpacity style={styles.button} onPress={analyzeImage}>
-      <Text style={styles.text}>Analyze Image</Text>
-    </TouchableOpacity>
-
-    {/* Wrap the buttons in a row */}
-    <View style={styles.buttonRow}>
-      <TouchableOpacity style={[styles.button, styles.tallButton]} onPress={useCamera}>
-        <Image source={require('../../assets/images/takePhoto.png')} style={styles.buttonImage}/>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={[styles.button, styles.tallButton]} onPress={pickImage}>
-        <Image source={require('../../assets/images/uploadImage.png')} style={styles.uploadImage}/>
-      </TouchableOpacity>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+  <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
+      <Image
+        source={require('../../assets/images/greenTopLeft.png')}
+        style={styles.topLeftImg}
+      />
+      <Image
+        source={require('../../assets/images/greenTopRight.png')}
+        style={styles.topRightImg}
+      />
+      <Image
+        source={require('../../assets/images/greenBottomLeft.png')}
+        style={styles.bottomLeftImg}
+      />
+      <Image
+        source={require('../../assets/images/greenBottomRight.png')}
+        style={styles.bottomRightImg}
+      />
     </View>
 
-    {error && <Text style={styles.error}>{error}</Text>}
-
-        {/* Modal for label selection */}
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContainer}>
-              <Text style={styles.modalTitle}>Select a Label</Text>
-              <Text style={styles.modalSubtitle}>
-                (If your item does not appear then please retake the photo with the item in clear focus)
+      <Modal
+    animationType="fade"
+    transparent={true}
+    visible={recycleSuccessModal.visible}
+    onRequestClose={() => setRecycleSuccessModal(prev => ({...prev, visible: false}))}
+  >
+    <View style={styles.recycleModalOverlay}>
+      <View style={styles.recycleModalContainer}>
+        <Text style={[styles.recycleModalTitle, { fontFamily: 'Nerko-One' }]}>
+          Recycling Success! 🌱
+        </Text>
+        
+        <View style={styles.recycleModalContent}>
+          <Text style={[styles.recycleModalText, { fontFamily: 'Gilroy' }]}>
+            You have recycled
+          </Text>
+          <Text style={[styles.recycleModalHighlight, { fontFamily: 'Nerko-One' }]}>
+            {recycleSuccessModal.itemName}
+          </Text>
+          
+          <View style={styles.recycleModalStats}>
+            <View style={styles.recycleModalStatItem}>
+              <Text style={[styles.recycleModalLabel, { fontFamily: 'Gilroy' }]}>Weight Saved</Text>
+              <Text style={[styles.recycleModalValue, { fontFamily: 'Gilroy' }]}>
+                {recycleSuccessModal.weight} kg
               </Text>
-              <FlatList
-                data={labels}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => (
-                  <TouchableOpacity style={styles.labelItem} onPress={() => addToCart(item)}>
-                    <Text>{item.description}</Text>
-                  </TouchableOpacity>
-                )}
-                contentContainerStyle={styles.labelList}
-                style={styles.flatList}
-              />
-              <TouchableOpacity style={styles.button} onPress={() => setModalVisible(false)}>
-                <Text style={styles.text}>Close</Text>
-              </TouchableOpacity>
+            </View>
+            
+            <View style={styles.recycleModalStatItem}>
+              <Text style={[styles.recycleModalLabel, { fontFamily: 'Gilroy' }]}>Points Earned</Text>
+              <Text style={[styles.recycleModalValue, { fontFamily: 'Gilroy' }]}>
+                +{recycleSuccessModal.points}
+              </Text>
             </View>
           </View>
-        </Modal>
 
-        <PointsDisplay />
-
-        {/* Cart display */}
-        <View style={styles.cartContainer}>
-          <Text style={styles.cartTitle}>Recycling Cart:</Text>
-          {cart.length > 0 ? (
-            cart.map((item, index) => (
-              <View key={index} style={styles.cartItem}>
-                <Text>{item.description}</Text>
-                <View style={styles.cartButtonsContainer}>
-                  <TouchableOpacity style = {styles.mapButton}>
-                    <Text style={styles.mapButtonText} onPress={() => handleRecycle(item.description)}>Recycle</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.mapButton}
-                    onPress={() => navigateToMap(item.description)} // Navigate to Map with item name
-                  >
-                    <Text style={styles.mapButtonText}>Go to Map</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => removeFromCart(index)} style={styles.deleteButton}>
-                    <Text style={styles.deleteText}>Delete</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            ))
-          ) : (
-            <Text style={styles.emptyCartMessage}>It's empty in here... Get to it!</Text>
-          )}
+          <Text style={[styles.recycleModalTotal, { fontFamily: 'Gilroy' }]}>
+            Total Points: {recycleSuccessModal.totalPoints}
+          </Text>
         </View>
 
-        {/* Spacer to ensure some space at the bottom when no image is present */}
-        <View style={styles.spacer} />
-      </ScrollView>
-    </SafeAreaView>
+        <TouchableOpacity
+          style={styles.recycleModalButton}
+          onPress={() => setRecycleSuccessModal(prev => ({...prev, visible: false}))}
+        >
+          <Text style={[styles.recycleModalButtonText, { fontFamily: 'Gilroy' }]}>
+            Keep Recycling!
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </Modal>
+
+    <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+      <Text style={[styles.title, {color: 'white'}]}>Scan To See If Your Image Is Recyclable!</Text>
+      <Text style={[styles.title, {color: '#4D9F39'}]}>Where Can You Recycle This?</Text>
+
+      {imageUri ? (
+        <View style={styles.imageContainer}>
+          <TouchableOpacity style={styles.closeButton} onPress={clearImage}>
+            <Text style={styles.closeText}>X</Text>
+          </TouchableOpacity>
+          <Image source={{ uri: imageUri }} style={styles.image} />
+        </View>
+      ) : (
+        <View style={styles.noImageContainer}>
+          <Text style={styles.noImageText}>No image selected</Text>
+        </View>
+      )}
+
+      <TouchableOpacity style={styles.button} onPress={analyzeImage}>
+        <Text style={styles.text}>Analyze Image</Text>
+      </TouchableOpacity>
+
+      {/* Wrap the buttons in a row */}
+      <View style={styles.buttonRow}>
+        <TouchableOpacity style={[styles.button, styles.tallButton]} onPress={useCamera}>
+          <Image source={require('../../assets/images/takePhoto.png')} style={styles.buttonImage}/>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={[styles.button, styles.tallButton]} onPress={pickImage}>
+          <Image source={require('../../assets/images/uploadImage.png')} style={styles.uploadImage}/>
+        </TouchableOpacity>
+      </View>
+
+      {error && <Text style={styles.error}>{error}</Text>}
+
+          {/* Modal for label selection */}
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContainer}>
+                <Text style={styles.modalTitle}>Select a Label</Text>
+                <Text style={styles.modalSubtitle}>
+                  (If your item does not appear then please retake the photo with the item in clear focus)
+                </Text>
+                <FlatList
+                  data={labels}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity style={styles.labelItem} onPress={() => addToCart(item)}>
+                      <Text>{item.description}</Text>
+                    </TouchableOpacity>
+                  )}
+                  contentContainerStyle={styles.labelList}
+                  style={styles.flatList}
+                />
+                <TouchableOpacity style={styles.button} onPress={() => setModalVisible(false)}>
+                  <Text style={styles.text}>Close</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+          {/*  <PointsDisplay /> */}
+
+
+          {/* Cart display */}
+        <BottomSheet
+    cart={cart.map(item => item.description)}
+    total={points} // Using your points from usePoints()
+    handleRecycle={(itemName) => handleRecycle(itemName)}
+    navigateToMap={(itemName) => navigateToMap(itemName)}
+    removeFromCart={(index) => removeFromCart(index)}
+    recycledItems={recycledItems}
+  />
+
+          {/* Spacer to ensure some space at the bottom when no image is present */}
+          <View style={styles.spacer} />
+        </ScrollView>
+      </SafeAreaView>
+        </GestureHandlerRootView>
+
   );
 };
 
@@ -408,7 +472,7 @@ const styles = StyleSheet.create({
   alignItems: 'center',
 },
   scrollViewContainer: {
-    paddingBottom: 20,
+    paddingBottom: 100,
     alignItems: 'center',
   },
   title: {
@@ -603,6 +667,88 @@ const styles = StyleSheet.create({
   },
   halfButton: {
     width: '48%', 
+  },
+    recycleModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  recycleModalContainer: {
+    width: '85%',
+    backgroundColor: 'beige',
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  recycleModalTitle: {
+    fontSize: 28,
+    color: '#728A68',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  recycleModalContent: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  recycleModalText: {
+    fontSize: 18,
+    color: '#400908',
+    marginBottom: 10,
+  },
+  recycleModalHighlight: {
+    fontSize: 24,
+    color: '#728A68',
+    marginBottom: 20,
+  },
+  recycleModalStats: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    marginBottom: 20,
+  },
+  recycleModalStatItem: {
+    alignItems: 'center',
+    backgroundColor: '#C2D5BA',
+    padding: 15,
+    borderRadius: 15,
+    width: '45%',
+  },
+  recycleModalLabel: {
+    fontSize: 14,
+    color: 'white',
+    marginBottom: 5,
+  },
+  recycleModalValue: {
+    fontSize: 20,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  recycleModalTotal: {
+    fontSize: 22,
+    color: '#400908',
+    marginTop: 10,
+    fontWeight: 'bold',
+  },
+  recycleModalButton: {
+    backgroundColor: '#728A68',
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    marginTop: 20,
+  },
+  recycleModalButtonText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 

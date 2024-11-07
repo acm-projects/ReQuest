@@ -567,7 +567,7 @@ const Dashboard = () => {
     const chartData = Object.entries(data).map(([key, value], index) => ({
       name: key, // The item name
       count: value, // The count of times it has been recycled
-      color: `hsl(${index * 60}, 70%, 50%)`, // Dynamic colors for each item
+color: `hsl(120, 30%, ${65 + (index * -9)}%)` ,// Starts at 65% lightness and increases by 5%
       legendFontColor: '#7F7F7F',
       legendFontSize: 15,
     }));
@@ -651,7 +651,7 @@ const tipsAndGuides = [
   style={tw`
     absolute 
     right-[5%] 
-    top-[9.5%] 
+    top-[8%] 
     h-30 
     w-30 
     z-10
@@ -725,7 +725,16 @@ const tipsAndGuides = [
 {/* Dots and Tips Container */}
 <View style={tw`relative`}>
   {/* Dots Indicator */}
-  <View style={[tw`w-full items-center justify-center py-2`, { backgroundColor: 'transparent', position: 'relative', zIndex: 2 }]}>
+ 
+
+  {/* Tips Carousel Section */}
+ <View style={[tw`flex-1 mt-1`, { minHeight: 500 }]}>
+  <TipsCarouselWithDots
+    tipsAndGuides={tipsAndGuides}
+    onIndexChange={setActiveIndex}
+  />
+</View>
+ <View style={[tw`w-full items-center justify-center py-2`, { backgroundColor: 'transparent', position: 'relative', zIndex: 2 }]}>
     <View style={dotStyles.dotsContainer}>
       {tipsAndGuides.map((_, index) => (
         <Animated.View
@@ -739,14 +748,6 @@ const tipsAndGuides = [
       ))}
     </View>
   </View>
-
-  {/* Tips Carousel Section */}
- <View style={[tw`flex-1 mt-1`, { minHeight: 500 }]}>
-  <TipsCarouselWithDots
-    tipsAndGuides={tipsAndGuides}
-    onIndexChange={setActiveIndex}
-  />
-</View>
 </View>
 
 

@@ -5,6 +5,10 @@ import * as Location from 'expo-location';
 import axios from 'axios';
 import { Feather } from '@expo/vector-icons';
 import {useRoute, RouteProp} from '@react-navigation/native';
+import CustomLoadingIndicator from '../CustomLoadingIndicator';
+import { useFonts } from 'expo-font';
+
+
 
 interface RecyclingCenter {
   id: string;
@@ -22,6 +26,8 @@ type RootStackParamList = {
 };
 
 const defaultKeyword = 'recycling center|waste management|recyclable materials|recycle center';
+
+ 
 
 // Define a type for the route prop of the 'map' screen
 type MapScreenRouteProp = RouteProp<RootStackParamList, 'map'>;
@@ -42,9 +48,15 @@ export default function Map() {
   const { itemName = '' } = route.params || {};
   const [prevItemName, setPrevItemName] = useState(itemName);
 
+  const [isLoading, setIsLoading] = useState(true);
+  const [showContent, setShowContent] = useState(false);
+
+
+
   const GOOGLE_PLACES_API_KEY = process.env.EXPO_PUBLIC_CLOUD_VISION_API_KEY;
 
   const isInitialRender = useRef(true);
+
 
 
   const requestLocationPermission = async (): Promise<boolean> => {
@@ -101,6 +113,8 @@ export default function Map() {
 
   
 
+
+  
   const fetchRecyclingCenters = useCallback(async (lat: number, lng: number, keyword: string = '') => {
     setLoading(true);
     
@@ -241,6 +255,42 @@ export default function Map() {
     }
     setSearchModalVisible(false);
   };
+
+
+const [fontsLoaded] = useFonts({
+    'Nerko-One': require('../../assets/fonts/NerkoOne-Regular.ttf'),
+    'Gilroy': require('../../assets/fonts/Gilroy-Regular.otf'),
+  });
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 6000); // Adjust timing as needed
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleLoadingComplete = () => {
+    setShowContent(true);
+  };
+
+  // Replace your existing loading check with this
+  if (!showContent) {
+    return (
+      <View style={[styles.container, styles.loadingContainer]}>
+        <CustomLoadingIndicator
+          imageSource={require('../../assets/images/birdPlanet.png')} // Adjust path as needed
+          width={200}
+          height={200}
+          isLoading={isLoading}
+          onExitComplete={handleLoadingComplete}
+          direction="top-to-bottom"
+          duration={1500}
+        />
+      </View>
+    );
+  }
+
+
 
   return (
     <View style={styles.container}>
@@ -438,20 +488,24 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
+    fontFamily: 'Nerko-One',
   },
   modalAddress: {
     marginVertical: 10,
     textAlign: 'center',
     fontStyle: 'italic',
+    fontFamily: 'Gilroy',
   },
   modalText: {
     marginVertical: 5,
     textAlign: 'center',
+    fontFamily: 'Gilroy',
   },
   modalTextSmall: {
     marginVertical: 2,
     textAlign: 'center',
     fontSize: 12,
+    fontFamily: 'Gilroy',
   },
   openingHoursContainer: {
     marginVertical: 10,
@@ -459,9 +513,16 @@ const styles = StyleSheet.create({
   scrollView: {
     maxHeight: 175,
   },
+   loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#728A68',
+  },
   modalDescription: {
     marginVertical: 10,
     textAlign: 'center',
+    fontFamily: 'Gilroy',
   },
   button: {
     backgroundColor: '#C2D5BA',
@@ -473,12 +534,14 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     textAlign: 'center',
+    fontFamily: 'Gilroy',
   },
   toggleText: {
     color: '#728A68',
     textAlign: 'center',
     marginVertical: 10,
     fontWeight: 'bold',
+    fontFamily: 'Gilroy',
   },
   //Beginning Modal for filter and 
    filterContainer: {
@@ -492,15 +555,18 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
+    fontFamily: 'Gilroy',
   },
   filterAddress: {
     marginVertical: 10,
     textAlign: 'center',
     fontStyle: 'italic',
+    fontFamily: 'Gilroy',
   },
   filterText: {
     marginVertical: 5,
     textAlign: 'center',
+    fontFamily: 'Gilroy',
   },
   filterButton: {
     backgroundColor: '#C2D5BA',

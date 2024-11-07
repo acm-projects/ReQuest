@@ -82,7 +82,7 @@ const MapWidget: React.FC = () => {
     >
       {/* Header with new background color */}
       <View style={[tw`p-3`, { backgroundColor: '#B6AD90' }]}>
-        <Text style={[tw`text-lg font-bold text-white`, { fontFamily: 'Gilroy' }]}>
+        <Text style={[tw`text-lg font-bold text-black`, { fontFamily: 'Gilroy' }]}>
           Nearby Recycling Centers
         </Text>
       </View>
