@@ -11,7 +11,7 @@ import { useFonts } from 'expo-font';
 import * as Font from 'expo-font';
 
 export default function LoginScreen() { // Renamed component to LoginScreen
-  const {signedIn, setSignedIn} = useAuth();
+
   const router = useRouter();
   const auth = FIREBASE_AUTH;
   const [showContent, setShowContent] = useState(false);
@@ -19,7 +19,7 @@ export default function LoginScreen() { // Renamed component to LoginScreen
   const [isLoading, setIsLoading] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [user, setUser] = useState<User | null>(null);
+  const {user, setUser, signedIn, setSignedIn} = useAuth();
   const [fontsLoaded] = useFonts({
     'Nerko-One': require('../assets/fonts/NerkoOne-Regular.ttf'),
     'Gilroy': require('../assets/fonts/Gilroy-Regular.otf'),
@@ -69,6 +69,9 @@ export default function LoginScreen() { // Renamed component to LoginScreen
       const response = await signInWithEmailAndPassword(auth, email, password);
       console.log(response);
       setSignedIn(true);
+       setUser({
+        uid: response.user.uid,
+      });
       router.push('../(tabs)'); 
     } catch (error: unknown) {
       if (error instanceof Error) {
