@@ -20,7 +20,7 @@ export default function TabLayout() {
     'Nerko-One': require('../../assets/fonts/NerkoOne-Regular.ttf'),
     'Gilroy': require('../../assets/fonts/Gilroy-Regular.otf'),
   });
-  const screenWidth = Dimensions.get('screen').width;
+  const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
   useEffect(() => {
     const loadingTimeout = setTimeout(() => {
@@ -121,21 +121,22 @@ export default function TabLayout() {
         />
         
         {renderArchedText()}
-        <Text style={[tw`text-8xl font-bold text-[#6B8068] tracking-wide mt-55`, { fontFamily: 'Nerko-One'}]}>ReQuest!</Text>
-        <Text style={[tw`text-4xl font-bold text-white mt-5`, {fontFamily: 'Gilroy'}]}>Reduce, Reuse, Recycle.</Text>
-        <Text style={[tw`text-4xl font-bold text-white mt-4`, {fontFamily: 'Gilroy'}]}>The Power is Yours!</Text>
+        <Text style={[tw`text-8xl font-bold text-[#6B8068] tracking-wide mb--20 mt-73`, { fontFamily: 'Nerko-One'}]}>ReQuest!</Text>
+        <Text style={[tw`text-4xl font-bold text-white mt-25`, {fontFamily: 'Gilroy'}]}>Reduce, Reuse, Recycle.</Text>
+        <Text style={[tw`text-4xl font-bold text-white mb--20`, {fontFamily: 'Gilroy'}]}>The Power is Yours!</Text>
       </SafeAreaView>
       <View>
-        <Svg
-          height={97}
-          width={screenWidth}
-          viewBox="0 0 1440 320"
-        >
-          <Path
-            fill="#fffbf1"
-            d='M0,160L30,133.3C60,107,120,53,180,48C240,43,300,85,360,133.3C420,181,480,235,540,266.7C600,299,660,309,720,277.3C780,245,840,171,900,160C960,149,1020,203,1080,229.3C1140,256,1200,256,1260,245.3C1320,235,1380,213,1410,202.7L1440,192L1440,320L1410,320C1380,320,1320,320,1260,320C1200,320,1140,320,1080,320C1020,320,960,320,900,320C840,320,780,320,720,320C660,320,600,320,540,320C480,320,420,320,360,320C300,320,240,320,180,320C120,320,60,320,30,320L0,320Z'
-          />
-        </Svg>
+<Svg
+  height={screenHeight * 0.2} 
+  width={screenWidth}         
+  viewBox="0 0 1440 320"
+  preserveAspectRatio="xMinYMin slice"
+>
+  <Path
+    fill="#fffbf1"
+    d="M0,160L30,133.3C60,107,120,53,180,48C240,43,300,85,360,133.3C420,181,480,235,540,266.7C600,299,660,309,720,277.3C780,245,840,171,900,160C960,149,1020,203,1080,229.3C1140,256,1200,256,1260,245.3C1320,235,1380,213,1410,202.7L1440,192L1440,320L1410,320C1380,320,1320,320,1260,320C1200,320,1140,320,1080,320C1020,320,960,320,900,320C840,320,780,320,720,320C660,320,600,320,540,320C480,320,420,320,360,320C300,320,240,320,180,320C120,320,60,320,30,320L0,320Z"
+  />
+</Svg>
       </View>
       <View style={styles.bottomSection}>
         <Image
@@ -217,7 +218,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: -215,
+    marginBottom: -290,
   },
   archText: {
     fontSize: 20,
@@ -227,7 +228,7 @@ const styles = StyleSheet.create({
   earthImg: {
     width: 300,
     height: 300,
-    marginBottom: 150,
+    marginBottom: 200,
   },
   topLeftImg: {
     position: 'absolute',
