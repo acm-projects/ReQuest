@@ -44,6 +44,7 @@ import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { Feather } from '@expo/vector-icons';
 import Groq from 'groq-sdk';
 import MapWidget from '../MapWidget'; // Adjust path based on where you created the file
+import BarGraphComponent from '../BarChartComponent';
 
 
 //import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -562,36 +563,7 @@ const Dashboard = () => {
       </PointsProvider>
   }
 
-  const PieChartComponent = ({ data }: ChartProps) => {
-    // Convert the hashmap to an array for the PieChart
-    const chartData = Object.entries(data).map(([key, value], index) => ({
-      name: key, // The item name
-      count: value, // The count of times it has been recycled
-color: `hsl(120, 30%, ${65 + (index * -9)}%)` ,// Starts at 65% lightness and increases by 5%
-      legendFontColor: '#7F7F7F',
-      legendFontSize: 15,
-    }));
-  
-    return (
-      <View>
-        <Text style={{ fontSize: 18, textAlign: 'center', marginVertical: 10 }}>
-          Recycling Stats
-        </Text>
-        <PieChart
-          data={chartData}
-          width={Dimensions.get('window').width - 20} // Adjust width based on screen size
-          height={220}
-          chartConfig={{
-            color: () => `rgba(0, 0, 0, 0.5)`,
-          }}
-          accessor={'count'} // Data field to display in the chart
-          backgroundColor={'transparent'}
-          paddingLeft={'15'}
-          absolute // Show absolute values on the chart
-        />
-      </View>
-    );
-  };
+
 
   const chartData = {
     'Plastic': 45,
@@ -717,7 +689,9 @@ const tipsAndGuides = [
 <View style={tw`h-4`} />
 
 <View style={tw`mt-4 mb-4`}>
-  <PieChartComponent data={chartData} />
+  <View style={tw`mt-4 mb-4`}>
+  <BarGraphComponent data={chartData} />
+</View>
 </View>
 
 <MapWidget />
