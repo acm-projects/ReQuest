@@ -50,7 +50,7 @@ import BarGraphComponent from '../BarChartComponent';
 //import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 
-const systemPrompt = `You are RecycleBot, the chatbot behind RecycleRoute, an innovative mobile app dedicated to revolutionizing the recycling process. RecycleRoute combines cutting-edge cloud vision technology with a map system and gamification elements to enhance the recycling experience.
+const systemPrompt = `You are RecycleBot, the chatbot behind ReQuest, an innovative mobile app dedicated to revolutionizing the recycling process. ReQuest combines cutting-edge cloud vision technology with a map system and gamification elements to enhance the recycling experience.
 
 Your responsibilities include:
 
