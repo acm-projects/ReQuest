@@ -121,7 +121,7 @@ export default function TabLayout() {
         />
         
         {renderArchedText()}
-        <Text style={[tw`text-8xl font-bold text-[#6B8068] tracking-wide mb--20 mt-73`, { fontFamily: 'Nerko-One'}]}>ReQuest!</Text>
+        <Text style={[tw`text-6xl font-bold text-[#6B8068] tracking-wide mb--20 mt-67`, { fontFamily: 'Nerko-One'}]}>ReQuest!</Text>
         <Text style={[tw`text-3xl font-bold text-white mt-25`, {fontFamily: 'Gilroy'}]}>Reduce, Reuse, Recycle.</Text>
         <Text style={[tw`text-3xl font-bold text-white mb--20`, {fontFamily: 'Gilroy'}]}>The Power is Yours!</Text>
       </SafeAreaView>
