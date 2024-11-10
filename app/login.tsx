@@ -9,6 +9,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import CustomLoadingIndicator from './CustomLoadingIndicator';
 import { useFonts } from 'expo-font';
 import * as Font from 'expo-font';
+import { SafeAreaView } from 'react-native';
 
 export default function LoginScreen() { // Renamed component to LoginScreen
 
@@ -105,7 +106,8 @@ export default function LoginScreen() { // Renamed component to LoginScreen
   }
 
   return (
-    <View style={tw`flex-1 bg-amber-50 justify-center items-center px-4`}>
+    <SafeAreaView style={tw`flex-1 bg-amber-50`}>
+      <View style={tw`flex-1 bg-amber-50 justify-center items-center px-4`}>
       <Image
         source={require('../assets/images/lightTopLeft.png')}
         style={styles.topLeftImg}
@@ -124,10 +126,10 @@ export default function LoginScreen() { // Renamed component to LoginScreen
       />
       {/* Back Arrow */}
       <TouchableOpacity 
-        style={tw`absolute top-10 left-4`}
+        style={tw`absolute top-0 left-2`}
         onPress={handleBackToFirst}
       >
-        <Text style={tw`text-2xl`}>&larr;</Text> 
+        <Text style={tw`text-4xl`}>&larr;</Text> 
       </TouchableOpacity>
       {/* Earth Image */}
       <Image
@@ -169,6 +171,7 @@ export default function LoginScreen() { // Renamed component to LoginScreen
       {/* Footer Text */}
       <Text style={[tw`text-emerald-600 mt-4`, {fontFamily: 'Gilroy'}]}>Thank you for recycling responsibly!</Text>
     </View>
+    </SafeAreaView>
   );
 }
 

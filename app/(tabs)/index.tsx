@@ -426,11 +426,12 @@ const Dashboard = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = useRef(null);
   const { points, setPoints } = usePoints();
-  const { weight } = useWeight();
-  const { impact } = useImpact();
-  const { history } = useHistory();
+  const { weight, setWeight } = useWeight();
+  const { impact, setImpact } = useImpact();
+  const { history, setHistory } = useHistory();
   const [isInitialized, setIsInitialized] = useState(false);
   const { chartHistory } = useChartHistory();
+  const [username, setUsername] = useState('');
 
   // Initial fetch of points from Firebase
   useEffect(() => {
@@ -443,10 +444,23 @@ const Dashboard = () => {
           const response = docSnap.data();
           
           if (response !== undefined) {
+            if (response.points !== undefined) {
             setPoints(response.points);
+            }
+            if(response.weight !== undefined) {
+            setWeight(response.weight);
+            }
+            if(response.impact !== undefined) {
+            setImpact(response.impact);
+            }
+            if(response.username !== undefined) {
+              setUsername(response.username);
+            } else {
+              setUsername('User');
+            }
           }
         } catch (error) {
-          console.error("Error fetching points:", error);
+          console.error("Error fetching data:", error);
         } finally {
           setIsInitialized(true);
         }
@@ -465,9 +479,11 @@ const Dashboard = () => {
           const docRef = doc(db, "users", user.uid);
           console.log("In the middle of updating")
           await updateDoc(docRef, {
-            points: points
+            points: points,
+            weight: weight,
+            impact: impact,
           });
-          console.log('Points updated successfully');
+          console.log('Data updated successfully');
         } catch (error) {
           console.error("Error updating points:", error);
         }
@@ -475,7 +491,7 @@ const Dashboard = () => {
     };
 
     updatePoints();
-  }, [points, user, isInitialized]);
+  }, [points, user, isInitialized, weight, impact, username]);
   
   const [fontsLoaded] = useFonts({
     'Nerko-One': require('../../assets/fonts/NerkoOne-Regular.ttf'),
@@ -609,7 +625,7 @@ const tipsAndGuides = [
       {/* Header Section */}
       <View style={tw`pt-7`}>
         <Text style={[tw`text-4xl font-bold text-center text-[#400908]`, { fontFamily: 'Nerko-One' }]}>
-          Welcome Back, Name!
+          Welcome Back, {username}!
         </Text>
       </View>
       

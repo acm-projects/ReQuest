@@ -18,16 +18,18 @@ const client = new Groq({
 });
 
 const systemPrompt = 
-`You are RecycleBot, an AI assistant for RecycleRoute, a mobile app that gamifies recycling. When provided an item name, you must respond *only* with a JSON object in the format below—nothing else. Do not include any prefacing text or extra information. If you detect an error, still return a JSON object in this exact format.
-It is critical that you classify objects if they are recyclable correctly. Animals and body appendages should probably not be recycled while regular everyday items should be.
+`
+You are RecycleBot, an AI assistant for RecycleRoute, a mobile app that gamifies recycling. When provided an item name, you must respond *only* with a JSON object in the format below—nothing else. Do not include any prefacing text or extra information. If you detect an error, still return a JSON object in this exact format.
+
+It is critical that you classify objects correctly as recyclable or non-recyclable. Animals and body appendages should probably not be recycled, while regular everyday items should be.
 
 For recyclable items, return:
 
 {
   "recyclable": true,
-  "points": <integer from 0 to 5>,
+  "points": <integer from 1 to 5 depending on required effort, 1 being for easy items like bottles and 5 being for high-value items like metals>,
   "weight": <double for the estimated weight of item in kg>,
-  "lifespan_extension": <double for estimated days world resources last longer with daily recycling like yours>
+  "lifespan_extension": <double for estimated days world resources last longer with daily recycling like yours, be very strict with this number and ensure it reflects realistic impact>
 }
 
 For non-recyclable items, return:
@@ -39,8 +41,11 @@ For non-recyclable items, return:
   "lifespan_extension": 0
 }
 
-Be fair but extremely strict in awarding points (0-5) based on the difficulty or ease of recycling the item, the approximate weight of the item, and the impact. This is important since people want accurate values. 
-You should be consistent. For example, straws and drink containers should be only 1-3 points, but items like gold and metal should be 5 points due to ease of recycling them. Calculate "lifespan_extension" based on the weight of the item, assuming it conserves resources proportional to daily recycling for an average person globally.`
+Be fair but very strict in awarding points and other metrics. Use a scale of 0–5 points, where:
+- "Points" are based on the difficulty or ease of recycling the item, with low-effort items like drink containers at 1–2 points and items like metals or electronics at 4–5 points.
+- "Weight" reflects the item’s approximate mass in kg.
+- "Lifespan_extension" represents a minimal but meaningful impact in days added to global resource availability through daily recycling of this item. Calculate this strictly based on the item's weight, assuming it conserves resources proportionate to daily recycling for an average person globally. Avoid overestimating; be conservative in your estimates for accuracy and consistency.
+`
 
 type RootStackParamList = {
   map: { itemName: string };
@@ -372,9 +377,10 @@ const analyzeImage = async () => {
     </View>
   </Modal>
 
+  <Text style={[styles.title2, {fontFamily: 'Nerko-One'}]}>Scan To See If Your Image Is Recyclable!</Text>
+   
     <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-      <Text style={[styles.title2, {fontFamily: 'Nerko-One'}]}>Scan To See If Your Image Is Recyclable!</Text>
-      <Text style={[styles.title, {fontFamily: 'Nerko-One', color: "green"}]}>Where Can You Recycle This?</Text>
+    <Text style={[styles.title, {fontFamily: 'Nerko-One', color: "green"}]}>Where Can You Recycle This?</Text>
 
       {imageUri ? (
         <View style={styles.imageContainer}>

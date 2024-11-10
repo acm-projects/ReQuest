@@ -10,6 +10,7 @@ import tw from 'twrnc';
 import TabBar from "../../components/TabBar";
 import { useFonts } from 'expo-font';
 import * as Font from 'expo-font';
+import { StatusBar } from 'expo-status-bar';
 
 export default function TabLayout() {
   const { signedIn } = useAuth();
@@ -86,6 +87,7 @@ export default function TabLayout() {
   if (signedIn) {
     return (
       <PointsProvider>
+        <StatusBar style="dark" />
         <Tabs tabBar={props => <TabBar {...props} />}>
           <Tabs.Screen
             name="index"

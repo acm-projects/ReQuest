@@ -71,6 +71,7 @@ const MapWidget: React.FC = () => {
     return (
       <View style={tw`mx-4 mb-6 rounded-xl overflow-hidden shadow-lg bg-white h-48 justify-center items-center`}>
         <ActivityIndicator size="large" color="#C2D5BA" />
+        <Text>Loading map widget...</Text>
       </View>
     );
   }

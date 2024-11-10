@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'; 
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { Image, StyleSheet, Text, View, TextInput, TouchableOpacity, TouchableWithoutFeedback, ScrollView, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
+import { Image, StyleSheet, Text, View, TextInput, TouchableOpacity, TouchableWithoutFeedback, ScrollView, KeyboardAvoidingView, Platform, Keyboard, SafeAreaView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { FIREBASE_AUTH, db } from '../FirebaseConfig';
 import { User } from 'firebase/auth';
@@ -61,10 +61,14 @@ export default function Signup() {
       const docRef = doc(db, "users", response.user.uid);
       await setDoc(docRef, {
         email: email, 
+        username: username,
         points: 0,
         numRecycled: 0,
         recyclingCart: [],
         successfullyRecycled: [],
+        weight: 0,
+        impact: 0,
+        recycled: {},
       });
       console.log(response);
       return true;  // Return true for successful signup
@@ -109,7 +113,8 @@ const handleRegisterPress = async () => {
   
   
   return (
-    <KeyboardAvoidingView 
+    <SafeAreaView style = {tw`flex-1 bg-amber-50`}>
+        <KeyboardAvoidingView 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={tw`flex-1`}
     >
@@ -135,11 +140,12 @@ const handleRegisterPress = async () => {
               source={require('../assets/images/lightBottomRight.png')}
               style={styles.bottomRightImg}
             />
+            {/* Back Arrow */}
             <TouchableOpacity 
-              style={tw`absolute top-10 left-4`} 
+              style={tw`absolute top-0 left-2`}
               onPress={() => router.back()}
             >
-              <Text style={tw`text-2xl`}>&larr;</Text> 
+              <Text style={tw`text-4xl`}>&larr;</Text> 
             </TouchableOpacity>
 
             <Text style={[tw`text-8xl font-semibold text-[#6B8068] mt-2`, {fontFamily: 'Nerko-One'}]}>Hello!</Text>
@@ -198,6 +204,7 @@ const handleRegisterPress = async () => {
         </ScrollView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 

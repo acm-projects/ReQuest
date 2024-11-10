@@ -17,6 +17,8 @@ interface PointsContextType {
   chartHistory: Record<string, number>;
   addChartHistory: (itemName: string) => void;
   setChartHistory: (message: Record<string, number>) => void;
+  username: string;
+  setUsername: (name: string) => void;
 }
 
 const PointsContext = createContext<PointsContextType | undefined>(undefined);
@@ -31,6 +33,7 @@ export const PointsProvider = ({ children }: PointsProviderProps) => {
   const [impact, setImpact] = useState(0);
   const [history, setHistory] = useState<string[]>([]);
   const [chartHistory, setChartHistory] = useState<Record<string, number>>({});
+  const [username, setUsername] = useState('');
 
   const addPoints = (amount: number) => {
     setPoints(prev => prev + amount);
@@ -56,7 +59,7 @@ export const PointsProvider = ({ children }: PointsProviderProps) => {
   };
 
   return (
-    <PointsContext.Provider value={{ points, addPoints, setPoints, weight, setWeight, addWeight, impact, setImpact, addImpact, history, addHistory, setHistory, chartHistory, addChartHistory, setChartHistory }}>
+    <PointsContext.Provider value={{ points, addPoints, setPoints, weight, setWeight, addWeight, impact, setImpact, addImpact, history, addHistory, setHistory, chartHistory, addChartHistory, setChartHistory, username, setUsername }}>
       {children}
     </PointsContext.Provider>
   );
@@ -98,6 +101,14 @@ export const useChartHistory = () => {
   const context = useContext(PointsContext);
   if (context === undefined) {
     throw new Error('useChartHistory must be used within a PointsProvider');
+  }
+  return context;
+}
+
+export const useUsername = () => {
+  const context = useContext(PointsContext);
+  if (context === undefined) {
+    throw new Error('useUsername must be used within a PointsProvider');
   }
   return context;
 }
