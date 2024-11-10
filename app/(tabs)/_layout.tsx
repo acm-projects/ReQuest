@@ -250,8 +250,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: -48,
     left: -69,
-    width: 210,
-    height: 210,
+    width: 200,
+    height: 200,
     resizeMode: 'contain',
   },
   bottomRightImg: {
