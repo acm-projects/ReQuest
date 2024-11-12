@@ -7,6 +7,9 @@ import { Feather } from '@expo/vector-icons';
 import {useRoute, RouteProp} from '@react-navigation/native';
 import CustomLoadingIndicator from '../CustomLoadingIndicator';
 import { useFonts } from 'expo-font';
+import { WebView } from 'react-native-webview';
+import { parseDocument } from 'htmlparser2';
+import { selectAll } from 'css-select';
 
 
 
@@ -19,6 +22,7 @@ interface RecyclingCenter {
   openingHours?: { open_now: boolean; weekday_text: string[] }; 
   rating?: number; 
   description?: string; 
+  items?: string;
 }
 
 type RootStackParamList = {
@@ -113,18 +117,74 @@ export default function Map() {
 
   
 
+    const fetchCrowdSourced = async (): Promise<RecyclingCenter[]> => {
+      try {
+        const response = await fetch(
+          "https://docs.google.com/spreadsheets/d/e/2PACX-1vQK7C7fNALFEUNzWAJq9_YoR-wV6HZHhIU2CONO3tEmg3fDneTRBFJJrmCLzHmoIjqEj0N6t7bpko1T/pubhtml"
+        );
+        const htmlString = await response.text();
+    
+        // Parse the HTML document
+        const dom = parseDocument(htmlString);
+        const rows = selectAll('table tr', dom);
+        const columnData: string[][] = [];
+    
+        // Iterate over each row and parse data by column
+        rows.forEach((row, rowIndex) => {
+          const cells = selectAll('td', row);
+    
+          cells.forEach((cell, colIndex) => {
+            const cellText = cell.children
+              .filter((node) => node.type === 'text')
+              .map((node) => node.data?.trim() || '')
+              .join('');
+    
+            // Initialize each column if it doesn’t exist
+            if (!columnData[colIndex]) {
+              columnData[colIndex] = [];
+            }
+    
+            // Add cell text to the respective column
+            columnData[colIndex].push(cellText);
+          });
+        });
+    
+        console.log(columnData)
+        // Map the parsed data to RecyclingCenter objects
+      const customCenters : RecyclingCenter[] = columnData[0].slice(1).map((name, index) => ({
+        id: `crowd-${index}`,
+        name,
+        latitude: parseFloat(columnData[2][index + 1]),
+        longitude: parseFloat(columnData[1][index + 1]),
+        address: 'Crowd-sourced location',
+        items: columnData[3][index + 1],
+        description : "No reviews available."
+      }));
+
+      return customCenters;
+        
+      } catch (error) {
+        console.error("Error fetching or parsing spreadsheet:", error);
+        return [];
+      }
+    };
 
   
   const fetchRecyclingCenters = useCallback(async (lat: number, lng: number, keyword: string = '') => {
     setLoading(true);
-    
-    // Use trimmed keyword to check if it's really empty
+
     const trimmedKeyword = keyword.trim();
     const searchKeyword = trimmedKeyword ? 
       `${trimmedKeyword} recycling` : 
       defaultKeyword;
     
     console.log('Searching with keyword:', searchKeyword); // Debug log
+
+    let customCenters: RecyclingCenter[] = [];
+
+    if (searchKeyword === defaultKeyword) {
+      customCenters = await fetchCrowdSourced();
+    }
 
     try {
       const response = await axios.get(
@@ -147,7 +207,11 @@ export default function Map() {
         address: place.vicinity || 'Address not available',
       }));
 
-      setRecyclingCenters(centers);
+      const combinedCenters = searchKeyword === defaultKeyword
+        ? [...customCenters, ...centers]
+        : centers;
+
+      setRecyclingCenters(combinedCenters);
       centers.forEach((center: RecyclingCenter) => fetchPlaceDetails(center.id));
     } catch (error) {
       console.error("Error fetching recycling centers:", error);
@@ -418,6 +482,11 @@ const [fontsLoaded] = useFonts({
               {selectedCenter.rating && (
                 <Text style={styles.modalText}>
                   Rating: {selectedCenter.rating} ⭐
+                </Text>
+              )}
+              {selectedCenter.items && (
+                <Text style={styles.modalText}>
+                  Items Accepted: {'\n'} {selectedCenter.items}
                 </Text>
               )}
               <ScrollView style={styles.scrollView} scrollEnabled={isExpanded}>
