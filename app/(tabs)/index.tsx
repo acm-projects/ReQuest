@@ -166,7 +166,6 @@ const Chat = () => {
       position: 'absolute',
       bottom: 75,
       right: 20,
-      backgroundColor: 'blue',
       borderRadius: 30,
       width: 60,
       height: 60,
@@ -243,13 +242,28 @@ const Chat = () => {
 
    return (
     <View style={{ flex: 1 }}>
-      <Pressable style={styles.floatingButton} onPress={toggleModal}>
-        <Image
-          source={require('../../assets/images/recycleEarth.png')}
-          style={{ width: 40, height: 40 }}
-          resizeMode="contain"
-        />
-      </Pressable>
+     <Pressable style={styles.floatingButton} onPress={toggleModal}>
+  <View style={{
+    width: 60,  // Increased from 40
+    height: 60, // Increased from 40
+    overflow: 'hidden',
+    borderRadius: 30,
+  }}>
+    <Image
+      source={require('../../assets/images/recycleEarth.png')}
+      style={{
+        width: 90,  // Increased from 60
+        height: 90, // Increased from 60
+        transform: [
+          { scale: 2.4 },
+          { translateX: 2 }, // Adjusted from -10
+          { translateY: 11 }, // Adjusted from -10 to move up
+        ],
+      }}
+      resizeMode="cover"
+    />
+  </View>
+</Pressable>
 
       <Modal
         visible={isModalVisible}
@@ -283,65 +297,78 @@ const Chat = () => {
             </Pressable>
 
             <View style={{ flex: 1, borderTopLeftRadius: 20, borderTopRightRadius: 20, overflow: 'hidden' }}>
-              <FlatList
-                data={messages}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => (
-                  <View
-                    style={{
-                      marginVertical: 5,
-                      alignSelf: item.role === 'user' ? 'flex-end' : 'flex-start',
-                      maxWidth: '80%',
-                      flexDirection: 'row',
-                      alignItems: 'flex-end',
-                    }}
-                  >
-                    {item.role === 'bot' && (
-                      <Image
-                        source={require('../../assets/images/recycleEarth.png')}
-                        style={{
-                          width: 30,
-                          height: 30,
-                          marginRight: 8,
-                          borderRadius: 15,
-                        }}
-                        resizeMode="contain"
-                      />
-                    )}
-                    
-                    <View
-                      style={{
-                        backgroundColor: item.role === 'user' ? '#728A68' : '#B6AD90',
-                        padding: 10,
-                        borderRadius: 15,
-                        borderBottomLeftRadius: item.role === 'user' ? 15 : 0,
-                        borderBottomRightRadius: item.role === 'user' ? 0 : 15,
-                        shadowColor: '#000',
-                        shadowOffset: { width: 0, height: 1 },
-                        shadowOpacity: 0.2,
-                        shadowRadius: 1,
-                        elevation: 1,
-                        flex: 1,
-                      }}
-                    >
-                      <Text style={{ 
-                        color: 'white',
-                        fontFamily: 'Gilroy',
-                        fontSize: 16,
-                      }}>
-                        {item.content}
-                      </Text>
-                    </View>
-                    
-                    {item.role === 'user' && <View style={{ width: 30, marginLeft: 8 }} />}
-                  </View>
-                )}
-                contentContainerStyle={{
-                  flexGrow: 1,
-                  justifyContent: 'flex-end',
-                  paddingBottom: 100,
-                }}
-              />
+          <FlatList
+ data={messages}
+ keyExtractor={(item, index) => index.toString()}
+ renderItem={({ item }) => (
+   <View
+     style={{
+       marginVertical: 7,
+       alignSelf: item.role === 'user' ? 'flex-end' : 'flex-start',
+       maxWidth: item.role === 'user' ? '85%' : '90%',
+       flexDirection: 'row',
+       alignItems: 'flex-end',
+       marginRight: item.role === 'user' ? 0 : undefined,
+     }}
+   >
+     {item.role === 'bot' && (
+       <View style={{
+         width: 45,
+         height: 45,
+         marginRight: 5,
+         borderRadius: 23,
+         overflow: 'hidden',
+         marginBottom: -20,
+       }}>
+         <Image
+           source={require('../../assets/images/recycleEarth.png')}
+           style={{
+             width: 68,
+             height: 68,
+             transform: [
+               { scale: 2.4 },
+               { translateX: 1 },
+               { translateY: 8 },
+             ],
+           }}
+           resizeMode="cover"
+         />
+       </View>
+     )}
+     
+     <View
+       style={{
+         backgroundColor: item.role === 'user' ? '#8AA984' : '#87BAC7',
+         padding: 10,
+         borderRadius: 15,
+         borderBottomLeftRadius: item.role === 'user' ? 15 : 0,
+         borderBottomRightRadius: item.role === 'user' ? 0 : 15,
+         shadowColor: '#000',
+         shadowOffset: { width: 0, height: 1 },
+         shadowOpacity: 0.2,
+         shadowRadius: 1,
+         elevation: 1,
+         flex: 1,
+       }}
+     >
+       <Text style={{ 
+         color: 'white',
+         fontFamily: 'Gilroy',
+         fontSize: 16,
+       }}>
+         {item.content}
+       </Text>
+     </View>
+     
+     {item.role === 'user' && <View style={{ width: 8 }} />}
+   </View>
+ )}
+ contentContainerStyle={{
+   paddingTop: 60,
+   paddingLeft: 8,
+   paddingRight: 0,
+ }}
+/>
             </View>
 
             <View
