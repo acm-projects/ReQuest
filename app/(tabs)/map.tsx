@@ -23,6 +23,8 @@ interface RecyclingCenter {
   rating?: number; 
   description?: string; 
   items?: string;
+  marker?: string;
+  instruction?: string;
 }
 
 type RootStackParamList = {
@@ -30,6 +32,8 @@ type RootStackParamList = {
 };
 
 const defaultKeyword = 'recycling center|waste management|recyclable materials|recycle center';
+const Green = '#C2D5BA';
+const Blue = '#A6C8E0';
 
  
 
@@ -158,7 +162,9 @@ export default function Map() {
         longitude: parseFloat(columnData[1][index + 1]),
         address: 'Crowd-sourced location',
         items: columnData[3][index + 1],
-        description : "No reviews available."
+        description : "No reviews available.",
+        marker: Blue,
+        instruction: columnData[4][index + 1],
       }));
 
       return customCenters;
@@ -205,6 +211,7 @@ export default function Map() {
         latitude: place.geometry.location.lat,
         longitude: place.geometry.location.lng,
         address: place.vicinity || 'Address not available',
+        marker: Green,
       }));
 
       const combinedCenters = searchKeyword === defaultKeyword
@@ -375,7 +382,7 @@ const [fontsLoaded] = useFonts({
                 coordinate={{ latitude: center.latitude, longitude: center.longitude }}
                 title={center.name}
                 onPress={() => handleMarkerPress(center)}
-                pinColor="#C2D5BA"
+                pinColor = {center.marker}
               />
             ))}
           </MapView>)}
@@ -489,6 +496,10 @@ const [fontsLoaded] = useFonts({
                   Items Accepted: {'\n'} {selectedCenter.items}
                 </Text>
               )}
+              {selectedCenter.instruction && (
+                <Text style={styles.modalText}>
+                  Instructions: {'\n'} {selectedCenter.instruction}
+                </Text>)}
               <ScrollView style={styles.scrollView} scrollEnabled={isExpanded}>
                 <Text style={styles.modalDescription}>
                   <Text style={{ fontWeight: 'bold' }}>Customer Stated: </Text>

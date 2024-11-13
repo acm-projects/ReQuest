@@ -175,6 +175,11 @@ const Chat = () => {
       justifyContent: 'center',
       alignItems: 'center',
       zIndex : 1,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.3,
+      shadowRadius: 3,
+      elevation: 5,
     },
     
      scrollView: {
@@ -722,7 +727,7 @@ const tipsAndGuides = [
 
         <View style={tw`flex-1 justify-center items-center mb-4`}>
           <Text style={[tw`text-[#400908] text-base`, { fontFamily: 'Gilroy' }]}>
-            History:
+            Session History:
           </Text>
           <ScrollView style={tw`max-h-[40%]`}>
             <Text style={[tw`text-[#400908] text-base font-bold`, { fontFamily: 'Gilroy', fontSize: 14 }]}>
