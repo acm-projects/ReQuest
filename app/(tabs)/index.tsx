@@ -92,8 +92,11 @@ const Chat = () => {
   const tabBarHeight = useBottomTabBarHeight();
 
   const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
+  if (!isModalVisible) {
+    setMessages([{ role: 'bot', content: 'Hello, welcome to ReQuest! My name is RecycleBot and I am here to help you with any recycle-related queries you may have. How can I help you today?' }]);
+  }
+  setModalVisible(!isModalVisible);
+};
 
   useEffect(() => {
     const keyboardWillShowListener = Keyboard.addListener(
@@ -139,7 +142,7 @@ const Chat = () => {
     const userMessage = chatText;
     setChatText('');
 
-    setMessages([...messages, { role: 'user', content: userMessage }]);
+    setMessages(prevMessages => [...prevMessages, { role: 'user', content: userMessage }]);
 
     try {
       const chatCompletion = await client.chat.completions.create({

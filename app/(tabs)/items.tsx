@@ -17,6 +17,8 @@ const client = new Groq({
   apiKey: process.env.EXPO_PUBLIC_GROQ_API_KEY,
 });
 
+
+
 const systemPrompt = 
 `
 You are RecycleBot, an AI assistant for RecycleRoute, a mobile app that gamifies recycling. When provided an item name, you must respond *only* with a JSON object in the format below—nothing else. Do not include any prefacing text or extra information. If you detect an error, still return a JSON object in this exact format.
