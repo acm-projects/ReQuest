@@ -112,3 +112,5 @@ export const useUsername = () => {
   }
   return context;
 }
+
+export default PointsContext;

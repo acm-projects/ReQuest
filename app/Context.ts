@@ -6,3 +6,5 @@ interface CurrentUserContextType {
 
 const CurrentUserContext = createContext<CurrentUserContextType | null>(null);
 
+export default CurrentUserContext;
+
