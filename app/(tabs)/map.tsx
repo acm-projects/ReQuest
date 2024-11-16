@@ -383,6 +383,7 @@ const [fontsLoaded] = useFonts({
                 title={center.name}
                 onPress={() => handleMarkerPress(center)}
                 pinColor = {center.marker}
+                useLegacyPinView = {true}
               />
             ))}
           </MapView>)}

@@ -109,6 +109,7 @@ const MapWidget: React.FC = () => {
               }}
               pinColor="#C2D5BA"
               title={center.name}
+              useLegacyPinView={true}
             />
           ))}
         </MapView>

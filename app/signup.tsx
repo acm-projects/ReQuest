@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; 
+import React, { useState, useEffect } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { Image, StyleSheet, Text, View, TextInput, TouchableOpacity, TouchableWithoutFeedback, ScrollView, KeyboardAvoidingView, Platform, Keyboard, SafeAreaView } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -6,21 +6,20 @@ import { FIREBASE_AUTH, db } from '../FirebaseConfig';
 import { User } from 'firebase/auth';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../AuthContext';
-import tw from 'twrnc'; 
+import tw from 'twrnc';
 import CustomLoadingIndicator from './CustomLoadingIndicator';
 import { useFonts } from 'expo-font';
 import * as Font from 'expo-font';
 
 export default function Signup() {
-  // Keep all your existing state declarations
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [username, setUsername] = useState('');
-  const [isLoading, setIsLoading] = useState(true);  // Initial loading true
+  const [isLoading, setIsLoading] = useState(true); // Initial loading true
   const [isSignupLoading, setIsSignupLoading] = useState(false);
   const router = useRouter();
-  const {user, setUser, signedIn, setSignedIn} = useAuth();
+  const { user, setUser, signedIn, setSignedIn } = useAuth();
   const [showContent, setShowContent] = useState(false);
   const [fontsLoaded] = useFonts({
     'Nerko-One': require('../assets/fonts/NerkoOne-Regular.ttf'),
@@ -38,9 +37,10 @@ export default function Signup() {
   const handleLoadingComplete = () => {
     setShowContent(true);
   };
-    const auth = FIREBASE_AUTH;
-  // Keep your existing signUp function as is
- const signUp = async (): Promise<boolean> => {  // Add return type
+
+  const auth = FIREBASE_AUTH;
+
+  const signUp = async (): Promise<boolean> => {  // Add return type
     setIsLoading(true);
     if (password !== confirmPassword) {
       alert("Passwords don't match!");
@@ -51,16 +51,16 @@ export default function Signup() {
       const response = await createUserWithEmailAndPassword(auth, email, password);
       console.log(response.user);
       console.log(response.user.uid);
-      
+
       setUser({
         uid: response.user.uid,
       });
       setSignedIn(true);
-      
-      console.log(user);  
+
+      console.log(user);
       const docRef = doc(db, "users", response.user.uid);
       await setDoc(docRef, {
-        email: email, 
+        email: email,
         username: username,
         points: 0,
         numRecycled: 0,
@@ -81,16 +81,16 @@ export default function Signup() {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
-const handleRegisterPress = async () => {
+  const handleRegisterPress = async () => {
     const signupSuccessful = await signUp();
     if (signupSuccessful) {
       router.push('../(tabs)');  // Make sure this path matches your file structure
     }
-  }
+  };
 
-  // Modified return for loading state
+  // Show loading animation if content isn't ready
   if (!showContent) {
     return (
       <View style={styles.loadingContainer}>
@@ -98,7 +98,7 @@ const handleRegisterPress = async () => {
           imageSource={require('../assets/images/sittingPlanet.png')}
           width={200}
           height={200}
-          isLoading={isLoading}  // Changed this to just isLoading
+          isLoading={isLoading}  // Loading state is passed here
           onExitComplete={handleLoadingComplete}
           direction="top-to-bottom"
           duration={1500}
@@ -107,103 +107,98 @@ const handleRegisterPress = async () => {
     );
   }
 
-
-
-
-  
-  
   return (
-    <SafeAreaView style = {tw`flex-1 bg-amber-50`}>
-        <KeyboardAvoidingView 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={tw`flex-1`}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView 
-          contentContainerStyle={tw`flex-grow`}
-          keyboardShouldPersistTaps="handled"
-        >
-          <View style={tw`flex-1 bg-amber-50 justify-center items-center px-4`}>
-            <Image
-              source={require('../assets/images/lightTopLeft.png')}
-              style={styles.cornerImg}
-            />
-            <Image
-              source={require('../assets/images/lightTopRight.png')}
-              style={styles.topRightImg}
-            />
-            <Image
-              source={require('../assets/images/lightBottomLeft.png')}
-              style={styles.bottomLeftImg}
-            />
-            <Image
-              source={require('../assets/images/lightBottomRight.png')}
-              style={styles.bottomRightImg}
-            />
-            {/* Back Arrow */}
-            <TouchableOpacity 
-              style={tw`absolute top-0 left-2`}
-              onPress={() => router.back()}
-            >
-              <Text style={tw`text-4xl`}>&larr;</Text> 
-            </TouchableOpacity>
+    <SafeAreaView style={tw`flex-1 bg-amber-50`}>
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={tw`flex-1`}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView 
+            contentContainerStyle={tw`flex-grow`}
+            keyboardShouldPersistTaps="handled"
+          >
+            <View style={tw`flex-1 bg-amber-50 justify-center items-center px-4`}>
+              <Image
+                source={require('../assets/images/lightTopLeft.png')}
+                style={styles.cornerImg}
+              />
+              <Image
+                source={require('../assets/images/lightTopRight.png')}
+                style={styles.topRightImg}
+              />
+              <Image
+                source={require('../assets/images/lightBottomLeft.png')}
+                style={styles.bottomLeftImg}
+              />
+              <Image
+                source={require('../assets/images/lightBottomRight.png')}
+                style={styles.bottomRightImg}
+              />
+              {/* Back Arrow */}
+              <TouchableOpacity 
+                style={tw`absolute top-0 left-2`}
+                onPress={() => router.back()}
+              >
+                <Text style={tw`text-4xl`}>&larr;</Text> 
+              </TouchableOpacity>
 
-            <Text style={[tw`text-8xl font-semibold text-[#6B8068] mt-2`, {fontFamily: 'Nerko-One'}]}>Hello!</Text>
-            <Text style={[tw`text-4xl font-bold text-black mb-6`, {fontFamily: 'Nerko-One'}]}>Register to Get Started</Text>
+              <Text style={[tw`text-8xl font-semibold text-[#6B8068] mt-2`, { fontFamily: 'Nerko-One' }]}>Hello!</Text>
+              <Text style={[tw`text-4xl font-bold text-black mb-6`, { fontFamily: 'Nerko-One' }]}>Register to Get Started</Text>
 
-            <Image
-              source={require('../assets/images/sittingPlanet.png')}
-              style={styles.earthImg}
-            />
+              <Image
+                source={require('../assets/images/sittingPlanet.png')}
+                style={styles.earthImg}
+              />
 
-            <TextInput
-              style={[styles.input, {fontFamily: 'Gilroy'}]}
-              placeholder="Enter your username"
-              placeholderTextColor="black"
-              value={username}
-              onChangeText={setUsername}
-            />
+              <TextInput
+                style={[styles.input, { fontFamily: 'Gilroy' }]}
+                placeholder="Enter your username"
+                placeholderTextColor="black"
+                value={username}
+                onChangeText={setUsername}
+              />
 
-            <TextInput
-              style={[styles.input, {fontFamily: 'Gilroy'}]}
-              placeholder="Enter your email"
-              placeholderTextColor="black"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
+              <TextInput
+                style={[styles.input, { fontFamily: 'Gilroy' }]}
+                placeholder="Enter your email"
+                placeholderTextColor="black"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
 
-            <TextInput
-              style={[styles.input, {fontFamily: 'Gilroy'}]}
-              placeholder="Enter your password"
-              placeholderTextColor="black"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-              autoCapitalize="none"
-            />
+              <TextInput
+                style={[styles.input, { fontFamily: 'Gilroy' }]}
+                placeholder="Enter your password"
+                placeholderTextColor="black"
+                secureTextEntry
+                value={password}
+                onChangeText={setPassword}
+                autoCapitalize="none"
+              />
 
-            <TextInput
-              style={[styles.input, {fontFamily: 'Gilroy'}]}
-              placeholder="Confirm password"
-              placeholderTextColor="black"
-              secureTextEntry
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              autoCapitalize="none"
-            />
+              <TextInput
+                style={[styles.input, { fontFamily: 'Gilroy' }]}
+                placeholder="Confirm password"
+                placeholderTextColor="black"
+                secureTextEntry
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                autoCapitalize="none"
+              />
 
-            <TouchableOpacity 
-              style={[styles.button, tw`mb-6`]} // Added margin bottom
-              onPress={handleRegisterPress}
-            >
-              <Text style={[tw`text-black text-center text-lg`, {fontFamily: 'Gilroy'}]}>Register</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+              <TouchableOpacity 
+                style={[styles.button, tw`mb-6`]} // Added margin bottom
+                onPress={handleRegisterPress}
+              >
+                <Text style={[tw`text-black text-center text-lg`, { fontFamily: 'Gilroy' }]}>Register</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -228,8 +223,6 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     textAlign: 'left',
   },
-  
-  // Add more padding to the bottom of the button for keyboard
   button: {
     backgroundColor: '#C2D5BA',
     padding: 15,
@@ -237,9 +230,6 @@ const styles = StyleSheet.create({
     width: '50%',
     marginTop: 20,
     marginBottom: Platform.OS === 'ios' ? 20 : 10,
-  },
-    container: {
-    flex: 1,
   },
   cornerImg: {
     position: 'absolute',
@@ -271,5 +261,6 @@ const styles = StyleSheet.create({
     right: -33,
     width: 200,
     height: 200,
+    resizeMode: 'contain',
   },
 });

@@ -18,6 +18,7 @@ import { db } from '../../FirebaseConfig';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useAuth } from '../../AuthContext';
 import { PieChart } from 'react-native-chart-kit';
+import { Asset } from 'expo-asset';
 import {
   Pressable,
   ScrollView,
@@ -174,13 +175,16 @@ const Chat = () => {
       height: 60,
       justifyContent: 'center',
       alignItems: 'center',
-      zIndex : 1,
+      zIndex: 1,
       shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
+      shadowOffset: { width: 0, height: 5 },
       shadowOpacity: 0.3,
-      shadowRadius: 3,
-      elevation: 5,
-    },
+      shadowRadius: 6,
+      elevation: 8,
+      backgroundColor: '#007BFF',  // Example background color (blue)
+      borderWidth: 2,              // Add a subtle border
+      borderColor: '#0056b3',      // Darker blue for border to create depth
+    },    
     
      scrollView: {
     padding: 16,
