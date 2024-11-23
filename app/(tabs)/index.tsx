@@ -641,7 +641,7 @@ const tipsAndGuides = [
   {
     title: "Tip 3: Compost Organic Waste",
     description: "Consider composting food scraps and yard waste to reduce landfill waste.",
-    link: "https://www.youtube.com/embed/zy70DAaeFBI",
+    link: "https://www.youtube.com/embed/oFlsjRXbnSk",
   },
   {
     title: "Tip 4: Saving Water Use",
@@ -668,9 +668,9 @@ const tipsAndGuides = [
         </Text>
       </View>
       
-      <Text style={[tw`text-lg text-[#400908] mt-2 ml-3 pt-22 text-left`, { fontFamily: 'Gilroy' }]}>
-        These are your current stats:
-      </Text>
+      <Text style={[tw`text-lg text-[#400908] mt-2 ml-3 pt-22 text-left relative z-10`, { fontFamily: 'Gilroy' }]}>
+      These are your current stats:
+    </Text>
 
       {/* Floating Earth Image */}
      <Image
@@ -678,7 +678,7 @@ const tipsAndGuides = [
   style={tw`
     absolute 
     right-[5%] 
-    top-[8%] 
+    top-[7.25%] 
     h-30 
     w-30 
     z-10

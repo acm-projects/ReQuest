@@ -68,7 +68,7 @@ const DetectObject = () => {
   const {impact, addImpact} = useImpact();
   const {history, addHistory} = useHistory();
   const {chartHistory, addChartHistory} = useChartHistory();
-  const [recycledItems, setRecycledItems] = useState<Set<string>>(new Set());
+  const [recycledItems] = useState<Set<string>>(new Set());
   const [fontsLoaded] = useFonts({
     'Nerko-One': require('../../assets/fonts/NerkoOne-Regular.ttf'),
     'Gilroy': require('../../assets/fonts/Gilroy-Regular.otf'),
@@ -229,12 +229,10 @@ const analyzeImage = async () => {
     lifespan_extension: number;
   }
   
-  const handleRecycle = async (itemName: string) => {
+   const handleRecycle = async (itemName: string) => {
     if (!itemName) {
       console.error('Unable to recycle item, name error');
       return;
-
-      
     }
   
     try {
@@ -250,31 +248,32 @@ const analyzeImage = async () => {
   
       if (typeof response === 'string') {
         try {
-          const { recyclable, points : earnedPoints, weight : earnedWeight, lifespan_extension: earnedImpact }: ResponseData = JSON.parse(response);
+          const { recyclable, points: earnedPoints, weight: earnedWeight, lifespan_extension: earnedImpact }: ResponseData = JSON.parse(response);
           const formattedWeight = parseFloat(earnedWeight.toFixed(2));
           console.log(`Recyclable: ${recyclable}, Points: ${points}, Weight: ${weight}, Impact: ${impact}`);
           
-              if (recyclable === true) {
-          addPoints(earnedPoints);
-          addWeight(formattedWeight);
-          addImpact(earnedImpact);
-          addHistory(`Recycled ${formattedWeight} kg of ${itemName} for ${earnedPoints}`);
-          addChartHistory(itemName);
-          
-          setRecycledItems(prev => new Set(prev).add(itemName));
-          setRecycleSuccessModal({
-            visible: true,
-            itemName,
-            weight: formattedWeight,
-            points: earnedPoints,
-            totalPoints: earnedPoints + points
-          });
-          
-          const newCart = cart.filter((item) => item.description !== itemName);
-          setCart(newCart);
-  } else {
-    Alert.alert('Not Recyclable', `Sorry, ${itemName} is not recyclable. Please remove from bag.`);
-  }
+          if (recyclable === true) {
+            addPoints(earnedPoints);
+            addWeight(formattedWeight);
+            addImpact(earnedImpact);
+            addHistory(`Recycled ${formattedWeight} kg of ${itemName} for ${earnedPoints}`);
+            addChartHistory(itemName);
+            
+            // Remove the recycled item from the cart
+            const newCart = cart.filter((item) => item.description !== itemName);
+            setCart(newCart);
+            
+            // Show success modal
+            setRecycleSuccessModal({
+              visible: true,
+              itemName,
+              weight: formattedWeight,
+              points: earnedPoints,
+              totalPoints: earnedPoints + points
+            });
+          } else {
+            Alert.alert('Not Recyclable', `Sorry, ${itemName} is not recyclable. Please remove from bag.`);
+          }
         } catch (error) {
           console.error('Error parsing response:', error);
           Alert.alert('Error', 'Unable to process recycling points');
@@ -288,6 +287,7 @@ const analyzeImage = async () => {
       Alert.alert('Error', 'Failed to process recycling request');
     }
   };
+  
 
   {/* 
     
@@ -743,12 +743,12 @@ const styles = StyleSheet.create({
   },
   recycleModalLabel: {
     fontSize: 14,
-    color: 'white',
+    color: 'black',
     marginBottom: 5,
   },
   recycleModalValue: {
     fontSize: 20,
-    color: 'white',
+    color: 'black',
     fontWeight: 'bold',
   },
   recycleModalTotal: {

@@ -58,7 +58,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       <Animated.View style={[styles.bottomSheetContainer, rBottomSheetStyle]}>
         <View style={styles.handle} />
         <ScrollView style={styles.scrollView}>
-          <Text style={styles.cartTitle}>Recycling Cart</Text>
+          <Text style={styles.cartTitle}>Recycling Bag</Text>
           {cart.map((item, index) => (
             <View key={index} style={styles.cartItem}>
               <Text style={styles.itemText}>{item}</Text>

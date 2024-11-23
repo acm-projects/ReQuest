@@ -392,7 +392,7 @@ const [fontsLoaded] = useFonts({
       style={[styles.filterButton, { position: 'absolute', top: 50, left: 30, zIndex: 1 }]}    
       onPress={() => setFilterModalVisible(true)}
     >
-      <Text style={styles.buttonText}>Filters</Text>
+      <Text style={styles.buttonText}>Sort By Distance</Text>
     </TouchableOpacity>
 
     {/* Search icon */}
@@ -613,7 +613,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   buttonText: {
-    color: 'white',
+    color: 'black',
     textAlign: 'center',
     fontFamily: 'Gilroy',
   },
