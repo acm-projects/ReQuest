@@ -1,10 +1,10 @@
 <p align="center">
   <img align="center" src="recycle.gif">
 
-# <h1 align="center">RecycleRoute :recycle:</h1>
+# <h1 align="center">ReQuest :recycle:</h1>
 
 <p align="center">
-Our planet is slowly dying and is about to enter an irreversible stage. Take action and make a difference with RecycleRoute! RecycleRoute is an app that lets you upload a photo of any item and discover where to recycle, sell, donate, or dispose of it responsibly. RecycleRoute also offers valuable tips and tracks your environmental impact. Let's safeguard our planet together—before it's too late—by using RecycleRoute!
+Our planet is slowly dying and is about to enter an irreversible stage. Take action and make a difference with ReQuest! ReQuest is an app that lets you upload a photo of any item and discover where to recycle, sell, donate, or dispose of it responsibly. ReQuest also offers valuable tips and tracks your environmental impact. Let's safeguard our planet together—before it's too late—by using ReQuest!
 </p>
 <br>
 
@@ -260,7 +260,7 @@ Our planet is slowly dying and is about to enter an irreversible stage. Take act
 
 <br>
 
-## RecycleRoute TEAM!! :tada:
+## ReQuest TEAM!! :tada:
 
 - Hishita Shah
 - Arin Sood
